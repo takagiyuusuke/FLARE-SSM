@@ -1,6 +1,17 @@
 // ========== 定数定義 ==========
 const wavelengths = ['0094', '0131', '0171', '0193', '0211', '0304', '0335', '1600', '4500'];
 const flareBaseURL = 'https://hobbies-da-cathedral-collections.trycloudflare.com/get_flare_class?time=';
+const aiaColormaps = {
+  '0094': [[0, 0, 0], [0, 0, 255], [255, 255, 255]],
+  '0131': [[0, 0, 0], [0, 255, 0], [255, 255, 255]],
+  '0171': [[0, 0, 0], [255, 255, 0], [255, 255, 255]],
+  '0193': [[0, 0, 0], [255, 165, 0], [255, 255, 255]],
+  '0211': [[0, 0, 0], [255, 0, 0], [255, 255, 255]],
+  '0304': [[0, 0, 0], [255, 20, 147], [255, 255, 255]],
+  '0335': [[0, 0, 0], [138, 43, 226], [255, 255, 255]],
+  '1600': [[0, 0, 0], [255, 140, 0], [255, 255, 255]],
+  '4500': [[0, 0, 0], [255, 255, 255], [255, 255, 255]],
+};
 
 // ========== 初期化処理 ==========
 window.addEventListener('DOMContentLoaded', () => {
@@ -94,6 +105,45 @@ let imageElements = {};  // 各波長のimgタグ
 let frameIndex = 0;
 let animationTimer = null;
 
+function applyColormapToImage(img, colormap) {
+  const canvas = document.createElement('canvas');
+  const ctx = canvas.getContext('2d');
+  canvas.width = img.width;
+  canvas.height = img.height;
+
+  // グレースケール画像を描画
+  ctx.drawImage(img, 0, 0);
+  const imageData = ctx.getImageData(0, 0, img.width, img.height);
+  const data = imageData.data;
+
+  // カラーマップを適用
+  for (let i = 0; i < data.length; i += 4) {
+    const grayscaleValue = data[i]; // R, G, Bは同じ値
+    const color = interpolateColormap(grayscaleValue / 255, colormap);
+    data[i] = color[0];     // R
+    data[i + 1] = color[1]; // G
+    data[i + 2] = color[2]; // B
+  }
+
+  ctx.putImageData(imageData, 0, 0);
+  return canvas.toDataURL();
+}
+
+function interpolateColormap(value, colormap) {
+  const steps = colormap.length - 1;
+  const scaledValue = value * steps;
+  const index = Math.floor(scaledValue);
+  const t = scaledValue - index;
+
+  const color1 = colormap[index];
+  const color2 = colormap[index + 1];
+  return [
+    Math.round(color1[0] * (1 - t) + color2[0] * t),
+    Math.round(color1[1] * (1 - t) + color2[1] * t),
+    Math.round(color1[2] * (1 - t) + color2[2] * t),
+  ];
+}
+
 function loadImagesFromSelectedTime() {
   if (animationTimer) {
     clearInterval(animationTimer);
@@ -135,7 +185,12 @@ function loadImagesFromSelectedTime() {
     aiaUrls[wl].forEach((url, i) => {
       const key = `${wl}-${i}`;
       const img = new Image();
-      img.onload = () => { preloadedImages[key] = img; };
+      img.onload = () => {
+        const coloredImageURL = applyColormapToImage(img, aiaColormaps[wl]);
+        const coloredImg = new Image();
+        coloredImg.src = coloredImageURL;
+        preloadedImages[key] = coloredImg;
+      };
       img.onerror = () => {
         const fallback = new Image();
         fallback.src = transparentURL;
