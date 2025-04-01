@@ -1,0 +1,7 @@
+requests
+numpy
+opencv-python-headless
+h5py
+matplotlib
+astropy
+python-dateutil

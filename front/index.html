@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>フレアデモ</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@1.4.0"></script>
+</head>
+<body>
+  <h1>フレアデモ</h1>
+
+  <div>
+    <label for="year">Year:</label>
+    <select id="year"></select>
+
+    <label for="month">Month:</label>
+    <select id="month"></select>
+
+    <label for="day">Day:</label>
+    <select id="day"></select>
+
+    <label for="hour">Hour (UTC):</label>
+    <select id="hour"></select>
+
+    <button id="load-button">この時刻で読み込む</button>
+  </div>
+
+  <h2 id="timestamp">Loading timestamp...</h2>
+
+  <div class="grid" id="aia-grid"></div>
+
+  <script src="script.js"></script>
+
+  <div>
+    <h3>72時間後までのX線強度の推移 (GOES観測)</h3>
+    <canvas id="flareChart" width="600" height="300"></canvas>
+  </div>
+</body>
+</html>
