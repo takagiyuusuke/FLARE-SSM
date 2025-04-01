@@ -147,8 +147,8 @@ def update_xrs_json(dt):
         print(f"❌ xrs.jsonの更新失敗: {e}")
 
 
-def main(mi):
-    now_jst = datetime.now(tz=tz.gettz('Asia/Tokyo')) - timedelta(minutes=mi)
+def main():
+    now_jst = datetime.now(tz=tz.gettz('Asia/Tokyo')) - timedelta(minutes=20)
     now_utc = now_jst.astimezone(tz=tz.tzutc())
     dt = now_utc.replace(minute=0, second=0, microsecond=0)
     time_str = dt.strftime('%H')
@@ -178,5 +178,4 @@ def main(mi):
 
 
 if __name__ == '__main__':
-    for i in range(24 * 6):
-        main((i + 6) * 60)
+    main()
