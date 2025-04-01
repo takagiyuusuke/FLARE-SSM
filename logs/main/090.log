@@ -1,0 +1,12 @@
+2025-04-02 00:33:25,954 - 090 - INFO - Using fold 1
+2025-04-02 00:33:25,954 - 090 - INFO - Dataset configuration:
+2025-04-02 00:33:25,954 - 090 - INFO - force_preprocess: False
+2025-04-02 00:33:25,954 - 090 - INFO - force_recalc_indices: False
+2025-04-02 00:33:25,954 - 090 - INFO - force_recalc_stats: False
+2025-04-02 00:33:25,954 - 090 - INFO - ==================================================
+2025-04-02 00:33:25,954 - 090 - INFO - Statistics Computation Start
+2025-04-02 00:33:25,954 - 090 - INFO - Using statistics directory: /data/h5data/main/statistics/fold1
+2025-04-02 00:33:25,954 - 090 - INFO - Training periods:
+2025-04-02 00:33:25,954 - 090 - INFO -   2011-12-01 to 2012-05-31
+2025-04-02 00:33:25,954 - 090 - INFO -   2012-06-01 to 2019-05-31
+2025-04-02 00:33:25,954 - 090 - INFO - ==================================================
