@@ -119,11 +119,11 @@ function loadImagesFromSelectedTime() {
   const hmiUrls = [];
   wavelengths.forEach(wl => {
     aiaUrls[wl] = timestamps.map((_, i) => {
-        return `../data/images/${month}${day}/${String(i).padStart(2, '0')}_aia_${wl}.png`;
+        return `../data/images/${String(month).padStart(2, '0')}${String(day).padStart(2, '0')}/${String(i).padStart(2, '0')}_aia_${wl}.png`;
       });
   });
   hmiUrls.push(...timestamps.map((_, i) => {
-    return `../data/images/${month}${day}/${String(i).padStart(2, '0')}_hmi.png`;
+    return `../data/images/${String(month).padStart(2, '0')}${String(day).padStart(2, '0')}/${String(i).padStart(2, '0')}_hmi.png`;
   }));
 
   // 画像キャッシュ初期化
