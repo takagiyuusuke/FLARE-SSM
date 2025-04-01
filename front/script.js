@@ -2,6 +2,53 @@
 const wavelengths = ['0094', '0131', '0171', '0193', '0211', '0304', '0335', '1600', '4500'];
 const flareBaseURL = 'https://hobbies-da-cathedral-collections.trycloudflare.com/get_flare_class?time=';
 
+// ========== AIA用カラーマップ定義 ==========
+// ここではグレースケールの正規化値 (0～1) に対して、黒→ダークパープル→赤→オレンジ→黄→白 の色に線形補間する例です。
+function getAIAColor(normValue) {
+  const stops = [
+    { pos: 0.0, color: [0, 0, 0] },
+    { pos: 0.2, color: [80, 0, 100] },
+    { pos: 0.4, color: [150, 0, 0] },
+    { pos: 0.6, color: [255, 150, 0] },
+    { pos: 0.8, color: [255, 255, 0] },
+    { pos: 1.0, color: [255, 255, 255] }
+  ];
+  for (let i = 0; i < stops.length - 1; i++) {
+    if (normValue >= stops[i].pos && normValue <= stops[i+1].pos) {
+      const range = stops[i+1].pos - stops[i].pos;
+      const factor = (normValue - stops[i].pos) / range;
+      const r = Math.round(stops[i].color[0] + factor * (stops[i+1].color[0] - stops[i].color[0]));
+      const g = Math.round(stops[i].color[1] + factor * (stops[i+1].color[1] - stops[i].color[1]));
+      const b = Math.round(stops[i].color[2] + factor * (stops[i+1].color[2] - stops[i].color[2]));
+      return [r, g, b];
+    }
+  }
+  return [255, 255, 255];
+}
+
+// AIA画像にカラーマップを適用する関数
+function applyAIAColormap(image) {
+  const canvas = document.createElement('canvas');
+  canvas.width = image.width;
+  canvas.height = image.height;
+  const ctx = canvas.getContext('2d');
+  ctx.drawImage(image, 0, 0);
+  const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+  const data = imageData.data;
+  for (let i = 0; i < data.length; i += 4) {
+    // グレースケール画像の場合、R=G=Bなのでどれか一つを使用
+    const gray = data[i];
+    const norm = gray / 255;
+    const [r, g, b] = getAIAColor(norm);
+    data[i] = r;
+    data[i + 1] = g;
+    data[i + 2] = b;
+    // data[i+3] はアルファ値そのまま
+  }
+  ctx.putImageData(imageData, 0, 0);
+  return canvas.toDataURL('image/png');
+}
+
 // ========== 初期化処理 ==========
 window.addEventListener('DOMContentLoaded', () => {
   populateTimeSelectors();
@@ -107,7 +154,7 @@ function loadImagesFromSelectedTime() {
 
   const baseTime = new Date(Date.UTC(year, month - 1, day, hour));
 
-  // 1時間ごと11枚生成（-22h 〜 0h）
+  // 1時間ごと11枚生成（-22h 〜 0h） → 22,20,...,0 で12枚
   timestamps = [];
   for (let h = 22; h >= 0; h -= 2) {
     const t = new Date(baseTime.getTime() - h * 3600 * 1000);
@@ -119,8 +166,8 @@ function loadImagesFromSelectedTime() {
   const hmiUrls = [];
   wavelengths.forEach(wl => {
     aiaUrls[wl] = timestamps.map((_, i) => {
-        return `data/images/${String(month).padStart(2, '0')}${String(day).padStart(2, '0')}/${String(i).padStart(2, '0')}_aia_${wl}.png`;
-      });
+      return `data/images/${String(month).padStart(2, '0')}${String(day).padStart(2, '0')}/${String(i).padStart(2, '0')}_aia_${wl}.png`;
+    });
   });
   hmiUrls.push(...timestamps.map((_, i) => {
     return `data/images/${String(month).padStart(2, '0')}${String(day).padStart(2, '0')}/${String(i).padStart(2, '0')}_hmi.png`;
@@ -131,11 +178,18 @@ function loadImagesFromSelectedTime() {
 
   const transparentURL = createTransparentImageURL();
 
+  // AIA画像の読み込み＆カラーマップ変換
   wavelengths.forEach(wl => {
     aiaUrls[wl].forEach((url, i) => {
       const key = `${wl}-${i}`;
       const img = new Image();
-      img.onload = () => { preloadedImages[key] = img; };
+      img.onload = () => {
+        // AIA画像はグレースケール→カラーマップ変換
+        const coloredDataURL = applyAIAColormap(img);
+        const coloredImg = new Image();
+        coloredImg.onload = () => { preloadedImages[key] = coloredImg; };
+        coloredImg.src = coloredDataURL;
+      };
       img.onerror = () => {
         const fallback = new Image();
         fallback.src = transparentURL;
@@ -146,6 +200,7 @@ function loadImagesFromSelectedTime() {
     });
   });
 
+  // HMI画像はそのまま読み込み
   hmiUrls.forEach((url, i) => {
     const key = `HMI-${i}`;
     const img = new Image();
@@ -161,6 +216,7 @@ function loadImagesFromSelectedTime() {
 
   renderImages();
 
+  // 以下、flareデータ取得とチャート描画の処理はそのまま
   const tY = baseTime.getUTCFullYear();
   const tM = String(baseTime.getUTCMonth() + 1).padStart(2, '0');
   const tD = String(baseTime.getUTCDate()).padStart(2, '0');
@@ -301,8 +357,8 @@ function loadImagesFromSelectedTime() {
                     label: {
                       enabled: true,
                       content: timestamps.length > 0 
-                      ? `${timestamps[timestamps.length - 1].getUTCFullYear()}-${String(timestamps[timestamps.length - 1].getUTCMonth() + 1).padStart(2, '0')}-${String(timestamps[timestamps.length - 1].getUTCDate()).padStart(2, '0')} ${String(timestamps[timestamps.length - 1].getUTCHours()).padStart(2, '0')}:00 UTC`
-                      : '0h', // timestamps が空の場合のフォールバック
+                        ? `${timestamps[timestamps.length - 1].getUTCFullYear()}-${String(timestamps[timestamps.length - 1].getUTCMonth() + 1).padStart(2, '0')}-${String(timestamps[timestamps.length - 1].getUTCDate()).padStart(2, '0')} ${String(timestamps[timestamps.length - 1].getUTCHours()).padStart(2, '0')}:00 UTC`
+                        : '0h',
                       position: 'end',
                       backgroundColor: 'black',
                       color: 'white',
@@ -318,10 +374,10 @@ function loadImagesFromSelectedTime() {
             beforeDraw: (chart) => {
               const { ctx, chartArea, scales } = chart;
               const zones = [
-                { from: 1e-4, to: 1e-3, color: 'rgba(255,0,0,0.15)' },     // X
-                { from: 1e-5, to: 1e-4, color: 'rgba(255,165,0,0.15)' },   // M
-                { from: 1e-6, to: 1e-5, color: 'rgba(0,255,0,0.15)' },     // C
-                { from: 1e-9, to: 1e-6, color: 'rgba(0,0,255,0.15)' }      // O
+                { from: 1e-4, to: 1e-3, color: 'rgba(255,0,0,0.15)' },
+                { from: 1e-5, to: 1e-4, color: 'rgba(255,165,0,0.15)' },
+                { from: 1e-6, to: 1e-5, color: 'rgba(0,255,0,0.15)' },
+                { from: 1e-9, to: 1e-6, color: 'rgba(0,0,255,0.15)' }
               ];
         
               zones.forEach(zone => {
@@ -333,7 +389,6 @@ function loadImagesFromSelectedTime() {
             }
           }]
         });
-        
       }
     })
     .catch(err => {
@@ -394,11 +449,11 @@ function renderImages() {
       dataset.pointRadius = Array(96).fill(2);
       const hourOffset = Math.floor((t - timestamps[timestamps.length - 1]) / (3600 * 1000));
       if (hourOffset >= -24 && hourOffset < 72) {
-        const graphIndex = hourOffset + 24; // インデックス調整（-24→0 に）
-        dataset.pointRadius[graphIndex] = 6; // ← この点だけサイズ大きく
+        const graphIndex = hourOffset + 24;
+        dataset.pointRadius[graphIndex] = 6;
       }
     
-      window.flareChartInstance.update('none'); // アニメーションなしで即時更新
+      window.flareChartInstance.update('none');
     }
 
     frameIndex++;
