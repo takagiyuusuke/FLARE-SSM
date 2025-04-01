@@ -541,5 +541,5 @@ function renderImages() {
     }
 
     frameIndex++;
-  }, 200);
+  }, 400);
 }
