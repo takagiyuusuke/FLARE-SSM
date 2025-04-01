@@ -1,6 +1,5 @@
 // ========== 定数定義 ==========
 const wavelengths = ['0094', '0131', '0171', '0193', '0211', '0304', '0335', '1600', '4500'];
-const flareBaseURL = 'https://hobbies-da-cathedral-collections.trycloudflare.com/get_flare_class?time=';
 
 // ========== 波長ごとのカラーマップ定義 ==========
 const colormaps = {
@@ -243,7 +242,7 @@ function loadImagesFromSelectedTime() {
 
   // 1時間ごと11枚生成（-22h ～ 0h → 12枚）
   timestamps = [];
-  for (let h = 22; h >= 0; h -= 2) {
+  for (let h = 22; h >= 0; h -= 1) {
     const t = new Date(baseTime.getTime() - h * 3600 * 1000);
     timestamps.push(t);
   }
@@ -535,5 +534,5 @@ function renderImages() {
     }
 
     frameIndex++;
-  }, 500);
+  }, 200);
 }
