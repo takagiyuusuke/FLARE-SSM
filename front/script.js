@@ -209,6 +209,25 @@ let imageElements = {};  // 各波長のimgタグ
 let frameIndex = 0;
 let animationTimer = null;
 
+function loadXRSData(baseTime) {
+  const xrsDataURL = 'data/xrs.json';
+  return fetch(xrsDataURL)
+    .then(res => res.json())
+    .then(data => {
+      const xrsData = [];
+      for (let i = -24; i < 72; i++) {
+        const targetTime = new Date(baseTime.getTime() + i * 3600 * 1000);
+        const key = `${targetTime.getUTCFullYear()}${String(targetTime.getUTCMonth() + 1).padStart(2, '0')}${String(targetTime.getUTCDate()).padStart(2, '0')}${String(targetTime.getUTCHours()).padStart(2, '0')}`;
+        xrsData.push(data[key] !== undefined ? data[key] : null);
+      }
+      return xrsData;
+    })
+    .catch(err => {
+      console.error("XRSデータ取得中にエラー:", err);
+      return Array(96).fill(null); // エラー時はすべてnull
+    });
+}
+
 function loadImagesFromSelectedTime() {
   if (animationTimer) {
     clearInterval(animationTimer);
@@ -289,35 +308,28 @@ function loadImagesFromSelectedTime() {
   const tH = String(baseTime.getUTCHours()).padStart(2, '0');
   const flareTimeStr = `${tY}${tM}${tD}${tH}`;
 
-  fetch(`${flareBaseURL}${flareTimeStr}`)
-    .then(res => res.json())
-    .then(flareData => {
-      if (!Array.isArray(flareData)) {
-        console.error("フレアデータ取得エラー:", flareData);
-        return;
-      }
+  loadXRSData(baseTime).then(flareData => {
+    const labels = Array.from({ length: 96 }, (_, i) => `${i > 24 ? '+' : ''}${i - 24}h`);
+    const ctx = document.getElementById('flareChart').getContext('2d');
+    const pointColors = flareData.map(value => {
+      if (value == null) return 'gray';
+      if (value < 1e-6) return 'blue';
+      if (value < 1e-5) return 'green';
+      if (value < 1e-4) return 'orange';
+      return 'red';
+    });
 
-      const labels = Array.from({ length: 96 }, (_, i) => `${i > 24 ? '+' : ''}${i - 24}h`);
-      const ctx = document.getElementById('flareChart').getContext('2d');
-      const pointColors = flareData.map(value => {
-        if (value == null) return 'gray';
-        if (value < 1e-6) return 'blue';
-        if (value < 1e-5) return 'green';
-        if (value < 1e-4) return 'orange';
-        return 'red';
-      });
+    if (window.flareChartInstance) {
+      window.flareChartInstance.data.labels = labels;
+      window.flareChartInstance.data.datasets[0].data = flareData;
+      window.flareChartInstance.data.datasets[0].pointBackgroundColor = pointColors;
 
-      if (window.flareChartInstance) {
-        window.flareChartInstance.data.labels = labels;
-        window.flareChartInstance.data.datasets[0].data = flareData;
-        window.flareChartInstance.data.datasets[0].pointBackgroundColor = pointColors;
+      const lastTimestamp = timestamps[timestamps.length - 1];
+      const formattedTime = `${lastTimestamp.getUTCFullYear()}-${String(lastTimestamp.getUTCMonth() + 1).padStart(2, '0')}-${String(lastTimestamp.getUTCDate()).padStart(2, '0')} ${String(lastTimestamp.getUTCHours()).padStart(2, '0')}:00 UTC`;
+      window.flareChartInstance.options.plugins.annotation.annotations.zeroHourLine.label.content = formattedTime;
 
-        const lastTimestamp = timestamps[timestamps.length - 1];
-        const formattedTime = `${lastTimestamp.getUTCFullYear()}-${String(lastTimestamp.getUTCMonth() + 1).padStart(2, '0')}-${String(lastTimestamp.getUTCDate()).padStart(2, '0')} ${String(lastTimestamp.getUTCHours()).padStart(2, '0')}:00 UTC`;
-        window.flareChartInstance.options.plugins.annotation.annotations.zeroHourLine.label.content = formattedTime;
-
-        window.flareChartInstance.update();
-      } else {
+      window.flareChartInstance.update();
+    } else {
         window.flareChartInstance = new Chart(ctx, {
           type: 'line',
           data: {
