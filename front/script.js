@@ -246,18 +246,24 @@ function loadImagesFromSelectedTime() {
     const t = new Date(baseTime.getTime() - h * 3600 * 1000);
     timestamps.push(t);
   }
-  console.log("Generated timestamps:", timestamps.map(t => t.toISOString()));
+  // console.log("Generated timestamps:", timestamps.map(t => t.toISOString()));
 
   // URL生成
   const aiaUrls = {};
   const hmiUrls = [];
   wavelengths.forEach(wl => {
-    aiaUrls[wl] = timestamps.map((_, i) => {
-      return `data/images/${String(month).padStart(2, '0')}${String(day).padStart(2, '0')}/${String(i).padStart(2, '0')}_aia_${wl}.png`;
+    aiaUrls[wl] = timestamps.map(t => {
+      const m = String(t.getUTCMonth() + 1).padStart(2, '0');
+      const d = String(t.getUTCDate()).padStart(2, '0');
+      const h = String(t.getUTCHours()).padStart(2, '0');
+      return `data/images/${m}${d}/${h}_aia_${wl}.png`;
     });
   });
-  hmiUrls.push(...timestamps.map((_, i) => {
-    return `data/images/${String(month).padStart(2, '0')}${String(day).padStart(2, '0')}/${String(i).padStart(2, '0')}_hmi.png`;
+  hmiUrls.push(...timestamps.map(t => {
+    const m = String(t.getUTCMonth() + 1).padStart(2, '0');
+    const d = String(t.getUTCDate()).padStart(2, '0');
+    const h = String(t.getUTCHours()).padStart(2, '0');
+    return `data/images/${m}${d}/${h}_hmi.png`;
   }));
 
   // 画像キャッシュ初期化
