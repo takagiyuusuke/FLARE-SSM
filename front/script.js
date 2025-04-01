@@ -2,17 +2,85 @@
 const wavelengths = ['0094', '0131', '0171', '0193', '0211', '0304', '0335', '1600', '4500'];
 const flareBaseURL = 'https://hobbies-da-cathedral-collections.trycloudflare.com/get_flare_class?time=';
 
-// ========== AIA用カラーマップ定義 ==========
-// ここではグレースケールの正規化値 (0～1) に対して、黒→ダークパープル→赤→オレンジ→黄→白 の色に線形補間する例です。
-function getAIAColor(normValue) {
-  const stops = [
+// ========== 波長ごとのカラーマップ定義 ==========
+const colormaps = {
+  '0094': [  // 94 Ångström
     { pos: 0.0, color: [0, 0, 0] },
-    { pos: 0.2, color: [80, 0, 100] },
-    { pos: 0.4, color: [150, 0, 0] },
-    { pos: 0.6, color: [255, 150, 0] },
-    { pos: 0.8, color: [255, 255, 0] },
+    { pos: 0.2, color: [10, 79, 51] },
+    { pos: 0.4, color: [41, 121, 102] },
+    { pos: 0.6, color: [92, 162, 153] },
+    { pos: 0.8, color: [163, 206, 204] },
     { pos: 1.0, color: [255, 255, 255] }
-  ];
+  ],
+  '0131': [  // 131 Ångström
+    { pos: 0.0, color: [0, 0, 0] },
+    { pos: 0.2, color: [0, 73, 73] },
+    { pos: 0.4, color: [0, 147, 147] },
+    { pos: 0.6, color: [62, 221, 221] },
+    { pos: 0.8, color: [158, 255, 255] },
+    { pos: 1.0, color: [255, 255, 255] }
+  ],
+  '0171': [  // 171 Ångström
+    { pos: 0.0, color: [0, 0, 0] },
+    { pos: 0.2, color: [73, 51, 0] },
+    { pos: 0.4, color: [147, 102, 0] },
+    { pos: 0.6, color: [221, 153, 0] },
+    { pos: 0.8, color: [255, 204, 54] },
+    { pos: 1.0, color: [255, 255, 255] }
+  ],
+  '0193': [  // 193 Ångström
+    { pos: 0.0, color: [0, 0, 0] },
+    { pos: 0.2, color: [114, 51, 10] },
+    { pos: 0.4, color: [161, 102, 41] },
+    { pos: 0.6, color: [197, 153, 92] },
+    { pos: 0.8, color: [228, 204, 163] },
+    { pos: 1.0, color: [255, 255, 255] }
+  ],
+  '0211': [  // 211 Ångström
+    { pos: 0.0, color: [0, 0, 0] },
+    { pos: 0.2, color: [114, 51, 79] },
+    { pos: 0.4, color: [161, 102, 121] },
+    { pos: 0.6, color: [197, 153, 162] },
+    { pos: 0.8, color: [228, 204, 206] },
+    { pos: 1.0, color: [255, 255, 255] }
+  ],
+  '0304': [  // 304 Ångström
+    { pos: 0.0, color: [0, 0, 0] },
+    { pos: 0.2, color: [73, 0, 0] },
+    { pos: 0.4, color: [147, 0, 0] },
+    { pos: 0.6, color: [221, 62, 0] },
+    { pos: 0.8, color: [255, 158, 54] },
+    { pos: 1.0, color: [255, 255, 255] }
+  ],
+  '0335': [  // 335 Ångström
+    { pos: 0.0, color: [0, 0, 0] },
+    { pos: 0.2, color: [10, 51, 114] },
+    { pos: 0.4, color: [41, 102, 161] },
+    { pos: 0.6, color: [92, 153, 197] },
+    { pos: 0.8, color: [163, 204, 228] },
+    { pos: 1.0, color: [255, 255, 255] }
+  ],
+  '1600': [  // 1600 Ångström
+    { pos: 0.0, color: [0, 0, 0] },
+    { pos: 0.2, color: [79, 79, 10] },
+    { pos: 0.4, color: [121, 121, 41] },
+    { pos: 0.6, color: [162, 162, 92] },
+    { pos: 0.8, color: [206, 206, 163] },
+    { pos: 1.0, color: [255, 255, 255] }
+  ],
+  '4500': [  // 4500 Ångström
+    { pos: 0.0, color: [0, 0, 0] },
+    { pos: 0.2, color: [51, 51, 0] },
+    { pos: 0.4, color: [102, 102, 0] },
+    { pos: 0.6, color: [153, 153, 0] },
+    { pos: 0.8, color: [204, 204, 27] },
+    { pos: 1.0, color: [255, 255, 128] }
+  ]
+};
+
+// ========== カラーマップ補間関数 ==========
+function getAIAColorForWavelength(normValue, wavelength) {
+  const stops = colormaps[wavelength];
   for (let i = 0; i < stops.length - 1; i++) {
     if (normValue >= stops[i].pos && normValue <= stops[i+1].pos) {
       const range = stops[i+1].pos - stops[i].pos;
@@ -26,8 +94,8 @@ function getAIAColor(normValue) {
   return [255, 255, 255];
 }
 
-// AIA画像にカラーマップを適用する関数
-function applyAIAColormap(image) {
+// AIA画像にカラーマップを適用する関数（波長指定付き）
+function applyAIAColormap(image, wavelength) {
   const canvas = document.createElement('canvas');
   canvas.width = image.width;
   canvas.height = image.height;
@@ -36,14 +104,14 @@ function applyAIAColormap(image) {
   const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
   const data = imageData.data;
   for (let i = 0; i < data.length; i += 4) {
-    // グレースケール画像の場合、R=G=Bなのでどれか一つを使用
+    // グレースケール画像の場合、R=G=Bなのでいずれかで正規化
     const gray = data[i];
     const norm = gray / 255;
-    const [r, g, b] = getAIAColor(norm);
+    const [r, g, b] = getAIAColorForWavelength(norm, wavelength);
     data[i] = r;
     data[i + 1] = g;
     data[i + 2] = b;
-    // data[i+3] はアルファ値そのまま
+    // data[i+3] はアルファ値
   }
   ctx.putImageData(imageData, 0, 0);
   return canvas.toDataURL('image/png');
@@ -81,7 +149,7 @@ function populateTimeSelectors() {
   // 日
   updateDaySelector();
   const daySelect = document.getElementById('day');
-  daySelect.value = now.getUTCDate(); // 現在の日付を設定
+  daySelect.value = now.getUTCDate();
   document.getElementById('year').addEventListener('change', () => {
     updateDaySelector();
     updateHourSelector();
@@ -154,7 +222,7 @@ function loadImagesFromSelectedTime() {
 
   const baseTime = new Date(Date.UTC(year, month - 1, day, hour));
 
-  // 1時間ごと11枚生成（-22h 〜 0h） → 22,20,...,0 で12枚
+  // 1時間ごと11枚生成（-22h ～ 0h → 12枚）
   timestamps = [];
   for (let h = 22; h >= 0; h -= 2) {
     const t = new Date(baseTime.getTime() - h * 3600 * 1000);
@@ -175,17 +243,15 @@ function loadImagesFromSelectedTime() {
 
   // 画像キャッシュ初期化
   preloadedImages = {};
-
   const transparentURL = createTransparentImageURL();
 
-  // AIA画像の読み込み＆カラーマップ変換
+  // AIA画像の読み込み＆波長ごとのカラーマップ変換
   wavelengths.forEach(wl => {
     aiaUrls[wl].forEach((url, i) => {
       const key = `${wl}-${i}`;
       const img = new Image();
       img.onload = () => {
-        // AIA画像はグレースケール→カラーマップ変換
-        const coloredDataURL = applyAIAColormap(img);
+        const coloredDataURL = applyAIAColormap(img, wl);
         const coloredImg = new Image();
         coloredImg.onload = () => { preloadedImages[key] = coloredImg; };
         coloredImg.src = coloredDataURL;
@@ -216,7 +282,7 @@ function loadImagesFromSelectedTime() {
 
   renderImages();
 
-  // 以下、flareデータ取得とチャート描画の処理はそのまま
+  // フレアデータ取得＆チャート描画処理（以下は元コードと同様）
   const tY = baseTime.getUTCFullYear();
   const tM = String(baseTime.getUTCMonth() + 1).padStart(2, '0');
   const tD = String(baseTime.getUTCDate()).padStart(2, '0');
@@ -234,11 +300,11 @@ function loadImagesFromSelectedTime() {
       const labels = Array.from({ length: 96 }, (_, i) => `${i > 24 ? '+' : ''}${i - 24}h`);
       const ctx = document.getElementById('flareChart').getContext('2d');
       const pointColors = flareData.map(value => {
-        if (value == null) return 'gray'; // 欠損
-        if (value < 1e-6) return 'blue';  // O（A/B）
-        if (value < 1e-5) return 'green'; // C
-        if (value < 1e-4) return 'orange';// M
-        return 'red';                     // X
+        if (value == null) return 'gray';
+        if (value < 1e-6) return 'blue';
+        if (value < 1e-5) return 'green';
+        if (value < 1e-4) return 'orange';
+        return 'red';
       });
 
       if (window.flareChartInstance) {
@@ -351,7 +417,7 @@ function loadImagesFromSelectedTime() {
                   zeroHourLine: {
                     type: 'line',
                     scaleID: 'x',
-                    value: 24, // 0h はインデックス24番目
+                    value: 24,
                     borderColor: 'black',
                     borderWidth: 3,
                     label: {
@@ -411,7 +477,7 @@ function createTransparentImageURL(width = 200, height = 200) {
 
 function renderImages() {
   const grid = document.getElementById('aia-grid');
-  grid.innerHTML = ''; // 既存をクリア
+  grid.innerHTML = '';
   imageElements = {};
 
   [...wavelengths, 'HMI'].forEach(type => {
