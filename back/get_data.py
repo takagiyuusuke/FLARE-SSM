@@ -148,7 +148,7 @@ def update_xrs_json(dt):
 
 
 def main():
-    now_jst = datetime.now(tz=tz.gettz('Asia/Tokyo')) - timedelta(minutes=200)
+    now_jst = datetime.now(tz=tz.gettz('Asia/Tokyo')) - timedelta(minutes=20)
     now_utc = now_jst.astimezone(tz=tz.tzutc())
     dt = now_utc.replace(minute=0, second=0, microsecond=0)
     time_str = dt.strftime('%H')
