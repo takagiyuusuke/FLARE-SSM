@@ -151,30 +151,38 @@ def main():
     now_jst = datetime.now(tz=tz.gettz('Asia/Tokyo')) - timedelta(minutes=20)
     now_utc = now_jst.astimezone(tz=tz.tzutc())
     dt = now_utc.replace(minute=0, second=0, microsecond=0)
-    time_str = dt.strftime('%H')
-    date_str = dt.strftime('%m%d')
 
-    aia_images = []
-    for wl in AIA_WAVELENGTHS:
-        image_data = fetch_and_process_aia_image(wl, dt)
-        aia_images.append(image_data)
+    while True:
+        time_str = dt.strftime('%H')
+        date_str = dt.strftime('%m%d')
+        hmi_path = os.path.join(SAVE_ROOT, date_str, f"{time_str}_hmi.png")
 
-        image_display = np.log1p(image_data)
-        image_display = cv2.normalize(image_display, None, 0, 255, cv2.NORM_MINMAX)
-        image_uint8 = image_display.astype(np.uint8)
-        png_path = os.path.join(SAVE_ROOT, date_str, f"{time_str}_aia_{wl}.png")
-        save_png(image_uint8, png_path)
-        print(f"✅ AIA保存: {png_path}")
+        # HMIファイルが存在するか確認
+        if os.path.exists(hmi_path):
+            print(f"✅ HMIファイルが既に存在: {hmi_path}")
+            break
 
-    hmi = download_hmi_image(dt)
-    filename = f"{time_str}_hmi.png"
-    path = os.path.join(SAVE_ROOT, date_str, filename)
-    save_png(hmi.astype(np.uint8), path)
-    print(f"✅ HMI保存: {filename}")
+        aia_images = []
+        for wl in AIA_WAVELENGTHS:
+            image_data = fetch_and_process_aia_image(wl, dt)
+            aia_images.append(image_data)
 
-    save_h5(aia_images, hmi, dt)
+            image_display = np.log1p(image_data)
+            image_display = cv2.normalize(image_display, None, 0, 255, cv2.NORM_MINMAX)
+            image_uint8 = image_display.astype(np.uint8)
+            png_path = os.path.join(SAVE_ROOT, date_str, f"{time_str}_aia_{wl}.png")
+            save_png(image_uint8, png_path)
+            print(f"✅ AIA保存: {png_path}")
 
-    update_xrs_json(dt)
+        hmi = download_hmi_image(dt)
+        save_png(hmi.astype(np.uint8), hmi_path)
+        print(f"✅ HMI保存: {hmi_path}")
+
+        save_h5(aia_images, hmi, dt)
+        update_xrs_json(dt)
+
+        # 1時間前に遡る
+        dt -= timedelta(hours=1)
 
 
 if __name__ == '__main__':

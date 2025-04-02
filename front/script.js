@@ -119,34 +119,47 @@ function applyAIAColormap(image, wavelength) {
 // ========== 初期化処理 ==========
 // DOM読み込み完了後に初期化
 window.addEventListener('DOMContentLoaded', () => {
-  // 現在のUTC時刻を取得（分は常に00に固定）
+  // ページ読み込み時の現在のローカル時刻を取得
   const now = new Date();
+  // UTC の現在時刻（分・秒は 0 固定）を生成
   const utcNow = new Date(Date.UTC(
     now.getUTCFullYear(),
     now.getUTCMonth(),
     now.getUTCDate(),
-    now.getUTCHours(),
-    0, 0
+    now.getUTCHours(), 0, 0
   ));
 
-  // Flatpickr の初期化
+  // UTC 表示用のフォーマット関数を定義
+  function formatDateUTC(date, format, locale) {
+    const pad = (n) => String(n).padStart(2, '0');
+    return format
+      .replace("Y", date.getUTCFullYear())
+      .replace("m", pad(date.getUTCMonth() + 1))
+      .replace("d", pad(date.getUTCDate()))
+      .replace("H", pad(date.getUTCHours()))
+      // 分は常に 00 とするため固定値を返す
+      .replace("i", "00");
+  }
+
   flatpickr("#datetime", {
-    inline: true,           // モーダルではなく、常に表示されるインラインカレンダー
-    enableTime: true,       // 時刻も選択可能にする
-    time_24hr: true,        // 24時間表示
-    dateFormat: "Y-m-d H:00",// 分は「00」と固定（表示上も変更）
-    defaultDate: utcNow,     // 初期値をUTCの現在時刻に設定
-    maxDate: utcNow,        // 未来の日付・時間は選択不可
-    minuteIncrement: 60     // 分の選択は60分単位（＝00固定）
+    inline: true,              // 常に表示されるインラインカレンダー
+    enableTime: true,          // 時刻選択を有効にする
+    time_24hr: true,           // 24時間表示
+    dateFormat: "Y-m-d H:00",   // 分は常に「00」
+    defaultDate: utcNow,        // 初期値は UTC の現在時刻（分は 00）
+    maxDate: utcNow,           // 未来の日付／時間は選択不可
+    minuteIncrement: 60,       // 分の選択は 60 分単位（＝常に 00）
+    formatDate: formatDateUTC    // 日付フォーマットの上書き（UTC 表示）
   });
 
-  // 初回読み込み（既存の処理を実行）
+  // 既存の処理（画像読み込みなど）を実行
   loadImagesFromSelectedTime();
 
   document.getElementById('load-button').addEventListener('click', () => {
     loadImagesFromSelectedTime();
   });
 });
+
 
 // ========== ロジック本体 ==========
 
