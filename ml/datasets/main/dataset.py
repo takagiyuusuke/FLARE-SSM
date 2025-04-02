@@ -152,24 +152,25 @@ class SolarFlareDatasetWithFeatures(Dataset):
             try:
                 with h5py.File(file_path, "r") as f:
                     X = f["X"][:]
-                    y = f["y"][()]
                     ts = f["timestamp"][()]
                     try:
                         timestamp = pd.to_datetime(ts.decode("utf-8"), format="%Y%m%d_%H%M%S")
                     except ValueError as e:
-                        print(f"Error parsing timestamp {ts_str}: {str(e)}")
+                        print(f"Error parsing timestamp {ts.decode('utf-8')}: {str(e)}")
                         continue
 
-                    if isinstance(y, (bytes, np.bytes_)):
-                        y_str = y.decode("utf-8")
-                        label_map = {"O": 1, "C": 2, "M": 3, "X": 4}
-                        y = label_map.get(y_str, 0)
-                    elif isinstance(y, np.ndarray) and y.dtype.kind in ["S", "U"]:
-                        label_map = {b"O": 1, b"C": 2, b"M": 3, b"X": 4}
-                        y = label_map.get(y[0], 0)
-
-                    if y == 0:
-                        continue
+                    # Handle missing 'y' dataset
+                    if "y" in f:
+                        y = f["y"][()]
+                        if isinstance(y, (bytes, np.bytes_)):
+                            y_str = y.decode("utf-8")
+                            label_map = {"O": 1, "C": 2, "M": 3, "X": 4}
+                            y = label_map.get(y_str, 0)
+                        elif isinstance(y, np.ndarray) and y.dtype.kind in ["S", "U"]:
+                            label_map = {b"O": 1, b"C": 2, b"M": 3, b"X": 4}
+                            y = label_map.get(y[0], 0)
+                    else:
+                        y = None  # Mark as missing
 
                     X = np.nan_to_num(X, 0)
 
@@ -193,7 +194,6 @@ class SolarFlareDatasetWithFeatures(Dataset):
 
                     if valid_img:
                         data_indices.append(file_path)
-                        ts_str = ts.decode("utf-8")
                         timestamps.append(timestamp)
                         y_data.append(y)
 
@@ -225,7 +225,7 @@ class SolarFlareDatasetWithFeatures(Dataset):
             print(f"Loading cached data for {self.split} period...")
             with open(self.indices_file, "rb") as f:
                 data_indices = pickle.load(f)
-            labels = np.load(self.labels_file)
+            labels = np.load(self.labels_file, allow_pickle=True)
             with open(self.timestamps_file, "rb") as f:
                 timestamps = pickle.load(f)
             return data_indices, labels.tolist(), timestamps
@@ -253,31 +253,31 @@ class SolarFlareDatasetWithFeatures(Dataset):
             try:
                 with h5py.File(file_path, "r") as f:
                     X = f["X"][:]
-                    y = f["y"][()]
                     ts = f["timestamp"][()]
 
-                    if isinstance(y, (bytes, np.bytes_)):
-                        y_str = y.decode("utf-8")
-                        label_map = {"O": 1, "C": 2, "M": 3, "X": 4}
-                        y = label_map.get(y_str, 0)
-                    elif isinstance(y, np.ndarray) and y.dtype.kind in ["S", "U"]:
-                        label_map = {b"O": 1, b"C": 2, b"M": 3, b"X": 4}
-                        y = label_map.get(y[0], 0)
-
-                    if y == 0:
-                        continue
+                    # Handle missing 'y' dataset
+                    if "y" in f:
+                        y = f["y"][()]
+                        if isinstance(y, (bytes, np.bytes_)):
+                            y_str = y.decode("utf-8")
+                            label_map = {"O": 1, "C": 2, "M": 3, "X": 4}
+                            y = label_map.get(y_str, 0)
+                        elif isinstance(y, np.ndarray) and y.dtype.kind in ["S", "U"]:
+                            label_map = {b"O": 1, b"C": 2, b"M": 3, b"X": 4}
+                            y = label_map.get(y[0], 0)
+                    else:
+                        y = None  # Mark as missing
 
                     X = np.nan_to_num(X, 0)
 
                     if np.any(X):
                         data_indices.append(file_path)
-                        ts_str = ts.decode("utf-8")
                         try:
-                            timestamp = pd.to_datetime(ts_str, format="%Y%m%d_%H%M%S")
+                            timestamp = pd.to_datetime(ts.decode("utf-8"), format="%Y%m%d_%H%M%S")
                             timestamps.append(timestamp)
                             y_data.append(y)
                         except ValueError as e:
-                            print(f"Error parsing timestamp {ts_str}: {str(e)}")
+                            print(f"Error parsing timestamp {ts.decode('utf-8')}: {str(e)}")
                             continue
 
             except (OSError, KeyError) as e:
@@ -287,7 +287,7 @@ class SolarFlareDatasetWithFeatures(Dataset):
         os.makedirs(os.path.dirname(self.indices_file), exist_ok=True)
         with open(self.indices_file, "wb") as f:
             pickle.dump(data_indices, f)
-        np.save(self.labels_file, y_data)
+        np.save(self.labels_file, y_data, allow_pickle=True)
         with open(self.timestamps_file, "wb") as f:
             pickle.dump(timestamps, f)
 
@@ -298,15 +298,14 @@ class SolarFlareDatasetWithFeatures(Dataset):
         """Internal method to check if an index is valid"""
         current_time = self.timestamps[i]
 
-        # set cadence to 2 hour
+        # Set cadence to 2 hours
         if current_time.hour % 2 != 0:
             return None
 
         total_missing_images = 0
         total_images = self.history * 10
 
-        for h in range(0, self.history * 2, 2): #cadene = 2hだとうまくいかないかも？
-        # for h in range(self.history):
+        for h in range(0, self.history * 2, 2):  # Cadence = 2 hours
             if i - h < 0:
                 return None
 
@@ -337,17 +336,9 @@ class SolarFlareDatasetWithFeatures(Dataset):
 
             if total_missing_images >= 10:
                 return None
-            
-        # check future index
-        for future_idx in range(i + 24, i + self.future_hours, 24):
-            if future_idx >= len(self.timestamps):
-                return None
 
-            future_label = self.labels[future_idx]
-            if future_label not in [1, 2, 3, 4]:
-                return None
-
-        return i if self.labels[i] > 0 else None
+        # Skip future label checks
+        return i
 
     def _get_valid_indices(self):
         """Get valid indices (serial processing version)"""
@@ -380,7 +371,6 @@ class SolarFlareDatasetWithFeatures(Dataset):
         latest_idx = self.valid_indices[idx]
         # ここは２時間間隔にすると...?
         history_indices = list(range(latest_idx - (self.history - 1) * 2, latest_idx + 1, 2))
-        # history_indices = list(range(latest_idx - (self.history - 1), latest_idx + 1, 1))
         X = []
 
         # Get historical data in order
@@ -413,31 +403,20 @@ class SolarFlareDatasetWithFeatures(Dataset):
 
         # Load feature data
         latest_timestamp = self.timestamps[latest_idx]
-        # feature_file = os.path.join(
-        #     self.features_dir, f"{latest_timestamp.strftime('%Y%m%d_%H%M%S')}.h5"
-        # )
-        # 
-        # try:
-        #     with h5py.File(feature_file, "r") as f:
-        #         h = f["features"][:]
-        #         h = torch.from_numpy(h.astype(np.float32))
-        # except:
-        #     h = torch.zeros((672, 128), dtype=torch.float32)
-        # 
-        # Check and process NaN and Inf
-        # if torch.isnan(h).any() or torch.isinf(h).any():
-        #     h = torch.zeros_like(h)
 
         # 中間特徴量を用いない場合
         h = torch.zeros((672, 128), dtype=torch.float32)
 
-        # compute max label
+        # Compute max label, skipping None values and ensuring index bounds
         y = 0
-        for idx in range(latest_idx, latest_idx + self.future_hours, 24):
-            y = max(y, self.labels[idx])
+        for idx in range(latest_idx, min(latest_idx + self.future_hours, len(self.labels)), 24):
+            label = self.labels[idx]
+            if label is not None:  # Skip None values
+                y = max(y, label)
 
         y_onehot = torch.zeros(4, dtype=torch.float32)
-        y_onehot[y - 1] = 1.0
+        if y > 0:  # Ensure y is valid before setting one-hot encoding
+            y_onehot[y - 1] = 1.0
 
         # Add check for NaN and Inf
         if torch.isnan(X).any() or torch.isinf(X).any():

@@ -512,6 +512,62 @@ class ExperimentManager:
             scheduler=getattr(self, "scheduler", None),
         )
         return config
+    
+    def predict_one_shot(self, sample_input1, sample_input2):
+        """
+        1サンプルの入力を受け取り、4クラスの尤度（確率分布）を返す関数（CPU推論用）
+
+        :param sample_input1: 1サンプルの画像データ。形状は [1, 4, 10, 256, 256] と想定。
+                            （※データセットでは各サンプルは [4, 10, 256, 256] となっており、batch次元を追加します）
+        :param sample_input2: 1サンプルの特徴量データ。形状は [1, 672, 128] と想定。
+                            （※データセットでは中間特徴量は使わない場合、ゼロテンソルで対応）
+        :return: 4クラスの尤度リスト（例： [0.1, 0.1, 0.7, 0.1] ）
+        """
+        # CPUのみでの推論のため、明示的にCPUのデバイスを指定
+        device = torch.device("cpu")
+        
+        # モデルと入力データをCPUへ移動
+        self.model.to(device)
+        sample_input1 = sample_input1.to(device)
+        sample_input2 = sample_input2.to(device)
+        
+        # 評価モードに切替え、勾配計算を無効化
+        self.model.eval()
+        with torch.no_grad():
+            # モデルへ入力してロジットを得る
+            # ※ forward の返り値は (logits, mixed_features) となっているので、先頭の出力を使用
+            logits, _ = self.model(sample_input1, sample_input2)
+            # ソフトマックスで4クラスの尤度に変換
+            probabilities = torch.softmax(logits, dim=1)
+        
+        # バッチサイズが1の場合、1サンプル分の尤度リストを返す
+        return probabilities[0].cpu().numpy().tolist()
+
+    def infer_all_valid_samples(self, valid_dataset):
+        """
+        valid_dataset 内の全サンプルについて、1ショット推論を行い4クラスの尤度を返す関数。
+
+        :param valid_dataset: SolarFlareDatasetWithFeatures の 'valid' 分割（__getitem__ が valid_indices に沿ったサンプルを返す）
+        :return: 各サンプルごとの4クラスの尤度のリスト（例：[[0.1,0.1,0.7,0.1], [ ... ], ...]）
+        """
+        self.model.to("cpu")
+        self.model.eval()
+        all_probabilities = []
+        
+        # 各サンプルに対して推論を実施
+        for idx in range(len(valid_dataset)):
+            X, h, y = valid_dataset[idx]
+            # Xは [history, channels, height, width] なので、バッチ次元を追加
+            sample_input1 = X.unsqueeze(0)
+            sample_input2 = h.unsqueeze(0)
+            
+            with torch.no_grad():
+                # predict_one_shotは内部でソフトマックスを適用して4クラスの尤度を返す
+                probabilities = self.predict_one_shot(sample_input1, sample_input2)
+            
+            all_probabilities.append(probabilities)
+        
+        return all_probabilities
 
 
 def main():
