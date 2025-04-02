@@ -118,7 +118,15 @@ function applyAIAColormap(image, wavelength) {
 
 // ========== 初期化処理 ==========
 window.addEventListener('DOMContentLoaded', () => {
-  populateTimeSelectors();
+  // Flatpickr の初期化 (UTCとして扱うため、選択後は各要素をUTCとして扱います)
+  flatpickr("#datetime", {
+    enableTime: true,
+    time_24hr: true,
+    dateFormat: "Y-m-d H:00",
+    defaultDate: new Date()
+  });
+
+  // 初回読み込み
   loadImagesFromSelectedTime();
 
   document.getElementById('load-button').addEventListener('click', () => {
@@ -126,82 +134,8 @@ window.addEventListener('DOMContentLoaded', () => {
   });
 });
 
-// ========== セレクタの中身を生成 ==========
-function populateTimeSelectors() {
-  const now = new Date();
-  now.setUTCMinutes(0, 0, 0);
-
-  // 年
-  const yearSelect = document.getElementById('year');
-  for (let y = 2011; y <= now.getUTCFullYear(); y++) {
-    yearSelect.innerHTML += `<option value="${y}">${y}</option>`;
-  }
-  yearSelect.value = now.getUTCFullYear();
-
-  // 月
-  const monthSelect = document.getElementById('month');
-  for (let m = 1; m <= 12; m++) {
-    monthSelect.innerHTML += `<option value="${m}">${m}</option>`;
-  }
-  monthSelect.value = now.getUTCMonth() + 1;
-
-  // 日
-  updateDaySelector();
-  const daySelect = document.getElementById('day');
-  daySelect.value = now.getUTCDate();
-  document.getElementById('year').addEventListener('change', () => {
-    updateDaySelector();
-    updateHourSelector();
-  });
-  document.getElementById('month').addEventListener('change', () => {
-    updateDaySelector();
-    updateHourSelector();
-  });
-  document.getElementById('day').addEventListener('change', updateHourSelector);
-
-  // 時間
-  updateHourSelector();
-}
-
-function updateDaySelector() {
-  const year = parseInt(document.getElementById('year').value);
-  const month = parseInt(document.getElementById('month').value);
-  const daySelect = document.getElementById('day');
-
-  const daysInMonth = new Date(year, month, 0).getDate();
-  const prevDay = parseInt(daySelect.value) || 1;
-  daySelect.innerHTML = '';
-  for (let d = 1; d <= daysInMonth; d++) {
-    daySelect.innerHTML += `<option value="${d}">${d}</option>`;
-  }
-  daySelect.value = Math.min(prevDay, daysInMonth);
-}
-
-function updateHourSelector() {
-  const now = new Date();
-  now.setUTCMinutes(0, 0, 0);
-  const maxHour = now.getUTCHours() - ((now.getUTCMinutes() >= 30) ? 0 : 1);
-
-  const selectedYear = parseInt(document.getElementById('year').value);
-  const selectedMonth = parseInt(document.getElementById('month').value);
-  const selectedDay = parseInt(document.getElementById('day').value);
-
-  const isToday = selectedYear === now.getUTCFullYear() &&
-                  selectedMonth === now.getUTCMonth() + 1 &&
-                  selectedDay === now.getUTCDate();
-
-  const hourSelect = document.getElementById('hour');
-  const currentValue = parseInt(hourSelect.value) || 0;
-  hourSelect.innerHTML = '';
-
-  for (let h = 0; h <= 23; h++) {
-    const disabled = (isToday && h > maxHour) ? 'disabled' : '';
-    hourSelect.innerHTML += `<option value="${h}" ${disabled}>${h}</option>`;
-  }
-  hourSelect.value = isToday ? maxHour : Math.min(currentValue, 23);
-}
-
 // ========== ロジック本体 ==========
+
 let preloadedImages = {};  // 全画像キャッシュ
 let timestamps = [];
 let imageElements = {};  // 各波長のimgタグ
@@ -233,24 +167,30 @@ function loadImagesFromSelectedTime() {
     animationTimer = null;
   }
 
-  const year = parseInt(document.getElementById('year').value);
-  const month = parseInt(document.getElementById('month').value);
-  const day = parseInt(document.getElementById('day').value);
-  const hour = parseInt(document.getElementById('hour').value);
+  // Flatpickr で選択された日時文字列を取得し、UTC基準の Date オブジェクトを生成
+  const selectedDateStr = document.getElementById('datetime').value;
+  if (!selectedDateStr) {
+    console.error("日時が選択されていません");
+    return;
+  }
+  const selectedDate = new Date(selectedDateStr);
+  // 選択された日時の各要素をUTCとして扱うために Date.UTC() を利用
+  const baseTime = new Date(Date.UTC(
+    selectedDate.getFullYear(),
+    selectedDate.getMonth(),
+    selectedDate.getDate(),
+    selectedDate.getHours()
+  ));
 
-  const baseTime = new Date(Date.UTC(year, month - 1, day, hour));
-
-  // 1時間ごと11枚生成（-22h ～ 0h → 12枚）
+  // 1時間ごとに11枚生成（-22h ～ 0h のタイムスタンプを作成）
   timestamps = [];
   for (let h = 22; h >= 0; h -= 2) {
     const t = new Date(baseTime.getTime() - h * 3600 * 1000);
     timestamps.push(t);
   }
-  // console.log("Generated timestamps:", timestamps.map(t => t.toISOString()));
 
   // URL生成
   const aiaUrls = {};
-  const hmiUrls = [];
   wavelengths.forEach(wl => {
     aiaUrls[wl] = timestamps.map(t => {
       const m = String(t.getUTCMonth() + 1).padStart(2, '0');
@@ -259,18 +199,18 @@ function loadImagesFromSelectedTime() {
       return `data/images/${m}${d}/${h}_aia_${wl}.png`;
     });
   });
-  hmiUrls.push(...timestamps.map(t => {
+  const hmiUrls = timestamps.map(t => {
     const m = String(t.getUTCMonth() + 1).padStart(2, '0');
     const d = String(t.getUTCDate()).padStart(2, '0');
     const h = String(t.getUTCHours()).padStart(2, '0');
     return `data/images/${m}${d}/${h}_hmi.png`;
-  }));
+  });
 
   // 画像キャッシュ初期化
   preloadedImages = {};
   const transparentURL = createTransparentImageURL();
 
-  // AIA画像の読み込み＆波長ごとのカラーマップ変換
+  // AIA画像の読み込み＆カラーマップ変換
   wavelengths.forEach(wl => {
     aiaUrls[wl].forEach((url, i) => {
       const key = `${wl}-${i}`;
@@ -307,7 +247,7 @@ function loadImagesFromSelectedTime() {
 
   renderImages();
 
-  // フレアデータ取得＆チャート描画処理（以下は元コードと同様）
+  // フレアデータ取得＆チャート描画処理（以下、元コードと同様）
   const tY = baseTime.getUTCFullYear();
   const tM = String(baseTime.getUTCMonth() + 1).padStart(2, '0');
   const tD = String(baseTime.getUTCDate()).padStart(2, '0');
@@ -336,148 +276,148 @@ function loadImagesFromSelectedTime() {
 
       window.flareChartInstance.update();
     } else {
-        window.flareChartInstance = new Chart(ctx, {
-          type: 'line',
-          data: {
-            labels: labels,
-            datasets: [{
-              label: 'X-ray Flux (0.1–0.8 nm)',
-              data: flareData,
-              borderColor: 'black',
-              pointBackgroundColor: pointColors,
-              fill: false
-            }]
+      window.flareChartInstance = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: 'X-ray Flux (0.1–0.8 nm)',
+            data: flareData,
+            borderColor: 'black',
+            pointBackgroundColor: pointColors,
+            fill: false
+          }]
+        },
+        options: {
+          scales: {
+            y: {
+              type: 'logarithmic',
+              min: 1e-9,
+              max: 1e-3,
+              title: { display: true, text: 'Flux (W/m²)' }
+            }
           },
-          options: {
-            scales: {
-              y: {
-                type: 'logarithmic',
-                min: 1e-9,
-                max: 1e-3,
-                title: { display: true, text: 'Flux (W/m²)' }
+          plugins: {
+            tooltip: {
+              callbacks: {
+                label: (ctx) => {
+                  const v = ctx.raw;
+                  if (v == null) return '欠損';
+                  const cls = v >= 1e-4 ? 'X' :
+                              v >= 1e-5 ? 'M' :
+                              v >= 1e-6 ? 'C' : 'O';
+                  return `Flux: ${v} W/m² (Class ${cls})`;
+                }
               }
             },
-            plugins: {
-              tooltip: {
-                callbacks: {
-                  label: (ctx) => {
-                    const v = ctx.raw;
-                    if (v == null) return '欠損';
-                    const cls = v >= 1e-4 ? 'X' :
-                                v >= 1e-5 ? 'M' :
-                                v >= 1e-6 ? 'C' : 'O';
-                    return `Flux: ${v} W/m² (Class ${cls})`;
+            annotation: {
+              annotations: {
+                flareBands: {
+                  type: 'box',
+                  yMin: 1e-4,
+                  yMax: 1e-3,
+                  backgroundColor: 'rgba(255,0,0,0.05)',
+                  label: {
+                    enabled: true,
+                    content: 'X',
+                    position: 'start',
+                    xAdjust: 50,
+                    backgroundColor: 'transparent',
+                    color: 'red',
+                    font: { weight: 'bold', size: 14 }
                   }
-                }
-              },
-              annotation: {
-                annotations: {
-                  flareBands: {
-                    type: 'box',
-                    yMin: 1e-4,
-                    yMax: 1e-3,
-                    backgroundColor: 'rgba(255,0,0,0.05)',
-                    label: {
-                      enabled: true,
-                      content: 'X',
-                      position: 'start',
-                      xAdjust: 50,
-                      backgroundColor: 'transparent',
-                      color: 'red',
-                      font: { weight: 'bold', size: 14 }
-                    }
-                  },
-                  flareBandM: {
-                    type: 'box',
-                    yMin: 1e-5,
-                    yMax: 1e-4,
-                    backgroundColor: 'rgba(255,165,0,0.05)',
-                    label: {
-                      enabled: true,
-                      content: 'M',
-                      position: 'start',
-                      xAdjust: 50,
-                      backgroundColor: 'transparent',
-                      color: 'orange',
-                      font: { weight: 'bold', size: 14 }
-                    }
-                  },
-                  flareBandC: {
-                    type: 'box',
-                    yMin: 1e-6,
-                    yMax: 1e-5,
-                    backgroundColor: 'rgba(0,255,0,0.05)',
-                    label: {
-                      enabled: true,
-                      content: 'C',
-                      position: 'start',
-                      xAdjust: 50,
-                      backgroundColor: 'transparent',
-                      color: 'green',
-                      font: { weight: 'bold', size: 14 }
-                    }
-                  },
-                  flareBandO: {
-                    type: 'box',
-                    yMin: 1e-9,
-                    yMax: 1e-6,
-                    backgroundColor: 'rgba(0,0,255,0.05)',
-                    label: {
-                      enabled: true,
-                      content: 'O',
-                      position: 'start',
-                      xAdjust: 50,
-                      backgroundColor: 'transparent',
-                      color: 'blue',
-                      font: { weight: 'bold', size: 14 }
-                    }
-                  },
-                  zeroHourLine: {
-                    type: 'line',
-                    scaleID: 'x',
-                    value: 24,
-                    borderColor: 'black',
-                    borderWidth: 3,
-                    label: {
-                      enabled: true,
-                      content: timestamps.length > 0 
-                        ? `${timestamps[timestamps.length - 1].getUTCFullYear()}-${String(timestamps[timestamps.length - 1].getUTCMonth() + 1).padStart(2, '0')}-${String(timestamps[timestamps.length - 1].getUTCDate()).padStart(2, '0')} ${String(timestamps[timestamps.length - 1].getUTCHours()).padStart(2, '0')}:00 UTC`
-                        : '0h',
-                      position: 'end',
-                      backgroundColor: 'black',
-                      color: 'white',
-                      font: { weight: 'bold', size: 12 }
-                    }
+                },
+                flareBandM: {
+                  type: 'box',
+                  yMin: 1e-5,
+                  yMax: 1e-4,
+                  backgroundColor: 'rgba(255,165,0,0.05)',
+                  label: {
+                    enabled: true,
+                    content: 'M',
+                    position: 'start',
+                    xAdjust: 50,
+                    backgroundColor: 'transparent',
+                    color: 'orange',
+                    font: { weight: 'bold', size: 14 }
+                  }
+                },
+                flareBandC: {
+                  type: 'box',
+                  yMin: 1e-6,
+                  yMax: 1e-5,
+                  backgroundColor: 'rgba(0,255,0,0.05)',
+                  label: {
+                    enabled: true,
+                    content: 'C',
+                    position: 'start',
+                    xAdjust: 50,
+                    backgroundColor: 'transparent',
+                    color: 'green',
+                    font: { weight: 'bold', size: 14 }
+                  }
+                },
+                flareBandO: {
+                  type: 'box',
+                  yMin: 1e-9,
+                  yMax: 1e-6,
+                  backgroundColor: 'rgba(0,0,255,0.05)',
+                  label: {
+                    enabled: true,
+                    content: 'O',
+                    position: 'start',
+                    xAdjust: 50,
+                    backgroundColor: 'transparent',
+                    color: 'blue',
+                    font: { weight: 'bold', size: 14 }
+                  }
+                },
+                zeroHourLine: {
+                  type: 'line',
+                  scaleID: 'x',
+                  value: 24,
+                  borderColor: 'black',
+                  borderWidth: 3,
+                  label: {
+                    enabled: true,
+                    content: timestamps.length > 0 
+                      ? `${timestamps[timestamps.length - 1].getUTCFullYear()}-${String(timestamps[timestamps.length - 1].getUTCMonth() + 1).padStart(2, '0')}-${String(timestamps[timestamps.length - 1].getUTCDate()).padStart(2, '0')} ${String(timestamps[timestamps.length - 1].getUTCHours()).padStart(2, '0')}:00 UTC`
+                      : '0h',
+                    position: 'end',
+                    backgroundColor: 'black',
+                    color: 'white',
+                    font: { weight: 'bold', size: 12 }
                   }
                 }
               }
             }
-          },
-          plugins: [{
-            id: 'backgroundZones',
-            beforeDraw: (chart) => {
-              const { ctx, chartArea, scales } = chart;
-              const zones = [
-                { from: 1e-4, to: 1e-3, color: 'rgba(255,0,0,0.15)' },
-                { from: 1e-5, to: 1e-4, color: 'rgba(255,165,0,0.15)' },
-                { from: 1e-6, to: 1e-5, color: 'rgba(0,255,0,0.15)' },
-                { from: 1e-9, to: 1e-6, color: 'rgba(0,0,255,0.15)' }
-              ];
-        
-              zones.forEach(zone => {
-                const y1 = scales.y.getPixelForValue(zone.from);
-                const y2 = scales.y.getPixelForValue(zone.to);
-                ctx.fillStyle = zone.color;
-                ctx.fillRect(chartArea.left, y2, chartArea.right - chartArea.left, y1 - y2);
-              });
-            }
-          }]
-        });
-      }
-    })
-    .catch(err => {
-      console.error("フレアデータ取得中にエラー:", err);
-    });
+          }
+        },
+        plugins: [{
+          id: 'backgroundZones',
+          beforeDraw: (chart) => {
+            const { ctx, chartArea, scales } = chart;
+            const zones = [
+              { from: 1e-4, to: 1e-3, color: 'rgba(255,0,0,0.15)' },
+              { from: 1e-5, to: 1e-4, color: 'rgba(255,165,0,0.15)' },
+              { from: 1e-6, to: 1e-5, color: 'rgba(0,255,0,0.15)' },
+              { from: 1e-9, to: 1e-6, color: 'rgba(0,0,255,0.15)' }
+            ];
+      
+            zones.forEach(zone => {
+              const y1 = scales.y.getPixelForValue(zone.from);
+              const y2 = scales.y.getPixelForValue(zone.to);
+              ctx.fillStyle = zone.color;
+              ctx.fillRect(chartArea.left, y2, chartArea.right - chartArea.left, y1 - y2);
+            });
+          }
+        }]
+      });
+    }
+  })
+  .catch(err => {
+    console.error("フレアデータ取得中にエラー:", err);
+  });
 }
 
 function createTransparentImageURL(width = 200, height = 200) {
