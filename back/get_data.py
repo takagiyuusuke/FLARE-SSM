@@ -81,28 +81,31 @@ def save_png(image, path):
 
 
 def save_h5(aia_images, hmi_image, dt):
-    os.makedirs(H5_SAVE_ROOT, exist_ok=True)
-    filename = dt.strftime("%Y%m%d_%H0000.h5")
-    filepath = os.path.join(H5_SAVE_ROOT, filename)
+    try:
+        os.makedirs(H5_SAVE_ROOT, exist_ok=True)
+        filename = dt.strftime("%Y%m%d_%H0000.h5")
+        filepath = os.path.join(H5_SAVE_ROOT, filename)
 
-    aia_images_fixed = []
-    for img in aia_images:
-        if img.ndim == 3 and img.shape[-1] == 3:
-            img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-        aia_images_fixed.append(img.astype(np.uint16).reshape(256, 256))
+        aia_images_fixed = []
+        for img in aia_images:
+            if img.ndim == 3 and img.shape[-1] == 3:
+                img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+            aia_images_fixed.append(img.astype(np.uint16).reshape(256, 256))
 
-    if hmi_image.ndim == 3 and hmi_image.shape[-1] == 3:
-        hmi_image = cv2.cvtColor(hmi_image, cv2.COLOR_BGR2GRAY)
-    hmi_image = hmi_image.astype(np.uint16).reshape(256, 256)
+        if hmi_image.ndim == 3 and hmi_image.shape[-1] == 3:
+            hmi_image = cv2.cvtColor(hmi_image, cv2.COLOR_BGR2GRAY)
+        hmi_image = hmi_image.astype(np.uint16).reshape(256, 256)
 
-    X = np.stack(aia_images_fixed + [hmi_image])  # shape: (10, 256, 256)
-    timestamp = dt.strftime("%Y%m%d_%H0000").encode()
+        X = np.stack(aia_images_fixed + [hmi_image])  # shape: (10, 256, 256)
+        timestamp = dt.strftime("%Y%m%d_%H0000").encode()
 
-    with h5py.File(filepath, 'w') as f:
-        f.create_dataset("X", data=X)
-        f.create_dataset("timestamp", data=timestamp)
+        with h5py.File(filepath, 'w') as f:
+            f.create_dataset("X", data=X)
+            f.create_dataset("timestamp", data=timestamp)
 
-    print(f"✅ H5保存: {filepath}")
+        print(f"✅ H5保存: {filepath}")
+    except Exception as e:
+        print(f"❌ H5保存失敗: {e}")
 
 
 def update_xrs_json(dt):
@@ -148,7 +151,7 @@ def update_xrs_json(dt):
 
 
 def main():
-    now_jst = datetime.now(tz=tz.gettz('Asia/Tokyo')) - timedelta(minutes=20)
+    now_jst = datetime.now(tz=tz.gettz('Asia/Tokyo')) - timedelta(minutes=40)
     now_utc = now_jst.astimezone(tz=tz.tzutc())
     dt = now_utc.replace(minute=0, second=0, microsecond=0)
 
@@ -156,10 +159,11 @@ def main():
         time_str = dt.strftime('%H')
         date_str = dt.strftime('%m%d')
         hmi_path = os.path.join(SAVE_ROOT, date_str, f"{time_str}_hmi.png")
+        h5_path = os.path.join(H5_SAVE_ROOT, dt.strftime("%Y%m%d_%H0000.h5"))
 
-        # HMIファイルが存在するか確認
-        if os.path.exists(hmi_path):
-            print(f"✅ HMIファイルが既に存在: {hmi_path}")
+        # h5ファイルが存在するか確認
+        if os.path.exists(h5_path):
+            print(f"✅ H5ファイルが既に存在: {h5_path}")
             break
 
         aia_images = []
@@ -167,16 +171,22 @@ def main():
             image_data = fetch_and_process_aia_image(wl, dt)
             aia_images.append(image_data)
 
-            image_display = np.log1p(image_data)
-            image_display = cv2.normalize(image_display, None, 0, 255, cv2.NORM_MINMAX)
-            image_uint8 = image_display.astype(np.uint8)
-            png_path = os.path.join(SAVE_ROOT, date_str, f"{time_str}_aia_{wl}.png")
-            save_png(image_uint8, png_path)
-            print(f"✅ AIA保存: {png_path}")
+            if not np.all(image_data == 0):  # 真っ黒な画像でない場合のみ保存
+                image_display = np.log1p(image_data)
+                image_display = cv2.normalize(image_display, None, 0, 255, cv2.NORM_MINMAX)
+                image_uint8 = image_display.astype(np.uint8)
+                png_path = os.path.join(SAVE_ROOT, date_str, f"{time_str}_aia_{wl}.png")
+                save_png(image_uint8, png_path)
+                print(f"✅ AIA保存: {png_path}")
+            else:
+                print(f"⚠️ AIA {wl} の画像が取得できなかったため、PNGは保存されませんでした")
 
         hmi = download_hmi_image(dt)
-        save_png(hmi.astype(np.uint8), hmi_path)
-        print(f"✅ HMI保存: {hmi_path}")
+        if not np.all(hmi == 0):  # 真っ黒な画像でない場合のみ保存
+            save_png(hmi.astype(np.uint8), hmi_path)
+            print(f"✅ HMI保存: {hmi_path}")
+        else:
+            print(f"⚠️ HMI画像が取得できなかったため、PNGは保存されませんでした")
 
         save_h5(aia_images, hmi, dt)
         update_xrs_json(dt)

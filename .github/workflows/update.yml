@@ -3,6 +3,7 @@ name: run_inference
 on:
   schedule:
     - cron: "20 * * * *" # 毎時20分に実行
+    - cron: "50 * * * *" # 毎時50分に実行
   workflow_dispatch: # 手動実行用
 
 jobs:
