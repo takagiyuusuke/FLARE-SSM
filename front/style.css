@@ -51,3 +51,22 @@ h1, h2, h3 {
   background-color: #3700b3;
   box-shadow: 0 4px 8px rgba(0,0,0,0.2);
 }
+
+.inline-calendar {
+  width: 350px;
+  border: none;
+  background: transparent;
+  font-size: 16px;
+  text-align: center;
+  /* カレンダー自体は flatpickr のスタイルが適用されるので、input の枠線を消す */
+}
+
+/* 時刻選択用ドロップダウンのスタイル（既存の #time-picker があればその中も） */
+#time-picker select {
+  font-size: 16px;
+  padding: 4px 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background: #fff;
+  color: #333;
+}

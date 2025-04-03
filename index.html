@@ -12,10 +12,10 @@
 <body>
   <h1>フレアデモ</h1>
 
-  <!-- 日付選択と時間選択（UTC） -->
+  <!-- 日付選択と時刻選択（UTC） -->
   <div id="date-container">
-    <!-- カレンダー（flatpickrで日付のみ選択） -->
-    <div id="date-picker"></div>
+    <!-- カレンダー（flatpickrで日付のみ選択・常時表示） -->
+    <input id="date-picker" type="text" readonly class="inline-calendar">
     <!-- 時刻選択用ドロップダウン -->
     <div id="time-picker">
       <label for="utc-hour">UTC 時刻:</label>
