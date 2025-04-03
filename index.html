@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>フレアデモ</title>
-  <link rel="stylesheet" href="front/style.css">
+  <link rel="stylesheet" href="style.css">
   <!-- Flatpickr のスタイル -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -11,18 +11,13 @@
 </head>
 <body>
   <h1>フレアデモ</h1>
-
-  <div>
-    <label for="datetime">UTC 日付＋時間選択:</label>
-    
-    <input type="text" id="datetime">
-    <button id="load-button">この時刻で読み込む</button>
-  </div>
+  
+  <!-- カレンダー表示用：input 要素ではなく div で inline 表示 -->
+  <div id="datetime"></div>
+  <button id="load-button">この時刻で読み込む</button>
 
   <h2 id="timestamp">Loading timestamp...</h2>
-
   <div class="grid" id="aia-grid"></div>
-
   <div>
     <h3>72時間後までのX線強度の推移 (GOES観測)</h3>
     <canvas id="flareChart" width="600" height="300"></canvas>
@@ -30,6 +25,6 @@
 
   <!-- Flatpickr のスクリプト -->
   <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-  <script src="front/script.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>

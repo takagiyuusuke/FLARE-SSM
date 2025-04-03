@@ -117,11 +117,13 @@ function applyAIAColormap(image, wavelength) {
 }
 
 // ========== 初期化処理 ==========
-// DOM読み込み完了後に初期化
+
+// グローバル変数として flatpickr のインスタンスを保持
+let fp;
+
 window.addEventListener('DOMContentLoaded', () => {
-  // ページ読み込み時の現在のローカル時刻を取得
+  // 現在のローカル時刻からUTC時刻（分・秒は00固定）を生成
   const now = new Date();
-  // UTC の現在時刻（分・秒は 0 固定）を生成
   const utcNow = new Date(Date.UTC(
     now.getUTCFullYear(),
     now.getUTCMonth(),
@@ -129,7 +131,7 @@ window.addEventListener('DOMContentLoaded', () => {
     now.getUTCHours(), 0, 0
   ));
 
-  // UTC 表示用のフォーマット関数を定義
+  // UTC 表示用のフォーマット関数（flatpickr 用）
   function formatDateUTC(date, format, locale) {
     const pad = (n) => String(n).padStart(2, '0');
     return format
@@ -137,29 +139,41 @@ window.addEventListener('DOMContentLoaded', () => {
       .replace("m", pad(date.getUTCMonth() + 1))
       .replace("d", pad(date.getUTCDate()))
       .replace("H", pad(date.getUTCHours()))
-      // 分は常に 00 とするため固定値を返す
+      // 分は常に「00」に固定
       .replace("i", "00");
   }
 
-  flatpickr("#datetime", {
-    inline: true,              // 常に表示されるインラインカレンダー
-    enableTime: true,          // 時刻選択を有効にする
-    time_24hr: true,           // 24時間表示
-    dateFormat: "Y-m-d H:00",   // 分は常に「00」
-    defaultDate: utcNow,        // 初期値は UTC の現在時刻（分は 00）
-    maxDate: utcNow,           // 未来の日付／時間は選択不可
-    minuteIncrement: 60,       // 分の選択は 60 分単位（＝常に 00）
-    formatDate: formatDateUTC    // 日付フォーマットの上書き（UTC 表示）
+  // Flatpickr を div#datetime に対して inline で初期化
+  fp = flatpickr("#datetime", {
+    inline: true,             // 常に表示する inline カレンダー
+    enableTime: true,         // 時刻選択を有効にする
+    time_24hr: true,          // 24時間表示
+    dateFormat: "Y-m-d H:00",  // 表示は「YYYY-MM-DD HH:00」
+    defaultDate: utcNow,       // 初期値はUTC現在時刻（分は00）
+    maxDate: utcNow,          // 未来の日付・時間は選択できない
+    minuteIncrement: 60,      // 分の選択は 60 分単位（＝常に 00）
+    formatDate: formatDateUTC, // フォーマット関数の上書き
+    onChange: function(selectedDates, dateStr, instance) {
+      if (selectedDates.length > 0) {
+        let d = selectedDates[0];
+        let hour = d.getUTCHours();
+        // 偶数の時間以外なら、最も近い偶数（切り捨て）に補正
+        if (hour % 2 !== 0) {
+          let newHour = Math.floor(hour / 2) * 2;
+          d.setUTCHours(newHour);
+          instance.setDate(d, true);
+        }
+      }
+    }
   });
 
-  // 既存の処理（画像読み込みなど）を実行
+  // 初回の画像読み込み（loadImagesFromSelectedTime 内部で flatpickr の選択値を利用）
   loadImagesFromSelectedTime();
 
   document.getElementById('load-button').addEventListener('click', () => {
     loadImagesFromSelectedTime();
   });
 });
-
 
 // ========== ロジック本体 ==========
 
@@ -194,19 +208,18 @@ function loadImagesFromSelectedTime() {
     animationTimer = null;
   }
 
-  // Flatpickr で選択された日時文字列を取得し、UTC基準の Date オブジェクトを生成
-  const selectedDateStr = document.getElementById('datetime').value;
-  if (!selectedDateStr) {
+  // ※ inline で表示しているため、value 属性ではなく fp.selectedDates[0] を利用
+  const selectedDate = fp.selectedDates[0];
+  if (!selectedDate) {
     console.error("日時が選択されていません");
     return;
   }
-  const selectedDate = new Date(selectedDateStr);
   // 選択された日時の各要素をUTCとして扱うために Date.UTC() を利用
   const baseTime = new Date(Date.UTC(
-    selectedDate.getFullYear(),
-    selectedDate.getMonth(),
-    selectedDate.getDate(),
-    selectedDate.getHours()
+    selectedDate.getUTCFullYear(),
+    selectedDate.getUTCMonth(),
+    selectedDate.getUTCDate(),
+    selectedDate.getUTCHours()
   ));
 
   // 1時間ごとに11枚生成（-22h ～ 0h のタイムスタンプを作成）

@@ -10,7 +10,7 @@ $ python inference.py --params params/main/params.yaml --fold 6 --data_root ./da
 """
 
 import sys
-import torch
+import json
 import os
 from argparse import Namespace
 from utils.main.config import parse_params
@@ -25,7 +25,7 @@ def main():
     # 推論はCPU上で実施するため、強制的に device を "cpu" に設定
     args.device = "cpu"
     
-    # ExperimentManager を初期化（モデルの構築などが行われる）
+    # ExperimentManager を初期化（モデル構築等を実施）
     experiment = ExperimentManager(args)
     
     # チェックポイントパスの指定確認
@@ -46,7 +46,7 @@ def main():
     # validデータセットからタイムスタンプも返すためにフラグを有効化
     test_dataset.return_timestamp = True
     
-    results = []
+    predictions = {}
     num_samples = len(test_dataset)
     print(f"Valid dataset: {num_samples} samples found.")
     
@@ -57,7 +57,6 @@ def main():
         if len(sample) == 4:
             X, h, y, timestamp = sample
         else:
-            # タイムスタンプが返ってこない場合はスキップ
             print(f"Warning: Sample index {idx} did not return timestamp; skipping.")
             continue
         
@@ -69,17 +68,28 @@ def main():
         # 1ショット推論を実施
         probabilities = experiment.predict_one_shot(sample_input1, sample_input2)
         
-        results.append({
-            "timestamp": str(timestamp),  # タイムスタンプは文字列化
-            "probabilities": probabilities
-        })
+        # タイムスタンプを "YYYYMMDDHH" 形式の文字列に変換
+        ts_key = timestamp.strftime("%Y%m%d%H")
+        predictions[ts_key] = probabilities
     
-    # 結果を時系列順（既に並んでいると仮定）に出力
+    # 推論結果を表示
     print("Inference results (timestamp and 4-class likelihoods):")
-    for res in results:
-        print(f"Timestamp: {res['timestamp']}, Probabilities: {res['probabilities']}")
+    for ts, probs in predictions.items():
+        print(f"Timestamp: {ts}, Probabilities: {probs}")
     
-    # 必要に応じて結果をファイル等に保存する処理を追加してください
+    # ../data ディレクトリが存在しなければ作成
+    pred_dir = os.path.join("..", "data")
+    os.makedirs(pred_dir, exist_ok=True)
+    
+    # 結果を ../data/pred.json に保存
+    pred_path = os.path.join(pred_dir, "pred.json")
+    with open(pred_path, "w") as f:
+        json.dump(predictions, f, indent=2)
+    
+    print(f"Predictions saved to: {pred_path}")
+
+if __name__ == "__main__":
+    main()
 
 if __name__ == "__main__":
     main()
