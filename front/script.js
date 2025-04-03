@@ -3,7 +3,7 @@ const wavelengths = ['0094', '0131', '0171', '0193', '0211', '0304', '0335', '16
 
 // ========== 波長ごとのカラーマップ定義 ==========
 const colormaps = {
-  '0094': [  // 94 Ångström
+  '0094': [
     { pos: 0.0, color: [0, 0, 0] },
     { pos: 0.2, color: [10, 79, 51] },
     { pos: 0.4, color: [41, 121, 102] },
@@ -11,7 +11,7 @@ const colormaps = {
     { pos: 0.8, color: [163, 206, 204] },
     { pos: 1.0, color: [255, 255, 255] }
   ],
-  '0131': [  // 131 Ångström
+  '0131': [
     { pos: 0.0, color: [0, 0, 0] },
     { pos: 0.2, color: [0, 73, 73] },
     { pos: 0.4, color: [0, 147, 147] },
@@ -19,7 +19,7 @@ const colormaps = {
     { pos: 0.8, color: [158, 255, 255] },
     { pos: 1.0, color: [255, 255, 255] }
   ],
-  '0171': [  // 171 Ångström
+  '0171': [
     { pos: 0.0, color: [0, 0, 0] },
     { pos: 0.2, color: [73, 51, 0] },
     { pos: 0.4, color: [147, 102, 0] },
@@ -27,7 +27,7 @@ const colormaps = {
     { pos: 0.8, color: [255, 204, 54] },
     { pos: 1.0, color: [255, 255, 255] }
   ],
-  '0193': [  // 193 Ångström
+  '0193': [
     { pos: 0.0, color: [0, 0, 0] },
     { pos: 0.2, color: [114, 51, 10] },
     { pos: 0.4, color: [161, 102, 41] },
@@ -35,7 +35,7 @@ const colormaps = {
     { pos: 0.8, color: [228, 204, 163] },
     { pos: 1.0, color: [255, 255, 255] }
   ],
-  '0211': [  // 211 Ångström
+  '0211': [
     { pos: 0.0, color: [0, 0, 0] },
     { pos: 0.2, color: [114, 51, 79] },
     { pos: 0.4, color: [161, 102, 121] },
@@ -43,7 +43,7 @@ const colormaps = {
     { pos: 0.8, color: [228, 204, 206] },
     { pos: 1.0, color: [255, 255, 255] }
   ],
-  '0304': [  // 304 Ångström
+  '0304': [
     { pos: 0.0, color: [0, 0, 0] },
     { pos: 0.2, color: [73, 0, 0] },
     { pos: 0.4, color: [147, 0, 0] },
@@ -51,7 +51,7 @@ const colormaps = {
     { pos: 0.8, color: [255, 158, 54] },
     { pos: 1.0, color: [255, 255, 255] }
   ],
-  '0335': [  // 335 Ångström
+  '0335': [
     { pos: 0.0, color: [0, 0, 0] },
     { pos: 0.2, color: [10, 51, 114] },
     { pos: 0.4, color: [41, 102, 161] },
@@ -59,7 +59,7 @@ const colormaps = {
     { pos: 0.8, color: [163, 204, 228] },
     { pos: 1.0, color: [255, 255, 255] }
   ],
-  '1600': [  // 1600 Ångström
+  '1600': [
     { pos: 0.0, color: [0, 0, 0] },
     { pos: 0.2, color: [79, 79, 10] },
     { pos: 0.4, color: [121, 121, 41] },
@@ -67,7 +67,7 @@ const colormaps = {
     { pos: 0.8, color: [206, 206, 163] },
     { pos: 1.0, color: [255, 255, 255] }
   ],
-  '4500': [  // 4500 Ångström
+  '4500': [
     { pos: 0.0, color: [0, 0, 0] },
     { pos: 0.2, color: [51, 51, 0] },
     { pos: 0.4, color: [102, 102, 0] },
@@ -103,14 +103,12 @@ function applyAIAColormap(image, wavelength) {
   const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
   const data = imageData.data;
   for (let i = 0; i < data.length; i += 4) {
-    // グレースケール画像の場合、R=G=Bなのでいずれかで正規化
     const gray = data[i];
     const norm = gray / 255;
     const [r, g, b] = getAIAColorForWavelength(norm, wavelength);
     data[i] = r;
     data[i + 1] = g;
     data[i + 2] = b;
-    // data[i+3] はアルファ値
   }
   ctx.putImageData(imageData, 0, 0);
   return canvas.toDataURL('image/png');
@@ -122,7 +120,7 @@ function applyAIAColormap(image, wavelength) {
 let fp;
 
 window.addEventListener('DOMContentLoaded', () => {
-  // 現在のローカル時刻からUTC時刻（分・秒は00固定）を生成
+  // 現在のローカル時刻から UTC 時刻（分・秒は 00 固定）を生成
   const now = new Date();
   const utcNow = new Date(Date.UTC(
     now.getUTCFullYear(),
@@ -139,13 +137,11 @@ window.addEventListener('DOMContentLoaded', () => {
       .replace("m", pad(date.getUTCMonth() + 1))
       .replace("d", pad(date.getUTCDate()))
       .replace("H", pad(date.getUTCHours()))
-      // 分は常に「00」に固定
       .replace("i", "00");
   }
 
   // UTC 文字列から Date オブジェクトを生成する parse 関数
   function parseDateUTC(dateStr, format) {
-    // 例: "2025-04-02 14:00" → [2025, 04, 02, 14, 00]
     const parts = dateStr.match(/\d+/g);
     return new Date(Date.UTC(
       parseInt(parts[0], 10),
@@ -156,32 +152,54 @@ window.addEventListener('DOMContentLoaded', () => {
     ));
   }
 
-  // Flatpickr を div#datetime に対して inline で初期化
+  // 時間選択部分のドロップダウンを UTC の偶数時刻に再構築する関数
+  function updateUTCOptions(instance) {
+    const hourSelect = instance.hourElement;
+    hourSelect.innerHTML = "";
+    for (let i = 0; i < 24; i += 2) {
+      const option = document.createElement("option");
+      option.value = i;
+      option.text = String(i).padStart(2, "0");
+      hourSelect.appendChild(option);
+    }
+    if (instance.selectedDates.length > 0) {
+      let utcHour = instance.selectedDates[0].getUTCHours();
+      utcHour = Math.floor(utcHour / 2) * 2;
+      instance.hourElement.value = utcHour;
+    }
+  }
+
+  // flatpickr の初期化（表示もパースも UTC で行い、ドロップダウンは偶数時間のみ）
   fp = flatpickr("#datetime", {
-    inline: true,             // 常に表示する inline カレンダー
-    enableTime: true,         // 時刻選択を有効にする
-    time_24hr: true,          // 24時間表示
-    dateFormat: "Y-m-d H:00",  // 表示は「YYYY-MM-DD HH:00」
-    defaultDate: utcNow,       // 初期値はUTC現在時刻（分は00）
-    maxDate: utcNow,          // 未来の日付・時間は選択できない
-    minuteIncrement: 60,      // 分の選択は 60 分単位（＝常に 00）
-    formatDate: formatDateUTC, // 表示フォーマットを上書き
-    parseDate: parseDateUTC,   // 文字列パースもUTCで行う
+    inline: true,
+    enableTime: true,
+    time_24hr: true,
+    dateFormat: "Y-m-d H:00",
+    defaultDate: utcNow,
+    maxDate: utcNow,
+    minuteIncrement: 60,
+    formatDate: formatDateUTC,
+    parseDate: parseDateUTC,
+    onReady: function(selectedDates, dateStr, instance) {
+      updateUTCOptions(instance);
+    },
+    onOpen: function(selectedDates, dateStr, instance) {
+      updateUTCOptions(instance);
+    },
     onChange: function(selectedDates, dateStr, instance) {
       if (selectedDates.length > 0) {
         let d = selectedDates[0];
-        let hour = d.getUTCHours();
-        // UTC で偶数時間以外なら、最も近い偶数（切り捨て）に補正
-        if (hour % 2 !== 0) {
-          let newHour = Math.floor(hour / 2) * 2;
-          d.setUTCHours(newHour);
+        let utcHour = d.getUTCHours();
+        if (utcHour % 2 !== 0) {
+          utcHour = Math.floor(utcHour / 2) * 2;
+          d.setUTCHours(utcHour);
           instance.setDate(d, true);
         }
       }
+      updateUTCOptions(instance);
     }
   });
 
-  // 初回の画像読み込み（loadImagesFromSelectedTime 内部で fp.selectedDates[0] を利用）
   loadImagesFromSelectedTime();
 
   document.getElementById('load-button').addEventListener('click', () => {
@@ -191,9 +209,9 @@ window.addEventListener('DOMContentLoaded', () => {
 
 // ========== ロジック本体 ==========
 
-let preloadedImages = {};  // 全画像キャッシュ
+let preloadedImages = {};
 let timestamps = [];
-let imageElements = {};  // 各波長のimgタグ
+let imageElements = {};
 let frameIndex = 0;
 let animationTimer = null;
 
@@ -212,7 +230,7 @@ function loadXRSData(baseTime) {
     })
     .catch(err => {
       console.error("XRSデータ取得中にエラー:", err);
-      return Array(96).fill(null); // エラー時はすべてnull
+      return Array(96).fill(null);
     });
 }
 
@@ -222,13 +240,11 @@ function loadImagesFromSelectedTime() {
     animationTimer = null;
   }
 
-  // inline で表示しているため、fp.selectedDates[0] から日時を取得
   const selectedDate = fp.selectedDates[0];
   if (!selectedDate) {
     console.error("日時が選択されていません");
     return;
   }
-  // 選択された日時をUTCとして扱う Date オブジェクトを生成
   const baseTime = new Date(Date.UTC(
     selectedDate.getUTCFullYear(),
     selectedDate.getUTCMonth(),
@@ -237,14 +253,12 @@ function loadImagesFromSelectedTime() {
     0, 0
   ));
 
-  // 1時間ごとに11枚生成（-22h ～ 0h のタイムスタンプを作成）
   timestamps = [];
   for (let h = 22; h >= 0; h -= 2) {
     const t = new Date(baseTime.getTime() - h * 3600 * 1000);
     timestamps.push(t);
   }
 
-  // URL生成
   const aiaUrls = {};
   wavelengths.forEach(wl => {
     aiaUrls[wl] = timestamps.map(t => {
@@ -261,11 +275,9 @@ function loadImagesFromSelectedTime() {
     return `data/images/${m}${d}/${h}_hmi.png`;
   });
 
-  // 画像キャッシュ初期化
   preloadedImages = {};
   const transparentURL = createTransparentImageURL();
 
-  // AIA画像の読み込み＆カラーマップ変換
   wavelengths.forEach(wl => {
     aiaUrls[wl].forEach((url, i) => {
       const key = `${wl}-${i}`;
@@ -286,7 +298,6 @@ function loadImagesFromSelectedTime() {
     });
   });
 
-  // HMI画像はそのまま読み込み
   hmiUrls.forEach((url, i) => {
     const key = `HMI-${i}`;
     const img = new Image();
@@ -302,7 +313,6 @@ function loadImagesFromSelectedTime() {
 
   renderImages();
 
-  // フレアデータ取得＆チャート描画処理（元コードと同様）
   const tY = baseTime.getUTCFullYear();
   const tM = String(baseTime.getUTCMonth() + 1).padStart(2, '0');
   const tD = String(baseTime.getUTCDate()).padStart(2, '0');
@@ -498,7 +508,7 @@ function renderImages() {
     container.className = 'channel';
 
     const label = document.createElement('div');
-    label.textContent = type === 'HMI' ? 'HMI' : `AIA ${type}Å`;
+    label.textContent = type === 'HMI' ? 'HMI' : `AIA ${parseInt(type, 10)}Å`;
     const img = document.createElement('img');
     img.id = `img-${type}`;
     container.appendChild(label);
