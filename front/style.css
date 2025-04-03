@@ -184,3 +184,7 @@ h2, h3 {
     margin: 0 auto;
   }
 }
+
+#date-picker {
+  display: none;
+}
