@@ -517,16 +517,12 @@ class ExperimentManager:
         """
         1サンプルの入力を受け取り、4クラスの尤度（確率分布）を返す関数（CPU推論用）
 
-        :param sample_input1: 1サンプルの画像データ。形状は [1, 4, 10, 256, 256] と想定。
-                            （※データセットでは各サンプルは [4, 10, 256, 256] となっており、batch次元を追加します）
-        :param sample_input2: 1サンプルの特徴量データ。形状は [1, 672, 128] と想定。
-                            （※データセットでは中間特徴量は使わない場合、ゼロテンソルで対応）
-        :return: 4クラスの尤度リスト（例： [0.1, 0.1, 0.7, 0.1] ）
+        :param sample_input1: 1サンプルの画像データテンソル（例：[1, 4, 10, 256, 256]）
+        :param sample_input2: 1サンプルの特徴量データテンソル（例：[1, 672, 128]）
+        :return: 4クラスの尤度リスト（例：[0.1, 0.1, 0.7, 0.1]）
         """
-        # CPUのみでの推論のため、明示的にCPUのデバイスを指定
+        # CPU上での推論のため、明示的にCPUのデバイスを使用
         device = torch.device("cpu")
-        
-        # モデルと入力データをCPUへ移動
         self.model.to(device)
         sample_input1 = sample_input1.to(device)
         sample_input2 = sample_input2.to(device)
@@ -534,10 +530,7 @@ class ExperimentManager:
         # 評価モードに切替え、勾配計算を無効化
         self.model.eval()
         with torch.no_grad():
-            # モデルへ入力してロジットを得る
-            # ※ forward の返り値は (logits, mixed_features) となっているので、先頭の出力を使用
             logits, _ = self.model(sample_input1, sample_input2)
-            # ソフトマックスで4クラスの尤度に変換
             probabilities = torch.softmax(logits, dim=1)
         
         # バッチサイズが1の場合、1サンプル分の尤度リストを返す
