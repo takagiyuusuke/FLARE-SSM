@@ -88,6 +88,28 @@ h1, h2, h3 {
   text-align: center;
   background-color: #f9f9f9;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s, border-color 0.2s;
+}
+
+.prediction-card:hover {
+  transform: scale(1.05);
+}
+
+.prediction-card.highlight {
+  border-color: #ff9800; /* 強調色 */
+  box-shadow: 0 4px 10px rgba(255, 152, 0, 0.5);
+}
+
+.class-label {
+  font-size: 24px;
+  font-weight: bold;
+  color: #333;
+}
+
+.class-small {
+  font-size: 14px;
+  font-weight: normal;
+  color: #666;
 }
 
 .error-message {
