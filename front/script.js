@@ -131,6 +131,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
   // flatpickr は enableTime:false として日付のみ選択
   fp = flatpickr("#date-picker", {
+    inline: true,
     enableTime: false,
     dateFormat: "Y-m-d",
     defaultDate: utcNow.toISOString().slice(0, 10)  // "YYYY-MM-DD"
