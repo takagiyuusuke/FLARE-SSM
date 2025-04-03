@@ -1,18 +1,4 @@
-.grid {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 12px;
-}
-.channel {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-img {
-  width: 200px;
-  height: 200px;
-  border: 1px solid #ccc;
-}
+/* 全体のフォント・背景 */
 body {
   font-family: "Roboto", sans-serif;
   margin: 20px;
@@ -25,12 +11,26 @@ h1, h2, h3 {
   text-align: center;
 }
 
-/* inline カレンダーのコンテナ */
-#datetime {
-  margin: 0 auto;
-  max-width: 350px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+/* 日付選択と時刻選択のコンテナ */
+#date-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
   margin-bottom: 20px;
+}
+
+/* flatpickr のカレンダー部分 */
+#date-picker {
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* 時刻選択用のドロップダウン */
+#time-picker {
+  font-size: 16px;
+}
+#time-picker label {
+  margin-right: 8px;
 }
 
 /* Material Design ライクなボタン */
@@ -46,8 +46,16 @@ h1, h2, h3 {
   cursor: pointer;
   transition: background-color 0.3s ease, box-shadow 0.3s ease;
 }
-
 #load-button:hover {
   background-color: #3700b3;
   box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+/* grid レイアウト（画像表示など用） */
+.grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 20px;
 }

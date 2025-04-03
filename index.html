@@ -11,13 +11,24 @@
 </head>
 <body>
   <h1>フレアデモ</h1>
-  
-  <!-- カレンダー表示用：input 要素ではなく div で inline 表示 -->
-  <div id="datetime"></div>
+
+  <!-- 日付選択と時間選択（UTC） -->
+  <div id="date-container">
+    <!-- カレンダー（flatpickrで日付のみ選択） -->
+    <div id="date-picker"></div>
+    <!-- 時刻選択用ドロップダウン -->
+    <div id="time-picker">
+      <label for="utc-hour">UTC 時刻:</label>
+      <select id="utc-hour"></select>
+    </div>
+  </div>
+
   <button id="load-button">この時刻で読み込む</button>
 
   <h2 id="timestamp">Loading timestamp...</h2>
+
   <div class="grid" id="aia-grid"></div>
+
   <div>
     <h3>72時間後までのX線強度の推移 (GOES観測)</h3>
     <canvas id="flareChart" width="600" height="300"></canvas>

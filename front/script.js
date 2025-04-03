@@ -116,11 +116,11 @@ function applyAIAColormap(image, wavelength) {
 
 // ========== 初期化処理 ==========
 
-// グローバル変数として flatpickr のインスタンスを保持
+// flatpickr のインスタンス（カレンダー部分：日付のみ）
 let fp;
 
 window.addEventListener('DOMContentLoaded', () => {
-  // 現在のローカル時刻から UTC 時刻（分・秒は 00 固定）を生成
+  // 現在の UTC 時刻（分・秒は 00 固定）
   const now = new Date();
   const utcNow = new Date(Date.UTC(
     now.getUTCFullYear(),
@@ -129,77 +129,28 @@ window.addEventListener('DOMContentLoaded', () => {
     now.getUTCHours(), 0, 0
   ));
 
-  // UTC 表示用のフォーマット関数（flatpickr 用）
-  function formatDateUTC(date, format, locale) {
-    const pad = (n) => String(n).padStart(2, '0');
-    return format
-      .replace("Y", date.getUTCFullYear())
-      .replace("m", pad(date.getUTCMonth() + 1))
-      .replace("d", pad(date.getUTCDate()))
-      .replace("H", pad(date.getUTCHours()))
-      .replace("i", "00");
-  }
-
-  // UTC 文字列から Date オブジェクトを生成する parse 関数
-  function parseDateUTC(dateStr, format) {
-    const parts = dateStr.match(/\d+/g);
-    return new Date(Date.UTC(
-      parseInt(parts[0], 10),
-      parseInt(parts[1], 10) - 1,
-      parseInt(parts[2], 10),
-      parseInt(parts[3], 10),
-      0, 0
-    ));
-  }
-
-  // 時間選択部分のドロップダウンを UTC の偶数時刻に再構築する関数
-  function updateUTCOptions(instance) {
-    const hourSelect = instance.hourElement;
-    hourSelect.innerHTML = "";
-    for (let i = 0; i < 24; i += 2) {
-      const option = document.createElement("option");
-      option.value = i;
-      option.text = String(i).padStart(2, "0");
-      hourSelect.appendChild(option);
-    }
-    if (instance.selectedDates.length > 0) {
-      let utcHour = instance.selectedDates[0].getUTCHours();
-      utcHour = Math.floor(utcHour / 2) * 2;
-      instance.hourElement.value = utcHour;
-    }
-  }
-
-  // flatpickr の初期化（表示もパースも UTC で行い、ドロップダウンは偶数時間のみ）
-  fp = flatpickr("#datetime", {
-    inline: true,
-    enableTime: true,
-    time_24hr: true,
-    dateFormat: "Y-m-d H:00",
-    defaultDate: utcNow,
-    maxDate: utcNow,
-    minuteIncrement: 60,
-    formatDate: formatDateUTC,
-    parseDate: parseDateUTC,
-    onReady: function(selectedDates, dateStr, instance) {
-      updateUTCOptions(instance);
-    },
-    onOpen: function(selectedDates, dateStr, instance) {
-      updateUTCOptions(instance);
-    },
-    onChange: function(selectedDates, dateStr, instance) {
-      if (selectedDates.length > 0) {
-        let d = selectedDates[0];
-        let utcHour = d.getUTCHours();
-        if (utcHour % 2 !== 0) {
-          utcHour = Math.floor(utcHour / 2) * 2;
-          d.setUTCHours(utcHour);
-          instance.setDate(d, true);
-        }
-      }
-      updateUTCOptions(instance);
-    }
+  // flatpickr は enableTime:false として日付のみ選択
+  fp = flatpickr("#date-picker", {
+    enableTime: false,
+    dateFormat: "Y-m-d",
+    defaultDate: utcNow.toISOString().slice(0, 10)  // "YYYY-MM-DD"
   });
 
+  // 時刻選択用の <select>（#utc-hour） を初期化（偶数時刻のみ）
+  const hourSelect = document.getElementById("utc-hour");
+  hourSelect.innerHTML = "";
+  for (let h = 0; h < 24; h += 2) {
+    const option = document.createElement("option");
+    option.value = h;
+    option.textContent = String(h).padStart(2, "0") + ":00";
+    hourSelect.appendChild(option);
+  }
+  // 現在のUTC時刻の時刻を偶数に丸めた値を初期値に設定
+  let initHour = utcNow.getUTCHours();
+  initHour = Math.floor(initHour / 2) * 2;
+  hourSelect.value = initHour;
+
+  // 初回の画像読み込み
   loadImagesFromSelectedTime();
 
   document.getElementById('load-button').addEventListener('click', () => {
@@ -209,9 +160,9 @@ window.addEventListener('DOMContentLoaded', () => {
 
 // ========== ロジック本体 ==========
 
-let preloadedImages = {};
+let preloadedImages = {};  // 全画像キャッシュ
 let timestamps = [];
-let imageElements = {};
+let imageElements = {};    // 各波長のimgタグ
 let frameIndex = 0;
 let animationTimer = null;
 
@@ -240,25 +191,29 @@ function loadImagesFromSelectedTime() {
     animationTimer = null;
   }
 
-  const selectedDate = fp.selectedDates[0];
-  if (!selectedDate) {
-    console.error("日時が選択されていません");
+  // flatpickr から選択された日付（文字列 "YYYY-MM-DD"）を取得
+  const selectedDateStr = fp.input.value;
+  if (!selectedDateStr) {
+    console.error("日付が選択されていません");
     return;
   }
-  const baseTime = new Date(Date.UTC(
-    selectedDate.getUTCFullYear(),
-    selectedDate.getUTCMonth(),
-    selectedDate.getUTCDate(),
-    selectedDate.getUTCHours(),
-    0, 0
-  ));
+  // UTC 時刻の Date オブジェクトとして組み立てる
+  const selectedDateParts = selectedDateStr.split("-");
+  const year = parseInt(selectedDateParts[0], 10);
+  const month = parseInt(selectedDateParts[1], 10) - 1;
+  const day = parseInt(selectedDateParts[2], 10);
+  // 時刻は <select id="utc-hour"> の値
+  const hour = parseInt(document.getElementById("utc-hour").value, 10);
+  const baseTime = new Date(Date.UTC(year, month, day, hour, 0, 0));
 
+  // 1時間ごとに11枚生成（-22h ～ 0h のタイムスタンプ）
   timestamps = [];
   for (let h = 22; h >= 0; h -= 2) {
     const t = new Date(baseTime.getTime() - h * 3600 * 1000);
     timestamps.push(t);
   }
 
+  // URL生成
   const aiaUrls = {};
   wavelengths.forEach(wl => {
     aiaUrls[wl] = timestamps.map(t => {
