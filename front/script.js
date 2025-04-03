@@ -134,7 +134,9 @@ window.addEventListener('DOMContentLoaded', () => {
     inline: true,
     enableTime: false,
     dateFormat: "Y-m-d",
-    defaultDate: utcNow.toISOString().slice(0, 10)  // "YYYY-MM-DD"
+    defaultDate: utcNow.toISOString().slice(0, 10),  // "YYYY-MM-DD"
+    maxDate: "today",
+    minDate: "2025-01-01", // 適宜変更
   });
 
   // 時刻選択用の <select>（#utc-hour） を初期化（偶数時刻のみ）
