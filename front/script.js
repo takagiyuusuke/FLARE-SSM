@@ -277,29 +277,61 @@ function loadImagesFromSelectedTime() {
 
   // pred.json を取得してカードを表示
   fetch('data/pred.json')
-    .then(res => res.json())
-    .then(predData => {
-      const probabilities = predData[selectedTimeKey];
-      const cardContainer = document.getElementById('prediction-cards');
-      cardContainer.innerHTML = ''; // 既存のカードをクリア
+  .then(res => res.json())
+  .then(predData => {
+    const probabilities = predData[selectedTimeKey];
+    const cardContainer = document.getElementById('prediction-cards');
+    cardContainer.innerHTML = ''; // 既存のカードをクリア
 
-      if (probabilities) {
-        probabilities.forEach((prob, index) => {
-          const card = document.createElement('div');
-          card.className = 'prediction-card';
-          card.innerHTML = `
-            <h3>Class ${index + 1}</h3>
-            <p>Probability: ${(prob * 100).toFixed(2)}%</p>
-          `;
-          cardContainer.appendChild(card);
-        });
-      } else {
-        console.warn(`❌ No prediction data found for key: ${selectedTimeKey}`);
+    if (probabilities) {
+      probabilities.forEach((prob, index) => {
+        const card = document.createElement('div');
+        card.className = 'prediction-card';
+        card.innerHTML = `
+          <h3>Class ${index + 1}</h3>
+          <p>Probability: ${(prob * 100).toFixed(2)}%</p>
+        `;
+        cardContainer.appendChild(card);
+      });
+    } else {
+      console.warn(`❌ No prediction data found for key: ${selectedTimeKey}`);
+      // エントリが存在しない場合、??%のカードを表示
+      for (let i = 0; i < 4; i++) {
+        const card = document.createElement('div');
+        card.className = 'prediction-card';
+        card.innerHTML = `
+          <h3>Class ${i + 1}</h3>
+          <p>Probability: ??%</p>
+        `;
+        cardContainer.appendChild(card);
       }
-    })
-    .catch(err => {
-      console.error("Prediction data fetch error:", err);
-    });
+      // エラーメッセージを表示
+      const errorMessage = document.createElement('p');
+      errorMessage.className = 'error-message';
+      errorMessage.textContent = "❌ 推論データが存在しません";
+      cardContainer.appendChild(errorMessage);
+    }
+  })
+  .catch(err => {
+    console.error("Prediction data fetch error:", err);
+    const cardContainer = document.getElementById('prediction-cards');
+    cardContainer.innerHTML = ''; // 既存のカードをクリア
+    // エラー時も??%のカードを表示
+    for (let i = 0; i < 4; i++) {
+      const card = document.createElement('div');
+      card.className = 'prediction-card';
+      card.innerHTML = `
+        <h3>Class ${i + 1}</h3>
+        <p>Probability: ??%</p>
+      `;
+      cardContainer.appendChild(card);
+    }
+    // エラーメッセージを表示
+    const errorMessage = document.createElement('p');
+    errorMessage.className = 'error-message';
+    errorMessage.textContent = "❌ 推論データの取得中にエラーが発生しました";
+    cardContainer.appendChild(errorMessage);
+  });
 
   loadXRSData(baseTime).then(flareData => {
     const labels = Array.from({ length: 96 }, (_, i) => `${i > 24 ? '+' : ''}${i - 24}h`);
