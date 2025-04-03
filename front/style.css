@@ -174,9 +174,14 @@ h1, h2, h3 {
   display: none;
 }
 
+#date-container {
+  width: 100%;
+  text-align: center;
+}
+
 /* --- レスポンシブ対応 ---
-   画面幅が768px以下の場合、.top-container を縦方向に変更し、right-top を left-top の下に表示 */
-@media (max-width: 768px) {
+   画面幅が850px以下の場合、.top-container を縦方向に変更し、right-top を left-top の下に表示 */
+@media (max-width: 850px) {
   .top-container {
     flex-direction: column;
     align-items: center;
