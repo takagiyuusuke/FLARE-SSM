@@ -32,14 +32,17 @@ jobs:
         run: python back/get_data.py
 
       - name: Run inference
-        run: python back/inference.py
+        run: |
+          cd ml
+          rm -r datasets/main/fold6/
+          python3 inference.py --params params/main/params.yaml --fold 6 --data_root ./datasets --history 4 --trial_name 090 --mode test --resume_from_checkpoint checkpoints/main/090_stage1_best.pth
 
       - name: Commit and push
         run: |
           git config user.name github-actions
           git config user.email github-actions@github.com
           git add data/
-          git add ml/datasets/all_data_hours/
+          git add ml/datasets/
           TIMESTAMP=$(date +"%H:%M")
           git commit -m "🤖Update data [auto] at $TIMESTAMP" || echo "No changes to commit"
           git push
