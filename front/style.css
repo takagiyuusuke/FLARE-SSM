@@ -6,7 +6,16 @@ body {
   color: #333;
 }
 
-h1, h2, h3 {
+/* ヘッダー（背景色などは例として設定） */
+header {
+  width: 100%;
+  height: 50px;
+  background-color: #6200ee;
+  margin-bottom: 10px;
+}
+
+/* 見出し */
+h2, h3 {
   text-align: center;
   margin: 8px 0;
 }
@@ -28,7 +37,12 @@ h1, h2, h3 {
   gap: 8px;
 }
 
-/* カレンダーを左-topの横幅いっぱいに表示 */
+/* カレンダーを横幅いっぱいに表示 */
+#date-container {
+  width: 100%;
+  text-align: center;
+}
+
 .inline-calendar {
   width: 100%;
   box-sizing: border-box;
@@ -42,31 +56,7 @@ h1, h2, h3 {
 #time-picker {
   display: flex;
   align-items: center;
-  justify-content: center; /* 追加：中央寄せ */
-  gap: 4px;
-}
-#time-picker select {
-  font-size: 14px;
-  padding: 4px 6px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  background: #fff;
-  color: #333;
-}
-
-/* 右側：太陽画像（通常は横幅70%） */
-.right-top {
-  flex: 0 0 70%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
-}
-
-/* 時刻選択 */
-#time-picker {
-  display: flex;
-  align-items: center;
+  justify-content: center;
   gap: 4px;
 }
 #time-picker select {
@@ -94,8 +84,14 @@ h1, h2, h3 {
   box-shadow: 0 4px 8px rgba(0,0,0,0.2);
 }
 
-/* --- 太陽画像グリッド（右側） --- */
-/* 固定で2行×5列 */
+/* --- 右側：太陽画像グリッド --- */
+.right-top {
+  flex: 0 0 70%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
 .grid {
   display: grid;
   grid-template-columns: repeat(5, minmax(150px, 1fr));
@@ -125,9 +121,8 @@ h1, h2, h3 {
   justify-content: center;
   gap: 8px;
 }
-/* 予測カード：横幅を大きく */
 .prediction-card {
-  flex: 0 0 250px;  /* 幅を250pxに */
+  flex: 0 0 250px;
   border: 1px solid #ccc;
   border-radius: 5px;
   padding: 10px;
@@ -154,7 +149,6 @@ h1, h2, h3 {
   font-weight: normal;
   color: #666;
 }
-/* エラーメッセージは下部に配置 */
 .error-message {
   width: 100%;
   margin-top: 8px;
@@ -170,23 +164,13 @@ h1, h2, h3 {
   text-align: center;
 }
 
-#date-picker {
-  display: none;
-}
-
-#date-container {
-  width: 100%;
-  text-align: center;
-}
-
-/* --- レスポンシブ対応 ---
-   画面幅が850px以下の場合、.top-container を縦方向に変更し、right-top を left-top の下に表示 */
+/* --- レスポンシブ対応 --- 
+   画面幅が850px以下の場合、.top-container を縦方向に変更 */
 @media (max-width: 850px) {
   .top-container {
     flex-direction: column;
     align-items: center;
   }
-  /* 左右の比率指定は解除 */
   .left-top, .right-top {
     flex: 1 1 100%;
   }

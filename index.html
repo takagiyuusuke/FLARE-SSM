@@ -10,13 +10,15 @@
   <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@1.4.0"></script>
 </head>
 <body>
-  <h1>フレアデモ</h1>
+  <!-- ヘッダー（今は空） -->
+  <header></header>
 
-  <!-- 上部：左右に分割（左：日付・時刻・ボタン、右：太陽画像） -->
+  <!-- 上部：左右に分割 -->
   <div class="top-container">
-    <!-- 左側：日付・時刻・ボタン -->
+    <!-- 左側：日付・時刻・ボタン（left-top） -->
     <div class="left-top">
       <div id="date-container">
+        <!-- flatpickr用の input 要素。inline カレンダーが表示される -->
         <input id="date-picker" type="text" readonly class="inline-calendar">
         <div id="time-picker">
           <label for="utc-hour">UTC 時刻:</label>
@@ -25,11 +27,11 @@
         <button id="load-button">この時刻で読み込む</button>
       </div>
     </div>
-    <!-- 右側：太陽画像（2行×5列固定） -->
+    <!-- 右側：太陽画像 -->
     <div class="right-top">
       <h2 id="timestamp">Loading timestamp...</h2>
       <div class="grid" id="aia-grid">
-        <!-- ここにはスクリプトから10枚の画像が動的に挿入されます -->
+        <!-- ここに太陽画像10枚（2行×5列）が動的に挿入されます -->
       </div>
     </div>
   </div>
