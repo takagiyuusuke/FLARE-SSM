@@ -143,6 +143,19 @@ window.addEventListener('DOMContentLoaded', () => {
       .replace("i", "00");
   }
 
+  // UTC 文字列から Date オブジェクトを生成する parse 関数
+  function parseDateUTC(dateStr, format) {
+    // 例: "2025-04-02 14:00" → [2025, 04, 02, 14, 00]
+    const parts = dateStr.match(/\d+/g);
+    return new Date(Date.UTC(
+      parseInt(parts[0], 10),
+      parseInt(parts[1], 10) - 1,
+      parseInt(parts[2], 10),
+      parseInt(parts[3], 10),
+      0, 0
+    ));
+  }
+
   // Flatpickr を div#datetime に対して inline で初期化
   fp = flatpickr("#datetime", {
     inline: true,             // 常に表示する inline カレンダー
@@ -152,12 +165,13 @@ window.addEventListener('DOMContentLoaded', () => {
     defaultDate: utcNow,       // 初期値はUTC現在時刻（分は00）
     maxDate: utcNow,          // 未来の日付・時間は選択できない
     minuteIncrement: 60,      // 分の選択は 60 分単位（＝常に 00）
-    formatDate: formatDateUTC, // フォーマット関数の上書き
+    formatDate: formatDateUTC, // 表示フォーマットを上書き
+    parseDate: parseDateUTC,   // 文字列パースもUTCで行う
     onChange: function(selectedDates, dateStr, instance) {
       if (selectedDates.length > 0) {
         let d = selectedDates[0];
         let hour = d.getUTCHours();
-        // 偶数の時間以外なら、最も近い偶数（切り捨て）に補正
+        // UTC で偶数時間以外なら、最も近い偶数（切り捨て）に補正
         if (hour % 2 !== 0) {
           let newHour = Math.floor(hour / 2) * 2;
           d.setUTCHours(newHour);
@@ -167,7 +181,7 @@ window.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // 初回の画像読み込み（loadImagesFromSelectedTime 内部で flatpickr の選択値を利用）
+  // 初回の画像読み込み（loadImagesFromSelectedTime 内部で fp.selectedDates[0] を利用）
   loadImagesFromSelectedTime();
 
   document.getElementById('load-button').addEventListener('click', () => {
@@ -208,18 +222,19 @@ function loadImagesFromSelectedTime() {
     animationTimer = null;
   }
 
-  // ※ inline で表示しているため、value 属性ではなく fp.selectedDates[0] を利用
+  // inline で表示しているため、fp.selectedDates[0] から日時を取得
   const selectedDate = fp.selectedDates[0];
   if (!selectedDate) {
     console.error("日時が選択されていません");
     return;
   }
-  // 選択された日時の各要素をUTCとして扱うために Date.UTC() を利用
+  // 選択された日時をUTCとして扱う Date オブジェクトを生成
   const baseTime = new Date(Date.UTC(
     selectedDate.getUTCFullYear(),
     selectedDate.getUTCMonth(),
     selectedDate.getUTCDate(),
-    selectedDate.getUTCHours()
+    selectedDate.getUTCHours(),
+    0, 0
   ));
 
   // 1時間ごとに11枚生成（-22h ～ 0h のタイムスタンプを作成）
@@ -287,7 +302,7 @@ function loadImagesFromSelectedTime() {
 
   renderImages();
 
-  // フレアデータ取得＆チャート描画処理（以下、元コードと同様）
+  // フレアデータ取得＆チャート描画処理（元コードと同様）
   const tY = baseTime.getUTCFullYear();
   const tM = String(baseTime.getUTCMonth() + 1).padStart(2, '0');
   const tD = String(baseTime.getUTCDate()).padStart(2, '0');
@@ -483,7 +498,7 @@ function renderImages() {
     container.className = 'channel';
 
     const label = document.createElement('div');
-    label.textContent = type === 'HMI' ? 'HMI' : `AIA ${type}`;
+    label.textContent = type === 'HMI' ? 'HMI' : `AIA ${type}Å`;
     const img = document.createElement('img');
     img.id = `img-${type}`;
     container.appendChild(label);
