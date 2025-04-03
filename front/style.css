@@ -19,7 +19,7 @@ h1, h2, h3 {
   margin-bottom: 10px;
 }
 
-/* 左側：日付・時刻・ボタン（幅30%） */
+/* 左上エリア：中央寄せ */
 .left-top {
   flex: 0 0 30%;
   display: flex;
@@ -28,9 +28,15 @@ h1, h2, h3 {
   gap: 8px;
 }
 
-/* 右側：太陽画像（幅70%） */
+/* #date-container を中央寄せ */
+#date-container {
+  width: 100%;
+  text-align: center;
+}
+
+/* 右上エリア：柔軟に拡大 */
 .right-top {
-  flex: 0 0 70%;
+  flex: 1 1 70%;  /* 変更：flex-grow を1にして余白を埋める */
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -81,19 +87,20 @@ h1, h2, h3 {
 /* 固定で2行×5列 */
 .grid {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  grid-template-rows: repeat(2, auto);
+  grid-template-columns: repeat(5, minmax(150px, 1fr));  /* 変更 */
   gap: 6px;
   width: 100%;
 }
+
+/* 画像セル内部 */
 .channel {
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 .channel img {
-  width: 100px;
-  height: 100px;
+  width: 100%;       /* セル幅いっぱいに */
+  height: auto;      /* アスペクト比維持 */
   border: 1px solid #ccc;
 }
 
