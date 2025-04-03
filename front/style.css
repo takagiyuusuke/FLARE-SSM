@@ -19,7 +19,7 @@ h1, h2, h3 {
   margin-bottom: 10px;
 }
 
-/* 左上エリア：中央寄せ */
+/* 左側：日付・時刻・ボタン */
 .left-top {
   flex: 0 0 30%;
   display: flex;
@@ -28,28 +28,39 @@ h1, h2, h3 {
   gap: 8px;
 }
 
-/* #date-container を中央寄せ */
-#date-container {
-  width: 100%;
-  text-align: center;
-}
-
-/* 右上エリア：柔軟に拡大 */
-.right-top {
-  flex: 1 1 70%;  /* 変更：flex-grow を1にして余白を埋める */
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
-}
-
-/* inlineカレンダー（flatpickr用） */
+/* カレンダーを左-topの横幅いっぱいに表示 */
 .inline-calendar {
-  width: 250px;
+  width: 100%;
+  box-sizing: border-box;
   border: none;
   background: transparent;
   font-size: 14px;
   text-align: center;
+}
+
+/* 時刻選択部分：中央寄せ */
+#time-picker {
+  display: flex;
+  align-items: center;
+  justify-content: center; /* 追加：中央寄せ */
+  gap: 4px;
+}
+#time-picker select {
+  font-size: 14px;
+  padding: 4px 6px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background: #fff;
+  color: #333;
+}
+
+/* 右側：太陽画像（通常は横幅70%） */
+.right-top {
+  flex: 0 0 70%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
 }
 
 /* 時刻選択 */
@@ -87,20 +98,19 @@ h1, h2, h3 {
 /* 固定で2行×5列 */
 .grid {
   display: grid;
-  grid-template-columns: repeat(5, minmax(150px, 1fr));  /* 変更 */
+  grid-template-columns: repeat(5, minmax(150px, 1fr));
+  grid-template-rows: repeat(2, auto);
   gap: 6px;
   width: 100%;
 }
-
-/* 画像セル内部 */
 .channel {
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 .channel img {
-  width: 100%;       /* セル幅いっぱいに */
-  height: auto;      /* アスペクト比維持 */
+  width: 100%;
+  height: auto;
   border: 1px solid #ccc;
 }
 
@@ -162,4 +172,17 @@ h1, h2, h3 {
 
 #date-picker {
   display: none;
+}
+
+/* --- レスポンシブ対応 ---
+   画面幅が768px以下の場合、.top-container を縦方向に変更し、right-top を left-top の下に表示 */
+@media (max-width: 768px) {
+  .top-container {
+    flex-direction: column;
+    align-items: center;
+  }
+  /* 左右の比率指定は解除 */
+  .left-top, .right-top {
+    flex: 1 1 100%;
+  }
 }
