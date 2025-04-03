@@ -273,7 +273,33 @@ function loadImagesFromSelectedTime() {
   const tM = String(baseTime.getUTCMonth() + 1).padStart(2, '0');
   const tD = String(baseTime.getUTCDate()).padStart(2, '0');
   const tH = String(baseTime.getUTCHours()).padStart(2, '0');
-  const flareTimeStr = `${tY}${tM}${tD}${tH}`;
+  const selectedTimeKey = `${tY}${tM}${tD}${tH}`;
+
+  // pred.json を取得してカードを表示
+  fetch('data/pred.json')
+    .then(res => res.json())
+    .then(predData => {
+      const probabilities = predData[selectedTimeKey];
+      const cardContainer = document.getElementById('prediction-cards');
+      cardContainer.innerHTML = ''; // 既存のカードをクリア
+
+      if (probabilities) {
+        probabilities.forEach((prob, index) => {
+          const card = document.createElement('div');
+          card.className = 'prediction-card';
+          card.innerHTML = `
+            <h3>Class ${index + 1}</h3>
+            <p>Probability: ${(prob * 100).toFixed(2)}%</p>
+          `;
+          cardContainer.appendChild(card);
+        });
+      } else {
+        console.warn(`❌ No prediction data found for key: ${selectedTimeKey}`);
+      }
+    })
+    .catch(err => {
+      console.error("Prediction data fetch error:", err);
+    });
 
   loadXRSData(baseTime).then(flareData => {
     const labels = Array.from({ length: 96 }, (_, i) => `${i > 24 ? '+' : ''}${i - 24}h`);

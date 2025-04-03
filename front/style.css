@@ -61,6 +61,10 @@ h1, h2, h3 {
   /* カレンダー自体は flatpickr のスタイルが適用されるので、input の枠線を消す */
 }
 
+#date-picker {
+  display: none;
+}
+
 /* 時刻選択用ドロップダウンのスタイル（既存の #time-picker があればその中も） */
 #time-picker select {
   font-size: 16px;
@@ -69,4 +73,19 @@ h1, h2, h3 {
   border-radius: 4px;
   background: #fff;
   color: #333;
+}
+
+.card-container {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.prediction-card {
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 10px;
+  text-align: center;
+  background-color: #f9f9f9;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
