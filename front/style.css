@@ -167,7 +167,7 @@ h2, h3 {
 
 /* --- レスポンシブ対応 --- 
    画面幅が850px以下の場合、.top-container を縦方向に変更 */
-@media (max-width: 850px) {
+@media (max-width: 1050px) {
   .top-container {
     flex-direction: column;
     align-items: center;
@@ -178,7 +178,7 @@ h2, h3 {
 }
 
 /* --- 850px以上の場合、左側の内容を中央に固定 --- */
-@media (min-width: 850px) {
+@media (min-width: 1050px) {
   #date-container {
     max-width: 300px;
     margin: 0 auto;
