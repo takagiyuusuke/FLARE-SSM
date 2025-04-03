@@ -12,9 +12,9 @@
 <body>
   <h1>フレアデモ</h1>
 
-  <!-- 上部: 左と右に分割 -->
+  <!-- 上部：左右に分割（左：日付・時刻・ボタン、右：太陽画像） -->
   <div class="top-container">
-    <!-- 左上: カレンダー、時刻選択、ボタン -->
+    <!-- 左側：日付・時刻・ボタン -->
     <div class="left-top">
       <div id="date-container">
         <input id="date-picker" type="text" readonly class="inline-calendar">
@@ -25,21 +25,24 @@
         <button id="load-button">この時刻で読み込む</button>
       </div>
     </div>
-    <!-- 右上: 現在表示中の時刻と太陽画像10種 -->
+    <!-- 右側：太陽画像（2行×5列固定） -->
     <div class="right-top">
       <h2 id="timestamp">Loading timestamp...</h2>
-      <div class="grid" id="aia-grid"></div>
+      <div class="grid" id="aia-grid">
+        <!-- ここにはスクリプトから10枚の画像が動的に挿入されます -->
+      </div>
     </div>
   </div>
 
-  <!-- 下部①: 予測結果（画面横幅いっぱい） -->
+  <!-- 下部①：予測結果（横幅100%） -->
   <div class="prediction-container">
     <div id="prediction-cards" class="card-container">
-      <!-- ここに予測カードの内容を動的に生成 -->
+      <!-- 予測カードの内容 -->
     </div>
+    <div id="error-message" class="error-message"></div>
   </div>
 
-  <!-- 下部②: X線強度グラフ -->
+  <!-- 下部②：X線強度グラフ（横幅100%） -->
   <div class="graph-container">
     <h3>72時間後までのX線強度の推移 (GOES観測)</h3>
     <canvas id="flareChart" width="600" height="300"></canvas>

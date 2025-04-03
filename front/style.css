@@ -1,4 +1,4 @@
-/* 全体の基本設定 */
+/* --- 全体基本設定 --- */
 body {
   font-family: "Roboto", sans-serif;
   margin: 10px;
@@ -11,35 +11,33 @@ h1, h2, h3 {
   margin: 8px 0;
 }
 
-/* 上部コンテナ（左右2カラム） */
+/* --- 上部レイアウト --- */
 .top-container {
   display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
+  flex-wrap: nowrap;
   gap: 10px;
-  flex-wrap: wrap;
   margin-bottom: 10px;
 }
 
-/* 左上エリア */
+/* 左側：日付・時刻・ボタン（幅30%） */
 .left-top {
-  flex: 1 1 300px;
+  flex: 0 0 30%;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 8px;
 }
 
-/* 右上エリア */
+/* 右側：太陽画像（幅70%） */
 .right-top {
-  flex: 1 1 300px;
+  flex: 0 0 70%;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 8px;
 }
 
-/* inlineカレンダー用（flatpickr） */
+/* inlineカレンダー（flatpickr用） */
 .inline-calendar {
   width: 250px;
   border: none;
@@ -48,7 +46,7 @@ h1, h2, h3 {
   text-align: center;
 }
 
-/* 時刻選択ドロップダウン */
+/* 時刻選択 */
 #time-picker {
   display: flex;
   align-items: center;
@@ -63,7 +61,7 @@ h1, h2, h3 {
   color: #333;
 }
 
-/* Material Design ライクなボタン */
+/* ボタン */
 #load-button {
   background-color: #6200ee;
   color: #fff;
@@ -79,51 +77,12 @@ h1, h2, h3 {
   box-shadow: 0 4px 8px rgba(0,0,0,0.2);
 }
 
-/* 予測カードコンテナ（下部全幅） */
-.prediction-container {
-  width: 100%;
-  margin: 10px 0;
-}
-.card-container {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 6px;
-}
-
-/* 予測カード */
-.prediction-card {
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  padding: 6px;
-  text-align: center;
-  background-color: #f9f9f9;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  transition: transform 0.2s, border-color 0.2s;
-  font-size: 14px;
-}
-.prediction-card:hover {
-  transform: scale(1.05);
-}
-.prediction-card.highlight {
-  border-color: #ff9800;
-  box-shadow: 0 3px 8px rgba(255, 152, 0, 0.5);
-}
-.class-label {
-  font-size: 18px;
-  font-weight: bold;
-  color: #333;
-}
-.class-small {
-  font-size: 12px;
-  font-weight: normal;
-  color: #666;
-}
-
-/* 太陽画像グリッド（右上エリア） */
+/* --- 太陽画像グリッド（右側） --- */
+/* 固定で2行×5列 */
 .grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+  grid-template-columns: repeat(5, 1fr);
+  grid-template-rows: repeat(2, auto);
   gap: 6px;
   width: 100%;
 }
@@ -138,9 +97,62 @@ h1, h2, h3 {
   border: 1px solid #ccc;
 }
 
-/* グラフ部分 */
+/* --- 下部：予測結果 --- */
+.prediction-container {
+  width: 100%;
+  margin: 10px 0;
+}
+.card-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+}
+/* 予測カード：横幅を大きく */
+.prediction-card {
+  flex: 0 0 250px;  /* 幅を250pxに */
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 10px;
+  text-align: center;
+  background-color: #f9f9f9;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  transition: transform 0.2s, border-color 0.2s;
+  font-size: 14px;
+}
+.prediction-card:hover {
+  transform: scale(1.05);
+}
+.prediction-card.highlight {
+  border-color: #ff9800;
+  box-shadow: 0 3px 8px rgba(255,152,0,0.5);
+}
+.class-label {
+  font-size: 18px;
+  font-weight: bold;
+  color: #333;
+}
+.class-small {
+  font-size: 12px;
+  font-weight: normal;
+  color: #666;
+}
+/* エラーメッセージは下部に配置 */
+.error-message {
+  width: 100%;
+  margin-top: 8px;
+  text-align: center;
+  color: red;
+  font-weight: bold;
+}
+
+/* --- 下部：グラフ --- */
 .graph-container {
   width: 100%;
-  max-width: 800px;
-  margin: 10px auto;
+  margin: 10px 0;
+  text-align: center;
+}
+
+#date-picker {
+  display: none;
 }
