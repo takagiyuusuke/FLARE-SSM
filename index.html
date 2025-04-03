@@ -12,31 +12,35 @@
 <body>
   <h1>フレアデモ</h1>
 
-  <!-- 日付選択と時刻選択（UTC） -->
-  <div id="date-container">
-    <!-- カレンダー（flatpickrで日付のみ選択・常時表示） -->
-    <input id="date-picker" type="text" readonly class="inline-calendar">
-    <!-- 時刻選択用ドロップダウン -->
-    <div id="time-picker">
-      <label for="utc-hour">UTC 時刻:</label>
-      <select id="utc-hour"></select>
+  <!-- まとめて横並びにするための flex コンテナ -->
+  <div class="top-row">
+    <div id="date-container">
+      <input id="date-picker" type="text" readonly class="inline-calendar">
+      <div id="time-picker">
+        <label for="utc-hour">UTC 時刻:</label>
+        <select id="utc-hour"></select>
+      </div>
     </div>
+
+    <button id="load-button">この時刻で読み込む</button>
+
+    <!-- 予測カード類 -->
+    <div id="prediction-cards" class="card-container"></div>
+
+    <!-- 現在の時刻 -->
+    <h2 id="timestamp">Loading timestamp...</h2>
   </div>
 
-  <button id="load-button">この時刻で読み込む</button>
-
-  <div id="prediction-cards" class="card-container"></div>
-
-  <h2 id="timestamp">Loading timestamp...</h2>
-
+  <!-- 画像グリッド -->
   <div class="grid" id="aia-grid"></div>
 
-  <div>
+  <!-- チャート部分 -->
+  <div class="chart-container">
     <h3>72時間後までのX線強度の推移 (GOES観測)</h3>
     <canvas id="flareChart" width="600" height="300"></canvas>
   </div>
 
-  <!-- Flatpickr のスクリプト -->
+  <!-- スクリプト類 -->
   <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
   <script src="front/script.js"></script>
 </body>
