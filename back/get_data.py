@@ -163,22 +163,17 @@ def main():
     else:
         update_xrs_json(dt)
 
-    # XRS更新用のタイムスタンプ
-    xrs_dt = dt
-
     while True:
-        # XRSの更新（1時間粒度）
-        if xrs_dt <= dt:
-            update_xrs_json(xrs_dt)
-            xrs_dt -= timedelta(hours=1)
+        update_xrs_json(dt)
+        update_xrs_json(dt - timedelta(hours=1))
 
         # H5ファイルが存在するか確認
         time_str = dt.strftime('%H')
         date_str = dt.strftime('%m%d')
-        h5_path = os.path.join(H5_SAVE_ROOT, dt.strftime("%Y%m%d_%H0000.h5"))
-        if os.path.exists(h5_path):
-            print(f"✅ H5ファイルが既に存在: {h5_path}")
-            break
+        # h5_path = os.path.join(H5_SAVE_ROOT, dt.strftime("%Y%m%d_%H0000.h5"))
+        # if os.path.exists(h5_path):
+        #     print(f"✅ H5ファイルが既に存在: {h5_path}")
+        #     break
 
         # AIA画像とHMI画像の処理（2時間粒度）
         aia_images = []
