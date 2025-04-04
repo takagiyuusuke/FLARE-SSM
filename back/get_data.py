@@ -157,7 +157,9 @@ def main():
 
     # 奇数時の場合、1時間繰り下げて偶数時に調整
     if dt.hour % 2 != 0:
+        update_xrs_json(dt)
         dt -= timedelta(hours=1)
+        update_xrs_json(dt)
     else:
         update_xrs_json(dt)
 

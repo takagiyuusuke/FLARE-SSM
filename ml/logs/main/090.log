@@ -6100,3 +6100,2436 @@ weight_decay: 0.05
 
 2025-04-03 18:23:48,399 - 090 - INFO - ==================
 
+2025-04-04 16:03:27,391 - 090 - INFO - Using fold 6
+2025-04-04 16:03:27,391 - 090 - INFO - Dataset configuration:
+2025-04-04 16:03:27,391 - 090 - INFO - force_preprocess: False
+2025-04-04 16:03:27,391 - 090 - INFO - force_recalc_indices: False
+2025-04-04 16:03:27,391 - 090 - INFO - force_recalc_stats: False
+2025-04-04 16:03:27,392 - 090 - INFO - ==================================================
+2025-04-04 16:03:27,392 - 090 - INFO - Statistics Computation Start
+2025-04-04 16:03:27,392 - 090 - INFO - Using statistics directory: ../../DeepSpaceWeatherModel/datasets/main/statistics/fold6
+2025-04-04 16:03:27,392 - 090 - INFO - Training periods:
+2025-04-04 16:03:27,392 - 090 - INFO -   2011-12-01 to 2021-11-30
+2025-04-04 16:03:27,392 - 090 - INFO - ==================================================
+2025-04-04 16:03:27,392 - 090 - INFO - Loading cached statistics from ../../DeepSpaceWeatherModel/datasets/main/statistics/fold6
+2025-04-04 16:03:27,393 - 090 - INFO - Loaded full Climatology: [0.54033927 0.32127617 0.12230964 0.01607491]
+2025-04-04 16:03:27,393 - 090 - INFO - Normalized Binary Climatology: [0.86161544 0.13838456]
+2025-04-04 16:03:27,393 - 090 - INFO - Below M class probability: 0.8616
+2025-04-04 16:03:27,394 - 090 - INFO - M class and above probability: 0.1384
+2025-04-04 16:03:27,394 - 090 - INFO - ==================================================
+2025-04-04 16:03:27,394 - 090 - INFO - Statistics Computation Complete
+2025-04-04 16:03:27,394 - 090 - INFO - ==================================================
+2025-04-04 16:03:29,702 - 090 - INFO - ==========================================================================================
+2025-04-04 16:03:29,703 - 090 - INFO - MACs: 2326.26M
+2025-04-04 16:03:29,703 - 090 - INFO - ==========================================================================================
+2025-04-04 16:03:29,718 - 090 - INFO - Model Summary:
+================================================================================
+Layer (type:depth-idx)                                  Param #
+================================================================================
+Ours                                                    --
+├─SolarSpatialEncoder: 1-1                              --
+│    └─ModuleList: 2-1                                  --
+│    │    └─Sequential: 3-1                             7,104
+│    │    └─Sequential: 3-2                             110,784
+│    │    └─Sequential: 3-3                             110,784
+│    │    └─Sequential: 3-4                             110,784
+│    └─ModuleList: 2-2                                  --
+│    │    └─DepthwiseChannelSelectiveModule: 3-5        14,912
+│    │    └─DepthwiseChannelSelectiveModule: 3-6        14,912
+│    │    └─DepthwiseChannelSelectiveModule: 3-7        14,912
+│    └─ModuleList: 2-3                                  --
+│    │    └─SpatioTemporalSSM: 3-8                      29,440
+│    │    └─SpatioTemporalSSM: 3-9                      29,440
+│    │    └─SpatioTemporalSSM: 3-10                     29,440
+│    └─Dropout: 2-4                                     --
+│    └─Sequential: 2-5                                  --
+│    │    └─Conv2d: 3-11                                1,474,816
+│    │    └─BatchNorm2d: 3-12                           512
+│    │    └─ReLU: 3-13                                  --
+│    │    └─Dropout: 3-14                               --
+│    │    └─Conv2d: 3-15                                295,040
+│    │    └─BatchNorm2d: 3-16                           256
+│    │    └─ReLU: 3-17                                  --
+│    │    └─Dropout: 3-18                               --
+│    │    └─Conv2d: 3-19                                147,584
+├─LongRangeTemporalSSM: 1-2                             --
+│    └─SSMBlock: 2-6                                    --
+│    │    └─ModuleList: 3-20                            115,968
+│    └─Sequential: 2-7                                  --
+│    │    └─Conv1d: 3-21                                82,048
+│    │    └─Dropout: 3-22                               --
+│    │    └─ReLU: 3-23                                  --
+│    │    └─Conv1d: 3-24                                82,048
+│    │    └─Dropout: 3-25                               --
+│    │    └─ReLU: 3-26                                  --
+│    └─Dropout: 2-8                                     --
+│    └─AdaptiveAvgPool1d: 2-9                           --
+├─SSMBlock: 1-3                                         --
+│    └─ModuleList: 2-10                                 --
+│    │    └─SSMLayer: 3-27                              29,312
+├─ClassificationHead: 1-4                               --
+│    └─AdaptiveAvgPool1d: 2-11                          --
+│    └─Sequential: 2-12                                 --
+│    │    └─Linear: 3-28                                2,080
+│    │    └─GELU: 3-29                                  --
+│    │    └─Dropout: 3-30                               --
+│    │    └─Linear: 3-31                                1,056
+│    │    └─GELU: 3-32                                  --
+│    │    └─Dropout: 3-33                               --
+│    │    └─Linear: 3-34                                132
+================================================================================
+Total params: 2,703,364
+Trainable params: 2,703,364
+Non-trainable params: 0
+================================================================================
+2025-04-04 16:03:29,719 - 090 - INFO - 
+=== Configuration ===
+2025-04-04 16:03:29,722 - 090 - INFO - bs: 64
+cache_root: ../../DeepSpaceWeatherModel/datasets/main
+calculate_valid_indices: false
+class_weights:
+  stage1:
+    beta: 0.9999
+    custom_weights:
+    - 1.0
+    - 2.0
+    - 2.0
+    - 2.0
+    enabled: true
+    method: inverse
+  stage2:
+    beta: 0.9999
+    custom_weights:
+    - 1.0
+    - 1.0
+    - 3.0
+    - 5.0
+    enabled: false
+    method: inverse
+cosine_epochs: 20
+cuda_device: 0
+current_stage: 1
+data_path: ../../DeepSpaceWeatherModel/datasets/all_data_hours
+data_root: ../../DeepSpaceWeatherModel/datasets
+dataset:
+  force_preprocess: false
+  force_recalc_indices: false
+  force_recalc_stats: false
+debug: false
+detail_summary: false
+device: cpu
+early_stopping:
+  metric: valid_GMGS
+  patience: 5
+epoch_for_2stage: 15
+epochs: 20
+factor:
+  BS: 2.5
+  CE: 1.5
+  GMGS: 1.5
+features_path: ../../DeepSpaceWeatherModel/datasets/all_features/completed/all_features_history_672_step_1
+fold: 6
+history: 4
+imbalance: true
+lr: 4.0e-05
+lr_for_2stage: 4.0e-05
+main_metric: GMGS
+mode: test
+model: !!python/object:argparse.Namespace
+  models:
+    CNNLSTM: !!python/object:argparse.Namespace
+      architecture_params: !!python/object:argparse.Namespace
+        cnn_layers: 4
+        hidden_dim: 128
+    FlareTransformer: !!python/object:argparse.Namespace
+      architecture_params: !!python/object:argparse.Namespace
+        input_channel: 90
+        mm_params: !!python/object:argparse.Namespace
+          N: 1
+          d_ff: 16
+          d_model: 128
+          dropout: 0.1
+          h: 4
+        output_channel: 4
+        sfm_params: !!python/object:argparse.Namespace
+          N: 1
+          d_ff: 16
+          d_model: 128
+          dropout: 0.1
+          h: 4
+        window: 4
+    Ours: !!python/object:argparse.Namespace
+      architecture_params: !!python/object:argparse.Namespace
+        D: 64
+        L: 128
+        L_LT: 1
+        L_SSE: 3
+        drop_path_rate: 0.5
+        dropout_rates: !!python/object:argparse.Namespace
+          dwcm: 0.4
+          head: 0.6
+          ltssm: 0.5
+          mixing_ssm: 0.5
+          sse: 0.5
+          stssm: 0.6
+        layer_scale_init_value: 1.0e-06
+  selected: Ours
+optimizer: adamw
+params: params/main/params.yaml
+resume_from_checkpoint: checkpoints/main/090_stage1_best.pth
+stage: 1
+stage2:
+  epochs: 15
+  lr: 4.0e-05
+test_periods:
+- !!python/tuple
+  - '2025-03-01'
+  - 2026-3-31
+train_periods:
+- !!python/tuple
+  - '2011-12-01'
+  - '2021-11-30'
+trial_name: 090
+val_periods:
+- !!python/tuple
+  - '2011-06-01'
+  - '2011-11-30'
+- !!python/tuple
+  - '2021-12-01'
+  - 2022-5-30
+wandb: false
+warmup_epochs: 3
+weight_decay: 0.05
+
+2025-04-04 16:03:29,722 - 090 - INFO - ==================
+
+2025-04-04 16:04:15,177 - 090 - INFO - Using fold 6
+2025-04-04 16:04:15,177 - 090 - INFO - Dataset configuration:
+2025-04-04 16:04:15,177 - 090 - INFO - force_preprocess: False
+2025-04-04 16:04:15,177 - 090 - INFO - force_recalc_indices: False
+2025-04-04 16:04:15,177 - 090 - INFO - force_recalc_stats: False
+2025-04-04 16:04:15,177 - 090 - INFO - ==================================================
+2025-04-04 16:04:15,177 - 090 - INFO - Statistics Computation Start
+2025-04-04 16:04:15,177 - 090 - INFO - Using statistics directory: ../../DeepSpaceWeatherModel/datasets/main/statistics/fold6
+2025-04-04 16:04:15,178 - 090 - INFO - Training periods:
+2025-04-04 16:04:15,178 - 090 - INFO -   2011-12-01 to 2021-11-30
+2025-04-04 16:04:15,178 - 090 - INFO - ==================================================
+2025-04-04 16:04:15,178 - 090 - INFO - Loading cached statistics from ../../DeepSpaceWeatherModel/datasets/main/statistics/fold6
+2025-04-04 16:04:15,178 - 090 - INFO - Loaded full Climatology: [0.54033927 0.32127617 0.12230964 0.01607491]
+2025-04-04 16:04:15,179 - 090 - INFO - Normalized Binary Climatology: [0.86161544 0.13838456]
+2025-04-04 16:04:15,179 - 090 - INFO - Below M class probability: 0.8616
+2025-04-04 16:04:15,179 - 090 - INFO - M class and above probability: 0.1384
+2025-04-04 16:04:15,179 - 090 - INFO - ==================================================
+2025-04-04 16:04:15,179 - 090 - INFO - Statistics Computation Complete
+2025-04-04 16:04:15,179 - 090 - INFO - ==================================================
+2025-04-04 16:04:17,893 - 090 - INFO - ==========================================================================================
+2025-04-04 16:04:17,893 - 090 - INFO - MACs: 2326.26M
+2025-04-04 16:04:17,893 - 090 - INFO - ==========================================================================================
+2025-04-04 16:04:17,915 - 090 - INFO - Model Summary:
+================================================================================
+Layer (type:depth-idx)                                  Param #
+================================================================================
+Ours                                                    --
+├─SolarSpatialEncoder: 1-1                              --
+│    └─ModuleList: 2-1                                  --
+│    │    └─Sequential: 3-1                             7,104
+│    │    └─Sequential: 3-2                             110,784
+│    │    └─Sequential: 3-3                             110,784
+│    │    └─Sequential: 3-4                             110,784
+│    └─ModuleList: 2-2                                  --
+│    │    └─DepthwiseChannelSelectiveModule: 3-5        14,912
+│    │    └─DepthwiseChannelSelectiveModule: 3-6        14,912
+│    │    └─DepthwiseChannelSelectiveModule: 3-7        14,912
+│    └─ModuleList: 2-3                                  --
+│    │    └─SpatioTemporalSSM: 3-8                      29,440
+│    │    └─SpatioTemporalSSM: 3-9                      29,440
+│    │    └─SpatioTemporalSSM: 3-10                     29,440
+│    └─Dropout: 2-4                                     --
+│    └─Sequential: 2-5                                  --
+│    │    └─Conv2d: 3-11                                1,474,816
+│    │    └─BatchNorm2d: 3-12                           512
+│    │    └─ReLU: 3-13                                  --
+│    │    └─Dropout: 3-14                               --
+│    │    └─Conv2d: 3-15                                295,040
+│    │    └─BatchNorm2d: 3-16                           256
+│    │    └─ReLU: 3-17                                  --
+│    │    └─Dropout: 3-18                               --
+│    │    └─Conv2d: 3-19                                147,584
+├─LongRangeTemporalSSM: 1-2                             --
+│    └─SSMBlock: 2-6                                    --
+│    │    └─ModuleList: 3-20                            115,968
+│    └─Sequential: 2-7                                  --
+│    │    └─Conv1d: 3-21                                82,048
+│    │    └─Dropout: 3-22                               --
+│    │    └─ReLU: 3-23                                  --
+│    │    └─Conv1d: 3-24                                82,048
+│    │    └─Dropout: 3-25                               --
+│    │    └─ReLU: 3-26                                  --
+│    └─Dropout: 2-8                                     --
+│    └─AdaptiveAvgPool1d: 2-9                           --
+├─SSMBlock: 1-3                                         --
+│    └─ModuleList: 2-10                                 --
+│    │    └─SSMLayer: 3-27                              29,312
+├─ClassificationHead: 1-4                               --
+│    └─AdaptiveAvgPool1d: 2-11                          --
+│    └─Sequential: 2-12                                 --
+│    │    └─Linear: 3-28                                2,080
+│    │    └─GELU: 3-29                                  --
+│    │    └─Dropout: 3-30                               --
+│    │    └─Linear: 3-31                                1,056
+│    │    └─GELU: 3-32                                  --
+│    │    └─Dropout: 3-33                               --
+│    │    └─Linear: 3-34                                132
+================================================================================
+Total params: 2,703,364
+Trainable params: 2,703,364
+Non-trainable params: 0
+================================================================================
+2025-04-04 16:04:17,916 - 090 - INFO - 
+=== Configuration ===
+2025-04-04 16:04:17,922 - 090 - INFO - bs: 64
+cache_root: ../../DeepSpaceWeatherModel/datasets/main
+calculate_valid_indices: false
+class_weights:
+  stage1:
+    beta: 0.9999
+    custom_weights:
+    - 1.0
+    - 2.0
+    - 2.0
+    - 2.0
+    enabled: true
+    method: inverse
+  stage2:
+    beta: 0.9999
+    custom_weights:
+    - 1.0
+    - 1.0
+    - 3.0
+    - 5.0
+    enabled: false
+    method: inverse
+cosine_epochs: 20
+cuda_device: 0
+current_stage: 1
+data_path: ../../DeepSpaceWeatherModel/datasets/all_data_hours
+data_root: ../../DeepSpaceWeatherModel/datasets
+dataset:
+  force_preprocess: false
+  force_recalc_indices: false
+  force_recalc_stats: false
+debug: false
+detail_summary: false
+device: cpu
+early_stopping:
+  metric: valid_GMGS
+  patience: 5
+epoch_for_2stage: 15
+epochs: 20
+factor:
+  BS: 2.5
+  CE: 1.5
+  GMGS: 1.5
+features_path: ../../DeepSpaceWeatherModel/datasets/all_features/completed/all_features_history_672_step_1
+fold: 6
+history: 4
+imbalance: true
+lr: 4.0e-05
+lr_for_2stage: 4.0e-05
+main_metric: GMGS
+mode: test
+model: !!python/object:argparse.Namespace
+  models:
+    CNNLSTM: !!python/object:argparse.Namespace
+      architecture_params: !!python/object:argparse.Namespace
+        cnn_layers: 4
+        hidden_dim: 128
+    FlareTransformer: !!python/object:argparse.Namespace
+      architecture_params: !!python/object:argparse.Namespace
+        input_channel: 90
+        mm_params: !!python/object:argparse.Namespace
+          N: 1
+          d_ff: 16
+          d_model: 128
+          dropout: 0.1
+          h: 4
+        output_channel: 4
+        sfm_params: !!python/object:argparse.Namespace
+          N: 1
+          d_ff: 16
+          d_model: 128
+          dropout: 0.1
+          h: 4
+        window: 4
+    Ours: !!python/object:argparse.Namespace
+      architecture_params: !!python/object:argparse.Namespace
+        D: 64
+        L: 128
+        L_LT: 1
+        L_SSE: 3
+        drop_path_rate: 0.5
+        dropout_rates: !!python/object:argparse.Namespace
+          dwcm: 0.4
+          head: 0.6
+          ltssm: 0.5
+          mixing_ssm: 0.5
+          sse: 0.5
+          stssm: 0.6
+        layer_scale_init_value: 1.0e-06
+  selected: Ours
+optimizer: adamw
+params: params/main/params.yaml
+resume_from_checkpoint: checkpoints/main/090_stage1_best.pth
+stage: 1
+stage2:
+  epochs: 15
+  lr: 4.0e-05
+test_periods:
+- !!python/tuple
+  - '2025-03-01'
+  - 2026-3-31
+train_periods:
+- !!python/tuple
+  - '2011-12-01'
+  - '2021-11-30'
+trial_name: 090
+val_periods:
+- !!python/tuple
+  - '2011-06-01'
+  - '2011-11-30'
+- !!python/tuple
+  - '2021-12-01'
+  - 2022-5-30
+wandb: false
+warmup_epochs: 3
+weight_decay: 0.05
+
+2025-04-04 16:04:17,923 - 090 - INFO - ==================
+
+2025-04-04 16:05:22,684 - 090 - INFO - Using fold 6
+2025-04-04 16:05:22,684 - 090 - INFO - Dataset configuration:
+2025-04-04 16:05:22,684 - 090 - INFO - force_preprocess: False
+2025-04-04 16:05:22,684 - 090 - INFO - force_recalc_indices: False
+2025-04-04 16:05:22,684 - 090 - INFO - force_recalc_stats: False
+2025-04-04 16:05:22,684 - 090 - INFO - ==================================================
+2025-04-04 16:05:22,684 - 090 - INFO - Statistics Computation Start
+2025-04-04 16:05:22,684 - 090 - INFO - Using statistics directory: ../../DeepSpaceWeatherModel/datasets/main/statistics/fold6
+2025-04-04 16:05:22,684 - 090 - INFO - Training periods:
+2025-04-04 16:05:22,684 - 090 - INFO -   2011-12-01 to 2021-11-30
+2025-04-04 16:05:22,684 - 090 - INFO - ==================================================
+2025-04-04 16:05:22,684 - 090 - INFO - Loading cached statistics from ../../DeepSpaceWeatherModel/datasets/main/statistics/fold6
+2025-04-04 16:05:22,685 - 090 - INFO - Loaded full Climatology: [0.54033927 0.32127617 0.12230964 0.01607491]
+2025-04-04 16:05:22,685 - 090 - INFO - Normalized Binary Climatology: [0.86161544 0.13838456]
+2025-04-04 16:05:22,685 - 090 - INFO - Below M class probability: 0.8616
+2025-04-04 16:05:22,685 - 090 - INFO - M class and above probability: 0.1384
+2025-04-04 16:05:22,685 - 090 - INFO - ==================================================
+2025-04-04 16:05:22,685 - 090 - INFO - Statistics Computation Complete
+2025-04-04 16:05:22,685 - 090 - INFO - ==================================================
+2025-04-04 16:05:23,908 - 090 - INFO - ==========================================================================================
+2025-04-04 16:05:23,908 - 090 - INFO - MACs: 2326.26M
+2025-04-04 16:05:23,908 - 090 - INFO - ==========================================================================================
+2025-04-04 16:05:23,926 - 090 - INFO - Model Summary:
+================================================================================
+Layer (type:depth-idx)                                  Param #
+================================================================================
+Ours                                                    --
+├─SolarSpatialEncoder: 1-1                              --
+│    └─ModuleList: 2-1                                  --
+│    │    └─Sequential: 3-1                             7,104
+│    │    └─Sequential: 3-2                             110,784
+│    │    └─Sequential: 3-3                             110,784
+│    │    └─Sequential: 3-4                             110,784
+│    └─ModuleList: 2-2                                  --
+│    │    └─DepthwiseChannelSelectiveModule: 3-5        14,912
+│    │    └─DepthwiseChannelSelectiveModule: 3-6        14,912
+│    │    └─DepthwiseChannelSelectiveModule: 3-7        14,912
+│    └─ModuleList: 2-3                                  --
+│    │    └─SpatioTemporalSSM: 3-8                      29,440
+│    │    └─SpatioTemporalSSM: 3-9                      29,440
+│    │    └─SpatioTemporalSSM: 3-10                     29,440
+│    └─Dropout: 2-4                                     --
+│    └─Sequential: 2-5                                  --
+│    │    └─Conv2d: 3-11                                1,474,816
+│    │    └─BatchNorm2d: 3-12                           512
+│    │    └─ReLU: 3-13                                  --
+│    │    └─Dropout: 3-14                               --
+│    │    └─Conv2d: 3-15                                295,040
+│    │    └─BatchNorm2d: 3-16                           256
+│    │    └─ReLU: 3-17                                  --
+│    │    └─Dropout: 3-18                               --
+│    │    └─Conv2d: 3-19                                147,584
+├─LongRangeTemporalSSM: 1-2                             --
+│    └─SSMBlock: 2-6                                    --
+│    │    └─ModuleList: 3-20                            115,968
+│    └─Sequential: 2-7                                  --
+│    │    └─Conv1d: 3-21                                82,048
+│    │    └─Dropout: 3-22                               --
+│    │    └─ReLU: 3-23                                  --
+│    │    └─Conv1d: 3-24                                82,048
+│    │    └─Dropout: 3-25                               --
+│    │    └─ReLU: 3-26                                  --
+│    └─Dropout: 2-8                                     --
+│    └─AdaptiveAvgPool1d: 2-9                           --
+├─SSMBlock: 1-3                                         --
+│    └─ModuleList: 2-10                                 --
+│    │    └─SSMLayer: 3-27                              29,312
+├─ClassificationHead: 1-4                               --
+│    └─AdaptiveAvgPool1d: 2-11                          --
+│    └─Sequential: 2-12                                 --
+│    │    └─Linear: 3-28                                2,080
+│    │    └─GELU: 3-29                                  --
+│    │    └─Dropout: 3-30                               --
+│    │    └─Linear: 3-31                                1,056
+│    │    └─GELU: 3-32                                  --
+│    │    └─Dropout: 3-33                               --
+│    │    └─Linear: 3-34                                132
+================================================================================
+Total params: 2,703,364
+Trainable params: 2,703,364
+Non-trainable params: 0
+================================================================================
+2025-04-04 16:05:23,927 - 090 - INFO - 
+=== Configuration ===
+2025-04-04 16:05:23,934 - 090 - INFO - bs: 64
+cache_root: ../../DeepSpaceWeatherModel/datasets/main
+calculate_valid_indices: false
+class_weights:
+  stage1:
+    beta: 0.9999
+    custom_weights:
+    - 1.0
+    - 2.0
+    - 2.0
+    - 2.0
+    enabled: true
+    method: inverse
+  stage2:
+    beta: 0.9999
+    custom_weights:
+    - 1.0
+    - 1.0
+    - 3.0
+    - 5.0
+    enabled: false
+    method: inverse
+cosine_epochs: 20
+cuda_device: 0
+current_stage: 1
+data_path: ../../DeepSpaceWeatherModel/datasets/all_data_hours
+data_root: ../../DeepSpaceWeatherModel/datasets
+dataset:
+  force_preprocess: false
+  force_recalc_indices: false
+  force_recalc_stats: false
+debug: false
+detail_summary: false
+device: cpu
+early_stopping:
+  metric: valid_GMGS
+  patience: 5
+epoch_for_2stage: 15
+epochs: 20
+factor:
+  BS: 2.5
+  CE: 1.5
+  GMGS: 1.5
+features_path: ../../DeepSpaceWeatherModel/datasets/all_features/completed/all_features_history_672_step_1
+fold: 6
+history: 4
+imbalance: true
+lr: 4.0e-05
+lr_for_2stage: 4.0e-05
+main_metric: GMGS
+mode: test
+model: !!python/object:argparse.Namespace
+  models:
+    CNNLSTM: !!python/object:argparse.Namespace
+      architecture_params: !!python/object:argparse.Namespace
+        cnn_layers: 4
+        hidden_dim: 128
+    FlareTransformer: !!python/object:argparse.Namespace
+      architecture_params: !!python/object:argparse.Namespace
+        input_channel: 90
+        mm_params: !!python/object:argparse.Namespace
+          N: 1
+          d_ff: 16
+          d_model: 128
+          dropout: 0.1
+          h: 4
+        output_channel: 4
+        sfm_params: !!python/object:argparse.Namespace
+          N: 1
+          d_ff: 16
+          d_model: 128
+          dropout: 0.1
+          h: 4
+        window: 4
+    Ours: !!python/object:argparse.Namespace
+      architecture_params: !!python/object:argparse.Namespace
+        D: 64
+        L: 128
+        L_LT: 1
+        L_SSE: 3
+        drop_path_rate: 0.5
+        dropout_rates: !!python/object:argparse.Namespace
+          dwcm: 0.4
+          head: 0.6
+          ltssm: 0.5
+          mixing_ssm: 0.5
+          sse: 0.5
+          stssm: 0.6
+        layer_scale_init_value: 1.0e-06
+  selected: Ours
+optimizer: adamw
+params: params/main/params.yaml
+resume_from_checkpoint: checkpoints/main/090_stage1_best.pth
+stage: 1
+stage2:
+  epochs: 15
+  lr: 4.0e-05
+test_periods:
+- !!python/tuple
+  - '2025-03-01'
+  - 2026-3-31
+train_periods:
+- !!python/tuple
+  - '2011-12-01'
+  - '2021-11-30'
+trial_name: 090
+val_periods:
+- !!python/tuple
+  - '2011-06-01'
+  - '2011-11-30'
+- !!python/tuple
+  - '2021-12-01'
+  - 2022-5-30
+wandb: false
+warmup_epochs: 3
+weight_decay: 0.05
+
+2025-04-04 16:05:23,934 - 090 - INFO - ==================
+
+2025-04-04 16:06:39,806 - 090 - INFO - Using fold 6
+2025-04-04 16:06:39,807 - 090 - INFO - Dataset configuration:
+2025-04-04 16:06:39,807 - 090 - INFO - force_preprocess: False
+2025-04-04 16:06:39,807 - 090 - INFO - force_recalc_indices: False
+2025-04-04 16:06:39,807 - 090 - INFO - force_recalc_stats: False
+2025-04-04 16:06:39,807 - 090 - INFO - ==================================================
+2025-04-04 16:06:39,807 - 090 - INFO - Statistics Computation Start
+2025-04-04 16:06:39,807 - 090 - INFO - Using statistics directory: ../../DeepSpaceWeatherModel/datasets/main/statistics/fold6
+2025-04-04 16:06:39,808 - 090 - INFO - Training periods:
+2025-04-04 16:06:39,808 - 090 - INFO -   2025-02-01 to 2025-02-01
+2025-04-04 16:06:39,808 - 090 - INFO - ==================================================
+2025-04-04 16:06:39,808 - 090 - INFO - Loading cached statistics from ../../DeepSpaceWeatherModel/datasets/main/statistics/fold6
+2025-04-04 16:06:39,809 - 090 - INFO - Loaded full Climatology: [0.54033927 0.32127617 0.12230964 0.01607491]
+2025-04-04 16:06:39,809 - 090 - INFO - Normalized Binary Climatology: [0.86161544 0.13838456]
+2025-04-04 16:06:39,809 - 090 - INFO - Below M class probability: 0.8616
+2025-04-04 16:06:39,809 - 090 - INFO - M class and above probability: 0.1384
+2025-04-04 16:06:39,809 - 090 - INFO - ==================================================
+2025-04-04 16:06:39,809 - 090 - INFO - Statistics Computation Complete
+2025-04-04 16:06:39,809 - 090 - INFO - ==================================================
+2025-04-04 16:06:41,766 - 090 - INFO - ==========================================================================================
+2025-04-04 16:06:41,767 - 090 - INFO - MACs: 2326.26M
+2025-04-04 16:06:41,768 - 090 - INFO - ==========================================================================================
+2025-04-04 16:06:41,790 - 090 - INFO - Model Summary:
+================================================================================
+Layer (type:depth-idx)                                  Param #
+================================================================================
+Ours                                                    --
+├─SolarSpatialEncoder: 1-1                              --
+│    └─ModuleList: 2-1                                  --
+│    │    └─Sequential: 3-1                             7,104
+│    │    └─Sequential: 3-2                             110,784
+│    │    └─Sequential: 3-3                             110,784
+│    │    └─Sequential: 3-4                             110,784
+│    └─ModuleList: 2-2                                  --
+│    │    └─DepthwiseChannelSelectiveModule: 3-5        14,912
+│    │    └─DepthwiseChannelSelectiveModule: 3-6        14,912
+│    │    └─DepthwiseChannelSelectiveModule: 3-7        14,912
+│    └─ModuleList: 2-3                                  --
+│    │    └─SpatioTemporalSSM: 3-8                      29,440
+│    │    └─SpatioTemporalSSM: 3-9                      29,440
+│    │    └─SpatioTemporalSSM: 3-10                     29,440
+│    └─Dropout: 2-4                                     --
+│    └─Sequential: 2-5                                  --
+│    │    └─Conv2d: 3-11                                1,474,816
+│    │    └─BatchNorm2d: 3-12                           512
+│    │    └─ReLU: 3-13                                  --
+│    │    └─Dropout: 3-14                               --
+│    │    └─Conv2d: 3-15                                295,040
+│    │    └─BatchNorm2d: 3-16                           256
+│    │    └─ReLU: 3-17                                  --
+│    │    └─Dropout: 3-18                               --
+│    │    └─Conv2d: 3-19                                147,584
+├─LongRangeTemporalSSM: 1-2                             --
+│    └─SSMBlock: 2-6                                    --
+│    │    └─ModuleList: 3-20                            115,968
+│    └─Sequential: 2-7                                  --
+│    │    └─Conv1d: 3-21                                82,048
+│    │    └─Dropout: 3-22                               --
+│    │    └─ReLU: 3-23                                  --
+│    │    └─Conv1d: 3-24                                82,048
+│    │    └─Dropout: 3-25                               --
+│    │    └─ReLU: 3-26                                  --
+│    └─Dropout: 2-8                                     --
+│    └─AdaptiveAvgPool1d: 2-9                           --
+├─SSMBlock: 1-3                                         --
+│    └─ModuleList: 2-10                                 --
+│    │    └─SSMLayer: 3-27                              29,312
+├─ClassificationHead: 1-4                               --
+│    └─AdaptiveAvgPool1d: 2-11                          --
+│    └─Sequential: 2-12                                 --
+│    │    └─Linear: 3-28                                2,080
+│    │    └─GELU: 3-29                                  --
+│    │    └─Dropout: 3-30                               --
+│    │    └─Linear: 3-31                                1,056
+│    │    └─GELU: 3-32                                  --
+│    │    └─Dropout: 3-33                               --
+│    │    └─Linear: 3-34                                132
+================================================================================
+Total params: 2,703,364
+Trainable params: 2,703,364
+Non-trainable params: 0
+================================================================================
+2025-04-04 16:06:41,791 - 090 - INFO - 
+=== Configuration ===
+2025-04-04 16:06:41,796 - 090 - INFO - bs: 64
+cache_root: ../../DeepSpaceWeatherModel/datasets/main
+calculate_valid_indices: false
+class_weights:
+  stage1:
+    beta: 0.9999
+    custom_weights:
+    - 1.0
+    - 2.0
+    - 2.0
+    - 2.0
+    enabled: true
+    method: inverse
+  stage2:
+    beta: 0.9999
+    custom_weights:
+    - 1.0
+    - 1.0
+    - 3.0
+    - 5.0
+    enabled: false
+    method: inverse
+cosine_epochs: 20
+cuda_device: 0
+current_stage: 1
+data_path: ../../DeepSpaceWeatherModel/datasets/all_data_hours
+data_root: ../../DeepSpaceWeatherModel/datasets
+dataset:
+  force_preprocess: false
+  force_recalc_indices: false
+  force_recalc_stats: false
+debug: false
+detail_summary: false
+device: cpu
+early_stopping:
+  metric: valid_GMGS
+  patience: 5
+epoch_for_2stage: 15
+epochs: 20
+factor:
+  BS: 2.5
+  CE: 1.5
+  GMGS: 1.5
+features_path: ../../DeepSpaceWeatherModel/datasets/all_features/completed/all_features_history_672_step_1
+fold: 6
+history: 4
+imbalance: true
+lr: 4.0e-05
+lr_for_2stage: 4.0e-05
+main_metric: GMGS
+mode: test
+model: !!python/object:argparse.Namespace
+  models:
+    CNNLSTM: !!python/object:argparse.Namespace
+      architecture_params: !!python/object:argparse.Namespace
+        cnn_layers: 4
+        hidden_dim: 128
+    FlareTransformer: !!python/object:argparse.Namespace
+      architecture_params: !!python/object:argparse.Namespace
+        input_channel: 90
+        mm_params: !!python/object:argparse.Namespace
+          N: 1
+          d_ff: 16
+          d_model: 128
+          dropout: 0.1
+          h: 4
+        output_channel: 4
+        sfm_params: !!python/object:argparse.Namespace
+          N: 1
+          d_ff: 16
+          d_model: 128
+          dropout: 0.1
+          h: 4
+        window: 4
+    Ours: !!python/object:argparse.Namespace
+      architecture_params: !!python/object:argparse.Namespace
+        D: 64
+        L: 128
+        L_LT: 1
+        L_SSE: 3
+        drop_path_rate: 0.5
+        dropout_rates: !!python/object:argparse.Namespace
+          dwcm: 0.4
+          head: 0.6
+          ltssm: 0.5
+          mixing_ssm: 0.5
+          sse: 0.5
+          stssm: 0.6
+        layer_scale_init_value: 1.0e-06
+  selected: Ours
+optimizer: adamw
+params: params/main/params.yaml
+resume_from_checkpoint: checkpoints/main/090_stage1_best.pth
+stage: 1
+stage2:
+  epochs: 15
+  lr: 4.0e-05
+test_periods:
+- !!python/tuple
+  - '2025-03-01'
+  - 2026-3-31
+train_periods:
+- !!python/tuple
+  - '2025-02-01'
+  - '2025-02-01'
+trial_name: 090
+val_periods:
+- !!python/tuple
+  - '2025-02-02'
+  - '2025-02-02'
+wandb: false
+warmup_epochs: 3
+weight_decay: 0.05
+
+2025-04-04 16:06:41,796 - 090 - INFO - ==================
+
+2025-04-04 16:08:05,292 - 090 - INFO - Using fold 6
+2025-04-04 16:08:05,292 - 090 - INFO - Dataset configuration:
+2025-04-04 16:08:05,292 - 090 - INFO - force_preprocess: False
+2025-04-04 16:08:05,292 - 090 - INFO - force_recalc_indices: False
+2025-04-04 16:08:05,292 - 090 - INFO - force_recalc_stats: False
+2025-04-04 16:08:05,293 - 090 - INFO - ==================================================
+2025-04-04 16:08:05,293 - 090 - INFO - Statistics Computation Start
+2025-04-04 16:08:05,293 - 090 - INFO - Using statistics directory: ../../DeepSpaceWeatherModel/datasets/main/statistics/fold6
+2025-04-04 16:08:05,293 - 090 - INFO - Training periods:
+2025-04-04 16:08:05,293 - 090 - INFO -   2025-02-01 to 2025-02-01
+2025-04-04 16:08:05,293 - 090 - INFO - ==================================================
+2025-04-04 16:08:05,293 - 090 - INFO - Loading cached statistics from ../../DeepSpaceWeatherModel/datasets/main/statistics/fold6
+2025-04-04 16:08:05,293 - 090 - INFO - Loaded full Climatology: [0.54033927 0.32127617 0.12230964 0.01607491]
+2025-04-04 16:08:05,294 - 090 - INFO - Normalized Binary Climatology: [0.86161544 0.13838456]
+2025-04-04 16:08:05,294 - 090 - INFO - Below M class probability: 0.8616
+2025-04-04 16:08:05,294 - 090 - INFO - M class and above probability: 0.1384
+2025-04-04 16:08:05,294 - 090 - INFO - ==================================================
+2025-04-04 16:08:05,294 - 090 - INFO - Statistics Computation Complete
+2025-04-04 16:08:05,294 - 090 - INFO - ==================================================
+2025-04-04 16:08:06,457 - 090 - INFO - ==========================================================================================
+2025-04-04 16:08:06,458 - 090 - INFO - MACs: 2326.26M
+2025-04-04 16:08:06,458 - 090 - INFO - ==========================================================================================
+2025-04-04 16:08:06,480 - 090 - INFO - Model Summary:
+================================================================================
+Layer (type:depth-idx)                                  Param #
+================================================================================
+Ours                                                    --
+├─SolarSpatialEncoder: 1-1                              --
+│    └─ModuleList: 2-1                                  --
+│    │    └─Sequential: 3-1                             7,104
+│    │    └─Sequential: 3-2                             110,784
+│    │    └─Sequential: 3-3                             110,784
+│    │    └─Sequential: 3-4                             110,784
+│    └─ModuleList: 2-2                                  --
+│    │    └─DepthwiseChannelSelectiveModule: 3-5        14,912
+│    │    └─DepthwiseChannelSelectiveModule: 3-6        14,912
+│    │    └─DepthwiseChannelSelectiveModule: 3-7        14,912
+│    └─ModuleList: 2-3                                  --
+│    │    └─SpatioTemporalSSM: 3-8                      29,440
+│    │    └─SpatioTemporalSSM: 3-9                      29,440
+│    │    └─SpatioTemporalSSM: 3-10                     29,440
+│    └─Dropout: 2-4                                     --
+│    └─Sequential: 2-5                                  --
+│    │    └─Conv2d: 3-11                                1,474,816
+│    │    └─BatchNorm2d: 3-12                           512
+│    │    └─ReLU: 3-13                                  --
+│    │    └─Dropout: 3-14                               --
+│    │    └─Conv2d: 3-15                                295,040
+│    │    └─BatchNorm2d: 3-16                           256
+│    │    └─ReLU: 3-17                                  --
+│    │    └─Dropout: 3-18                               --
+│    │    └─Conv2d: 3-19                                147,584
+├─LongRangeTemporalSSM: 1-2                             --
+│    └─SSMBlock: 2-6                                    --
+│    │    └─ModuleList: 3-20                            115,968
+│    └─Sequential: 2-7                                  --
+│    │    └─Conv1d: 3-21                                82,048
+│    │    └─Dropout: 3-22                               --
+│    │    └─ReLU: 3-23                                  --
+│    │    └─Conv1d: 3-24                                82,048
+│    │    └─Dropout: 3-25                               --
+│    │    └─ReLU: 3-26                                  --
+│    └─Dropout: 2-8                                     --
+│    └─AdaptiveAvgPool1d: 2-9                           --
+├─SSMBlock: 1-3                                         --
+│    └─ModuleList: 2-10                                 --
+│    │    └─SSMLayer: 3-27                              29,312
+├─ClassificationHead: 1-4                               --
+│    └─AdaptiveAvgPool1d: 2-11                          --
+│    └─Sequential: 2-12                                 --
+│    │    └─Linear: 3-28                                2,080
+│    │    └─GELU: 3-29                                  --
+│    │    └─Dropout: 3-30                               --
+│    │    └─Linear: 3-31                                1,056
+│    │    └─GELU: 3-32                                  --
+│    │    └─Dropout: 3-33                               --
+│    │    └─Linear: 3-34                                132
+================================================================================
+Total params: 2,703,364
+Trainable params: 2,703,364
+Non-trainable params: 0
+================================================================================
+2025-04-04 16:08:06,481 - 090 - INFO - 
+=== Configuration ===
+2025-04-04 16:08:06,488 - 090 - INFO - bs: 64
+cache_root: ../../DeepSpaceWeatherModel/datasets/main
+calculate_valid_indices: false
+class_weights:
+  stage1:
+    beta: 0.9999
+    custom_weights:
+    - 1.0
+    - 2.0
+    - 2.0
+    - 2.0
+    enabled: true
+    method: inverse
+  stage2:
+    beta: 0.9999
+    custom_weights:
+    - 1.0
+    - 1.0
+    - 3.0
+    - 5.0
+    enabled: false
+    method: inverse
+cosine_epochs: 20
+cuda_device: 0
+current_stage: 1
+data_path: ../../DeepSpaceWeatherModel/datasets/all_data_hours
+data_root: ../../DeepSpaceWeatherModel/datasets
+dataset:
+  force_preprocess: false
+  force_recalc_indices: false
+  force_recalc_stats: false
+debug: false
+detail_summary: false
+device: cpu
+early_stopping:
+  metric: valid_GMGS
+  patience: 5
+epoch_for_2stage: 15
+epochs: 20
+factor:
+  BS: 2.5
+  CE: 1.5
+  GMGS: 1.5
+features_path: ../../DeepSpaceWeatherModel/datasets/all_features/completed/all_features_history_672_step_1
+fold: 6
+history: 4
+imbalance: true
+lr: 4.0e-05
+lr_for_2stage: 4.0e-05
+main_metric: GMGS
+mode: test
+model: !!python/object:argparse.Namespace
+  models:
+    CNNLSTM: !!python/object:argparse.Namespace
+      architecture_params: !!python/object:argparse.Namespace
+        cnn_layers: 4
+        hidden_dim: 128
+    FlareTransformer: !!python/object:argparse.Namespace
+      architecture_params: !!python/object:argparse.Namespace
+        input_channel: 90
+        mm_params: !!python/object:argparse.Namespace
+          N: 1
+          d_ff: 16
+          d_model: 128
+          dropout: 0.1
+          h: 4
+        output_channel: 4
+        sfm_params: !!python/object:argparse.Namespace
+          N: 1
+          d_ff: 16
+          d_model: 128
+          dropout: 0.1
+          h: 4
+        window: 4
+    Ours: !!python/object:argparse.Namespace
+      architecture_params: !!python/object:argparse.Namespace
+        D: 64
+        L: 128
+        L_LT: 1
+        L_SSE: 3
+        drop_path_rate: 0.5
+        dropout_rates: !!python/object:argparse.Namespace
+          dwcm: 0.4
+          head: 0.6
+          ltssm: 0.5
+          mixing_ssm: 0.5
+          sse: 0.5
+          stssm: 0.6
+        layer_scale_init_value: 1.0e-06
+  selected: Ours
+optimizer: adamw
+params: params/main/params.yaml
+resume_from_checkpoint: checkpoints/main/090_stage1_best.pth
+stage: 1
+stage2:
+  epochs: 15
+  lr: 4.0e-05
+test_periods:
+- !!python/tuple
+  - '2025-03-01'
+  - 2026-3-31
+train_periods:
+- !!python/tuple
+  - '2025-02-01'
+  - '2025-02-01'
+trial_name: 090
+val_periods:
+- !!python/tuple
+  - '2025-02-02'
+  - '2025-02-02'
+wandb: false
+warmup_epochs: 3
+weight_decay: 0.05
+
+2025-04-04 16:08:06,488 - 090 - INFO - ==================
+
+2025-04-04 16:11:04,373 - 090 - INFO - Using fold 6
+2025-04-04 16:11:04,374 - 090 - INFO - Dataset configuration:
+2025-04-04 16:11:04,374 - 090 - INFO - force_preprocess: False
+2025-04-04 16:11:04,374 - 090 - INFO - force_recalc_indices: False
+2025-04-04 16:11:04,374 - 090 - INFO - force_recalc_stats: False
+2025-04-04 16:11:04,374 - 090 - INFO - ==================================================
+2025-04-04 16:11:04,374 - 090 - INFO - Statistics Computation Start
+2025-04-04 16:11:04,374 - 090 - INFO - Using statistics directory: ../../DeepSpaceWeatherModel/datasets/main/statistics/fold6
+2025-04-04 16:11:04,374 - 090 - INFO - Training periods:
+2025-04-04 16:11:04,374 - 090 - INFO -   2025-02-01 to 2025-02-01
+2025-04-04 16:11:04,374 - 090 - INFO - ==================================================
+2025-04-04 16:11:04,374 - 090 - INFO - Loading cached statistics from ../../DeepSpaceWeatherModel/datasets/main/statistics/fold6
+2025-04-04 16:11:04,375 - 090 - INFO - Loaded full Climatology: [0.54033927 0.32127617 0.12230964 0.01607491]
+2025-04-04 16:11:04,375 - 090 - INFO - Normalized Binary Climatology: [0.86161544 0.13838456]
+2025-04-04 16:11:04,375 - 090 - INFO - Below M class probability: 0.8616
+2025-04-04 16:11:04,375 - 090 - INFO - M class and above probability: 0.1384
+2025-04-04 16:11:04,375 - 090 - INFO - ==================================================
+2025-04-04 16:11:04,375 - 090 - INFO - Statistics Computation Complete
+2025-04-04 16:11:04,375 - 090 - INFO - ==================================================
+2025-04-04 16:11:05,497 - 090 - INFO - ==========================================================================================
+2025-04-04 16:11:05,498 - 090 - INFO - MACs: 2326.26M
+2025-04-04 16:11:05,498 - 090 - INFO - ==========================================================================================
+2025-04-04 16:11:05,520 - 090 - INFO - Model Summary:
+================================================================================
+Layer (type:depth-idx)                                  Param #
+================================================================================
+Ours                                                    --
+├─SolarSpatialEncoder: 1-1                              --
+│    └─ModuleList: 2-1                                  --
+│    │    └─Sequential: 3-1                             7,104
+│    │    └─Sequential: 3-2                             110,784
+│    │    └─Sequential: 3-3                             110,784
+│    │    └─Sequential: 3-4                             110,784
+│    └─ModuleList: 2-2                                  --
+│    │    └─DepthwiseChannelSelectiveModule: 3-5        14,912
+│    │    └─DepthwiseChannelSelectiveModule: 3-6        14,912
+│    │    └─DepthwiseChannelSelectiveModule: 3-7        14,912
+│    └─ModuleList: 2-3                                  --
+│    │    └─SpatioTemporalSSM: 3-8                      29,440
+│    │    └─SpatioTemporalSSM: 3-9                      29,440
+│    │    └─SpatioTemporalSSM: 3-10                     29,440
+│    └─Dropout: 2-4                                     --
+│    └─Sequential: 2-5                                  --
+│    │    └─Conv2d: 3-11                                1,474,816
+│    │    └─BatchNorm2d: 3-12                           512
+│    │    └─ReLU: 3-13                                  --
+│    │    └─Dropout: 3-14                               --
+│    │    └─Conv2d: 3-15                                295,040
+│    │    └─BatchNorm2d: 3-16                           256
+│    │    └─ReLU: 3-17                                  --
+│    │    └─Dropout: 3-18                               --
+│    │    └─Conv2d: 3-19                                147,584
+├─LongRangeTemporalSSM: 1-2                             --
+│    └─SSMBlock: 2-6                                    --
+│    │    └─ModuleList: 3-20                            115,968
+│    └─Sequential: 2-7                                  --
+│    │    └─Conv1d: 3-21                                82,048
+│    │    └─Dropout: 3-22                               --
+│    │    └─ReLU: 3-23                                  --
+│    │    └─Conv1d: 3-24                                82,048
+│    │    └─Dropout: 3-25                               --
+│    │    └─ReLU: 3-26                                  --
+│    └─Dropout: 2-8                                     --
+│    └─AdaptiveAvgPool1d: 2-9                           --
+├─SSMBlock: 1-3                                         --
+│    └─ModuleList: 2-10                                 --
+│    │    └─SSMLayer: 3-27                              29,312
+├─ClassificationHead: 1-4                               --
+│    └─AdaptiveAvgPool1d: 2-11                          --
+│    └─Sequential: 2-12                                 --
+│    │    └─Linear: 3-28                                2,080
+│    │    └─GELU: 3-29                                  --
+│    │    └─Dropout: 3-30                               --
+│    │    └─Linear: 3-31                                1,056
+│    │    └─GELU: 3-32                                  --
+│    │    └─Dropout: 3-33                               --
+│    │    └─Linear: 3-34                                132
+================================================================================
+Total params: 2,703,364
+Trainable params: 2,703,364
+Non-trainable params: 0
+================================================================================
+2025-04-04 16:11:05,522 - 090 - INFO - 
+=== Configuration ===
+2025-04-04 16:11:05,528 - 090 - INFO - bs: 64
+cache_root: ../../DeepSpaceWeatherModel/datasets/main
+calculate_valid_indices: false
+class_weights:
+  stage1:
+    beta: 0.9999
+    custom_weights:
+    - 1.0
+    - 2.0
+    - 2.0
+    - 2.0
+    enabled: true
+    method: inverse
+  stage2:
+    beta: 0.9999
+    custom_weights:
+    - 1.0
+    - 1.0
+    - 3.0
+    - 5.0
+    enabled: false
+    method: inverse
+cosine_epochs: 20
+cuda_device: 0
+current_stage: 1
+data_path: ../../DeepSpaceWeatherModel/datasets/all_data_hours
+data_root: ../../DeepSpaceWeatherModel/datasets
+dataset:
+  force_preprocess: false
+  force_recalc_indices: false
+  force_recalc_stats: false
+debug: false
+detail_summary: false
+device: cpu
+early_stopping:
+  metric: valid_GMGS
+  patience: 5
+epoch_for_2stage: 15
+epochs: 20
+factor:
+  BS: 2.5
+  CE: 1.5
+  GMGS: 1.5
+features_path: ../../DeepSpaceWeatherModel/datasets/all_features/completed/all_features_history_672_step_1
+fold: 6
+history: 4
+imbalance: true
+lr: 4.0e-05
+lr_for_2stage: 4.0e-05
+main_metric: GMGS
+mode: test
+model: !!python/object:argparse.Namespace
+  models:
+    CNNLSTM: !!python/object:argparse.Namespace
+      architecture_params: !!python/object:argparse.Namespace
+        cnn_layers: 4
+        hidden_dim: 128
+    FlareTransformer: !!python/object:argparse.Namespace
+      architecture_params: !!python/object:argparse.Namespace
+        input_channel: 90
+        mm_params: !!python/object:argparse.Namespace
+          N: 1
+          d_ff: 16
+          d_model: 128
+          dropout: 0.1
+          h: 4
+        output_channel: 4
+        sfm_params: !!python/object:argparse.Namespace
+          N: 1
+          d_ff: 16
+          d_model: 128
+          dropout: 0.1
+          h: 4
+        window: 4
+    Ours: !!python/object:argparse.Namespace
+      architecture_params: !!python/object:argparse.Namespace
+        D: 64
+        L: 128
+        L_LT: 1
+        L_SSE: 3
+        drop_path_rate: 0.5
+        dropout_rates: !!python/object:argparse.Namespace
+          dwcm: 0.4
+          head: 0.6
+          ltssm: 0.5
+          mixing_ssm: 0.5
+          sse: 0.5
+          stssm: 0.6
+        layer_scale_init_value: 1.0e-06
+  selected: Ours
+optimizer: adamw
+params: params/main/params.yaml
+resume_from_checkpoint: checkpoints/main/090_stage1_best.pth
+stage: 1
+stage2:
+  epochs: 15
+  lr: 4.0e-05
+test_periods:
+- !!python/tuple
+  - '2019-03-01'
+  - 2019-3-31
+train_periods:
+- !!python/tuple
+  - '2025-02-01'
+  - '2025-02-01'
+trial_name: 090
+val_periods:
+- !!python/tuple
+  - '2025-02-02'
+  - '2025-02-02'
+wandb: false
+warmup_epochs: 3
+weight_decay: 0.05
+
+2025-04-04 16:11:05,528 - 090 - INFO - ==================
+
+2025-04-04 16:14:06,100 - 090 - INFO - Using fold 6
+2025-04-04 16:14:06,100 - 090 - INFO - Dataset configuration:
+2025-04-04 16:14:06,100 - 090 - INFO - force_preprocess: False
+2025-04-04 16:14:06,100 - 090 - INFO - force_recalc_indices: False
+2025-04-04 16:14:06,100 - 090 - INFO - force_recalc_stats: False
+2025-04-04 16:14:06,100 - 090 - INFO - ==================================================
+2025-04-04 16:14:06,100 - 090 - INFO - Statistics Computation Start
+2025-04-04 16:14:06,100 - 090 - INFO - Using statistics directory: ../../DeepSpaceWeatherModel/datasets/main/statistics/fold6
+2025-04-04 16:14:06,100 - 090 - INFO - Training periods:
+2025-04-04 16:14:06,100 - 090 - INFO -   2025-02-01 to 2025-02-01
+2025-04-04 16:14:06,100 - 090 - INFO - ==================================================
+2025-04-04 16:14:06,100 - 090 - INFO - Loading cached statistics from ../../DeepSpaceWeatherModel/datasets/main/statistics/fold6
+2025-04-04 16:14:06,101 - 090 - INFO - Loaded full Climatology: [0.54033927 0.32127617 0.12230964 0.01607491]
+2025-04-04 16:14:06,101 - 090 - INFO - Normalized Binary Climatology: [0.86161544 0.13838456]
+2025-04-04 16:14:06,101 - 090 - INFO - Below M class probability: 0.8616
+2025-04-04 16:14:06,101 - 090 - INFO - M class and above probability: 0.1384
+2025-04-04 16:14:06,101 - 090 - INFO - ==================================================
+2025-04-04 16:14:06,101 - 090 - INFO - Statistics Computation Complete
+2025-04-04 16:14:06,101 - 090 - INFO - ==================================================
+2025-04-04 16:14:07,047 - 090 - INFO - ==========================================================================================
+2025-04-04 16:14:07,048 - 090 - INFO - MACs: 2326.26M
+2025-04-04 16:14:07,048 - 090 - INFO - ==========================================================================================
+2025-04-04 16:14:07,066 - 090 - INFO - Model Summary:
+================================================================================
+Layer (type:depth-idx)                                  Param #
+================================================================================
+Ours                                                    --
+├─SolarSpatialEncoder: 1-1                              --
+│    └─ModuleList: 2-1                                  --
+│    │    └─Sequential: 3-1                             7,104
+│    │    └─Sequential: 3-2                             110,784
+│    │    └─Sequential: 3-3                             110,784
+│    │    └─Sequential: 3-4                             110,784
+│    └─ModuleList: 2-2                                  --
+│    │    └─DepthwiseChannelSelectiveModule: 3-5        14,912
+│    │    └─DepthwiseChannelSelectiveModule: 3-6        14,912
+│    │    └─DepthwiseChannelSelectiveModule: 3-7        14,912
+│    └─ModuleList: 2-3                                  --
+│    │    └─SpatioTemporalSSM: 3-8                      29,440
+│    │    └─SpatioTemporalSSM: 3-9                      29,440
+│    │    └─SpatioTemporalSSM: 3-10                     29,440
+│    └─Dropout: 2-4                                     --
+│    └─Sequential: 2-5                                  --
+│    │    └─Conv2d: 3-11                                1,474,816
+│    │    └─BatchNorm2d: 3-12                           512
+│    │    └─ReLU: 3-13                                  --
+│    │    └─Dropout: 3-14                               --
+│    │    └─Conv2d: 3-15                                295,040
+│    │    └─BatchNorm2d: 3-16                           256
+│    │    └─ReLU: 3-17                                  --
+│    │    └─Dropout: 3-18                               --
+│    │    └─Conv2d: 3-19                                147,584
+├─LongRangeTemporalSSM: 1-2                             --
+│    └─SSMBlock: 2-6                                    --
+│    │    └─ModuleList: 3-20                            115,968
+│    └─Sequential: 2-7                                  --
+│    │    └─Conv1d: 3-21                                82,048
+│    │    └─Dropout: 3-22                               --
+│    │    └─ReLU: 3-23                                  --
+│    │    └─Conv1d: 3-24                                82,048
+│    │    └─Dropout: 3-25                               --
+│    │    └─ReLU: 3-26                                  --
+│    └─Dropout: 2-8                                     --
+│    └─AdaptiveAvgPool1d: 2-9                           --
+├─SSMBlock: 1-3                                         --
+│    └─ModuleList: 2-10                                 --
+│    │    └─SSMLayer: 3-27                              29,312
+├─ClassificationHead: 1-4                               --
+│    └─AdaptiveAvgPool1d: 2-11                          --
+│    └─Sequential: 2-12                                 --
+│    │    └─Linear: 3-28                                2,080
+│    │    └─GELU: 3-29                                  --
+│    │    └─Dropout: 3-30                               --
+│    │    └─Linear: 3-31                                1,056
+│    │    └─GELU: 3-32                                  --
+│    │    └─Dropout: 3-33                               --
+│    │    └─Linear: 3-34                                132
+================================================================================
+Total params: 2,703,364
+Trainable params: 2,703,364
+Non-trainable params: 0
+================================================================================
+2025-04-04 16:14:07,066 - 090 - INFO - 
+=== Configuration ===
+2025-04-04 16:14:07,072 - 090 - INFO - bs: 64
+cache_root: ../../DeepSpaceWeatherModel/datasets/main
+calculate_valid_indices: false
+class_weights:
+  stage1:
+    beta: 0.9999
+    custom_weights:
+    - 1.0
+    - 2.0
+    - 2.0
+    - 2.0
+    enabled: true
+    method: inverse
+  stage2:
+    beta: 0.9999
+    custom_weights:
+    - 1.0
+    - 1.0
+    - 3.0
+    - 5.0
+    enabled: false
+    method: inverse
+cosine_epochs: 20
+cuda_device: 0
+current_stage: 1
+data_path: ../../DeepSpaceWeatherModel/datasets/all_data_hours
+data_root: ../../DeepSpaceWeatherModel/datasets
+dataset:
+  force_preprocess: false
+  force_recalc_indices: false
+  force_recalc_stats: false
+debug: false
+detail_summary: false
+device: cpu
+early_stopping:
+  metric: valid_GMGS
+  patience: 5
+epoch_for_2stage: 15
+epochs: 20
+factor:
+  BS: 2.5
+  CE: 1.5
+  GMGS: 1.5
+features_path: ../../DeepSpaceWeatherModel/datasets/all_features/completed/all_features_history_672_step_1
+fold: 6
+history: 4
+imbalance: true
+lr: 4.0e-05
+lr_for_2stage: 4.0e-05
+main_metric: GMGS
+mode: test
+model: !!python/object:argparse.Namespace
+  models:
+    CNNLSTM: !!python/object:argparse.Namespace
+      architecture_params: !!python/object:argparse.Namespace
+        cnn_layers: 4
+        hidden_dim: 128
+    FlareTransformer: !!python/object:argparse.Namespace
+      architecture_params: !!python/object:argparse.Namespace
+        input_channel: 90
+        mm_params: !!python/object:argparse.Namespace
+          N: 1
+          d_ff: 16
+          d_model: 128
+          dropout: 0.1
+          h: 4
+        output_channel: 4
+        sfm_params: !!python/object:argparse.Namespace
+          N: 1
+          d_ff: 16
+          d_model: 128
+          dropout: 0.1
+          h: 4
+        window: 4
+    Ours: !!python/object:argparse.Namespace
+      architecture_params: !!python/object:argparse.Namespace
+        D: 64
+        L: 128
+        L_LT: 1
+        L_SSE: 3
+        drop_path_rate: 0.5
+        dropout_rates: !!python/object:argparse.Namespace
+          dwcm: 0.4
+          head: 0.6
+          ltssm: 0.5
+          mixing_ssm: 0.5
+          sse: 0.5
+          stssm: 0.6
+        layer_scale_init_value: 1.0e-06
+  selected: Ours
+optimizer: adamw
+params: params/main/params.yaml
+resume_from_checkpoint: checkpoints/main/090_stage1_best.pth
+stage: 1
+stage2:
+  epochs: 15
+  lr: 4.0e-05
+test_periods:
+- !!python/tuple
+  - '2019-03-01'
+  - 2019-3-31
+train_periods:
+- !!python/tuple
+  - '2025-02-01'
+  - '2025-02-01'
+trial_name: 090
+val_periods:
+- !!python/tuple
+  - '2025-02-02'
+  - '2025-02-02'
+wandb: false
+warmup_epochs: 3
+weight_decay: 0.05
+
+2025-04-04 16:14:07,072 - 090 - INFO - ==================
+
+2025-04-04 16:52:38,165 - 090 - INFO - Using fold 6
+2025-04-04 16:52:38,165 - 090 - INFO - Dataset configuration:
+2025-04-04 16:52:38,165 - 090 - INFO - force_preprocess: False
+2025-04-04 16:52:38,165 - 090 - INFO - force_recalc_indices: False
+2025-04-04 16:52:38,165 - 090 - INFO - force_recalc_stats: False
+2025-04-04 16:52:38,165 - 090 - INFO - ==================================================
+2025-04-04 16:52:38,165 - 090 - INFO - Statistics Computation Start
+2025-04-04 16:52:38,165 - 090 - INFO - Using statistics directory: ../../DeepSpaceWeatherModel/datasets/main/statistics/fold6
+2025-04-04 16:52:38,165 - 090 - INFO - Training periods:
+2025-04-04 16:52:38,165 - 090 - INFO -   2025-02-01 to 2025-02-01
+2025-04-04 16:52:38,165 - 090 - INFO - ==================================================
+2025-04-04 16:52:38,165 - 090 - INFO - Loading cached statistics from ../../DeepSpaceWeatherModel/datasets/main/statistics/fold6
+2025-04-04 16:52:38,166 - 090 - INFO - Loaded full Climatology: [0.54033927 0.32127617 0.12230964 0.01607491]
+2025-04-04 16:52:38,167 - 090 - INFO - Normalized Binary Climatology: [0.86161544 0.13838456]
+2025-04-04 16:52:38,167 - 090 - INFO - Below M class probability: 0.8616
+2025-04-04 16:52:38,167 - 090 - INFO - M class and above probability: 0.1384
+2025-04-04 16:52:38,167 - 090 - INFO - ==================================================
+2025-04-04 16:52:38,167 - 090 - INFO - Statistics Computation Complete
+2025-04-04 16:52:38,167 - 090 - INFO - ==================================================
+2025-04-04 16:52:39,948 - 090 - INFO - ==========================================================================================
+2025-04-04 16:52:39,949 - 090 - INFO - MACs: 2326.26M
+2025-04-04 16:52:39,949 - 090 - INFO - ==========================================================================================
+2025-04-04 16:52:39,961 - 090 - INFO - Model Summary:
+================================================================================
+Layer (type:depth-idx)                                  Param #
+================================================================================
+Ours                                                    --
+├─SolarSpatialEncoder: 1-1                              --
+│    └─ModuleList: 2-1                                  --
+│    │    └─Sequential: 3-1                             7,104
+│    │    └─Sequential: 3-2                             110,784
+│    │    └─Sequential: 3-3                             110,784
+│    │    └─Sequential: 3-4                             110,784
+│    └─ModuleList: 2-2                                  --
+│    │    └─DepthwiseChannelSelectiveModule: 3-5        14,912
+│    │    └─DepthwiseChannelSelectiveModule: 3-6        14,912
+│    │    └─DepthwiseChannelSelectiveModule: 3-7        14,912
+│    └─ModuleList: 2-3                                  --
+│    │    └─SpatioTemporalSSM: 3-8                      29,440
+│    │    └─SpatioTemporalSSM: 3-9                      29,440
+│    │    └─SpatioTemporalSSM: 3-10                     29,440
+│    └─Dropout: 2-4                                     --
+│    └─Sequential: 2-5                                  --
+│    │    └─Conv2d: 3-11                                1,474,816
+│    │    └─BatchNorm2d: 3-12                           512
+│    │    └─ReLU: 3-13                                  --
+│    │    └─Dropout: 3-14                               --
+│    │    └─Conv2d: 3-15                                295,040
+│    │    └─BatchNorm2d: 3-16                           256
+│    │    └─ReLU: 3-17                                  --
+│    │    └─Dropout: 3-18                               --
+│    │    └─Conv2d: 3-19                                147,584
+├─LongRangeTemporalSSM: 1-2                             --
+│    └─SSMBlock: 2-6                                    --
+│    │    └─ModuleList: 3-20                            115,968
+│    └─Sequential: 2-7                                  --
+│    │    └─Conv1d: 3-21                                82,048
+│    │    └─Dropout: 3-22                               --
+│    │    └─ReLU: 3-23                                  --
+│    │    └─Conv1d: 3-24                                82,048
+│    │    └─Dropout: 3-25                               --
+│    │    └─ReLU: 3-26                                  --
+│    └─Dropout: 2-8                                     --
+│    └─AdaptiveAvgPool1d: 2-9                           --
+├─SSMBlock: 1-3                                         --
+│    └─ModuleList: 2-10                                 --
+│    │    └─SSMLayer: 3-27                              29,312
+├─ClassificationHead: 1-4                               --
+│    └─AdaptiveAvgPool1d: 2-11                          --
+│    └─Sequential: 2-12                                 --
+│    │    └─Linear: 3-28                                2,080
+│    │    └─GELU: 3-29                                  --
+│    │    └─Dropout: 3-30                               --
+│    │    └─Linear: 3-31                                1,056
+│    │    └─GELU: 3-32                                  --
+│    │    └─Dropout: 3-33                               --
+│    │    └─Linear: 3-34                                132
+================================================================================
+Total params: 2,703,364
+Trainable params: 2,703,364
+Non-trainable params: 0
+================================================================================
+2025-04-04 16:52:39,961 - 090 - INFO - 
+=== Configuration ===
+2025-04-04 16:52:39,965 - 090 - INFO - bs: 64
+cache_root: ../../DeepSpaceWeatherModel/datasets/main
+calculate_valid_indices: false
+class_weights:
+  stage1:
+    beta: 0.9999
+    custom_weights:
+    - 1.0
+    - 2.0
+    - 2.0
+    - 2.0
+    enabled: true
+    method: inverse
+  stage2:
+    beta: 0.9999
+    custom_weights:
+    - 1.0
+    - 1.0
+    - 3.0
+    - 5.0
+    enabled: false
+    method: inverse
+cosine_epochs: 20
+cuda_device: 0
+current_stage: 1
+data_path: ../../DeepSpaceWeatherModel/datasets/all_data_hours
+data_root: ../../DeepSpaceWeatherModel/datasets
+dataset:
+  force_preprocess: false
+  force_recalc_indices: false
+  force_recalc_stats: false
+debug: false
+detail_summary: false
+device: cuda:0
+early_stopping:
+  metric: valid_GMGS
+  patience: 5
+epoch_for_2stage: 15
+epochs: 20
+factor:
+  BS: 2.5
+  CE: 1.5
+  GMGS: 1.5
+features_path: ../../DeepSpaceWeatherModel/datasets/all_features/completed/all_features_history_672_step_1
+fold: 6
+history: 4
+imbalance: true
+lr: 4.0e-05
+lr_for_2stage: 4.0e-05
+main_metric: GMGS
+mode: test
+model: !!python/object:argparse.Namespace
+  models:
+    CNNLSTM: !!python/object:argparse.Namespace
+      architecture_params: !!python/object:argparse.Namespace
+        cnn_layers: 4
+        hidden_dim: 128
+    FlareTransformer: !!python/object:argparse.Namespace
+      architecture_params: !!python/object:argparse.Namespace
+        input_channel: 90
+        mm_params: !!python/object:argparse.Namespace
+          N: 1
+          d_ff: 16
+          d_model: 128
+          dropout: 0.1
+          h: 4
+        output_channel: 4
+        sfm_params: !!python/object:argparse.Namespace
+          N: 1
+          d_ff: 16
+          d_model: 128
+          dropout: 0.1
+          h: 4
+        window: 4
+    Ours: !!python/object:argparse.Namespace
+      architecture_params: !!python/object:argparse.Namespace
+        D: 64
+        L: 128
+        L_LT: 1
+        L_SSE: 3
+        drop_path_rate: 0.5
+        dropout_rates: !!python/object:argparse.Namespace
+          dwcm: 0.4
+          head: 0.6
+          ltssm: 0.5
+          mixing_ssm: 0.5
+          sse: 0.5
+          stssm: 0.6
+        layer_scale_init_value: 1.0e-06
+  selected: Ours
+optimizer: adamw
+params: params/main/params.yaml
+resume_from_checkpoint: checkpoints/main/090_stage1_best.pth
+stage: 1
+stage2:
+  epochs: 15
+  lr: 4.0e-05
+test_periods:
+- !!python/tuple
+  - '2019-03-01'
+  - 2019-3-31
+train_periods:
+- !!python/tuple
+  - '2025-02-01'
+  - '2025-02-01'
+trial_name: 090
+val_periods:
+- !!python/tuple
+  - '2025-02-02'
+  - '2025-02-02'
+wandb: false
+warmup_epochs: 3
+weight_decay: 0.05
+
+2025-04-04 16:52:39,965 - 090 - INFO - ==================
+
+2025-04-04 16:54:19,327 - 090 - INFO - Using fold 6
+2025-04-04 16:54:19,327 - 090 - INFO - Dataset configuration:
+2025-04-04 16:54:19,327 - 090 - INFO - force_preprocess: False
+2025-04-04 16:54:19,327 - 090 - INFO - force_recalc_indices: False
+2025-04-04 16:54:19,327 - 090 - INFO - force_recalc_stats: False
+2025-04-04 16:54:19,328 - 090 - INFO - ==================================================
+2025-04-04 16:54:19,328 - 090 - INFO - Statistics Computation Start
+2025-04-04 16:54:19,328 - 090 - INFO - Using statistics directory: ../../DeepSpaceWeatherModel/datasets/main/statistics/fold6
+2025-04-04 16:54:19,328 - 090 - INFO - Training periods:
+2025-04-04 16:54:19,328 - 090 - INFO -   2020-01-01 to 2020-01-01
+2025-04-04 16:54:19,328 - 090 - INFO - ==================================================
+2025-04-04 16:54:19,328 - 090 - INFO - Loading cached statistics from ../../DeepSpaceWeatherModel/datasets/main/statistics/fold6
+2025-04-04 16:54:19,328 - 090 - INFO - Loaded full Climatology: [0.54033927 0.32127617 0.12230964 0.01607491]
+2025-04-04 16:54:19,328 - 090 - INFO - Normalized Binary Climatology: [0.86161544 0.13838456]
+2025-04-04 16:54:19,328 - 090 - INFO - Below M class probability: 0.8616
+2025-04-04 16:54:19,328 - 090 - INFO - M class and above probability: 0.1384
+2025-04-04 16:54:19,329 - 090 - INFO - ==================================================
+2025-04-04 16:54:19,329 - 090 - INFO - Statistics Computation Complete
+2025-04-04 16:54:19,329 - 090 - INFO - ==================================================
+2025-04-04 16:54:20,789 - 090 - INFO - ==========================================================================================
+2025-04-04 16:54:20,789 - 090 - INFO - MACs: 2326.26M
+2025-04-04 16:54:20,789 - 090 - INFO - ==========================================================================================
+2025-04-04 16:54:20,801 - 090 - INFO - Model Summary:
+================================================================================
+Layer (type:depth-idx)                                  Param #
+================================================================================
+Ours                                                    --
+├─SolarSpatialEncoder: 1-1                              --
+│    └─ModuleList: 2-1                                  --
+│    │    └─Sequential: 3-1                             7,104
+│    │    └─Sequential: 3-2                             110,784
+│    │    └─Sequential: 3-3                             110,784
+│    │    └─Sequential: 3-4                             110,784
+│    └─ModuleList: 2-2                                  --
+│    │    └─DepthwiseChannelSelectiveModule: 3-5        14,912
+│    │    └─DepthwiseChannelSelectiveModule: 3-6        14,912
+│    │    └─DepthwiseChannelSelectiveModule: 3-7        14,912
+│    └─ModuleList: 2-3                                  --
+│    │    └─SpatioTemporalSSM: 3-8                      29,440
+│    │    └─SpatioTemporalSSM: 3-9                      29,440
+│    │    └─SpatioTemporalSSM: 3-10                     29,440
+│    └─Dropout: 2-4                                     --
+│    └─Sequential: 2-5                                  --
+│    │    └─Conv2d: 3-11                                1,474,816
+│    │    └─BatchNorm2d: 3-12                           512
+│    │    └─ReLU: 3-13                                  --
+│    │    └─Dropout: 3-14                               --
+│    │    └─Conv2d: 3-15                                295,040
+│    │    └─BatchNorm2d: 3-16                           256
+│    │    └─ReLU: 3-17                                  --
+│    │    └─Dropout: 3-18                               --
+│    │    └─Conv2d: 3-19                                147,584
+├─LongRangeTemporalSSM: 1-2                             --
+│    └─SSMBlock: 2-6                                    --
+│    │    └─ModuleList: 3-20                            115,968
+│    └─Sequential: 2-7                                  --
+│    │    └─Conv1d: 3-21                                82,048
+│    │    └─Dropout: 3-22                               --
+│    │    └─ReLU: 3-23                                  --
+│    │    └─Conv1d: 3-24                                82,048
+│    │    └─Dropout: 3-25                               --
+│    │    └─ReLU: 3-26                                  --
+│    └─Dropout: 2-8                                     --
+│    └─AdaptiveAvgPool1d: 2-9                           --
+├─SSMBlock: 1-3                                         --
+│    └─ModuleList: 2-10                                 --
+│    │    └─SSMLayer: 3-27                              29,312
+├─ClassificationHead: 1-4                               --
+│    └─AdaptiveAvgPool1d: 2-11                          --
+│    └─Sequential: 2-12                                 --
+│    │    └─Linear: 3-28                                2,080
+│    │    └─GELU: 3-29                                  --
+│    │    └─Dropout: 3-30                               --
+│    │    └─Linear: 3-31                                1,056
+│    │    └─GELU: 3-32                                  --
+│    │    └─Dropout: 3-33                               --
+│    │    └─Linear: 3-34                                132
+================================================================================
+Total params: 2,703,364
+Trainable params: 2,703,364
+Non-trainable params: 0
+================================================================================
+2025-04-04 16:54:20,802 - 090 - INFO - 
+=== Configuration ===
+2025-04-04 16:54:20,805 - 090 - INFO - bs: 64
+cache_root: ../../DeepSpaceWeatherModel/datasets/main
+calculate_valid_indices: false
+class_weights:
+  stage1:
+    beta: 0.9999
+    custom_weights:
+    - 1.0
+    - 2.0
+    - 2.0
+    - 2.0
+    enabled: true
+    method: inverse
+  stage2:
+    beta: 0.9999
+    custom_weights:
+    - 1.0
+    - 1.0
+    - 3.0
+    - 5.0
+    enabled: false
+    method: inverse
+cosine_epochs: 20
+cuda_device: 0
+current_stage: 1
+data_path: ../../DeepSpaceWeatherModel/datasets/all_data_hours
+data_root: ../../DeepSpaceWeatherModel/datasets
+dataset:
+  force_preprocess: false
+  force_recalc_indices: false
+  force_recalc_stats: false
+debug: false
+detail_summary: false
+device: cuda:0
+early_stopping:
+  metric: valid_GMGS
+  patience: 5
+epoch_for_2stage: 15
+epochs: 20
+factor:
+  BS: 2.5
+  CE: 1.5
+  GMGS: 1.5
+features_path: ../../DeepSpaceWeatherModel/datasets/all_features/completed/all_features_history_672_step_1
+fold: 6
+history: 4
+imbalance: true
+lr: 4.0e-05
+lr_for_2stage: 4.0e-05
+main_metric: GMGS
+mode: test
+model: !!python/object:argparse.Namespace
+  models:
+    CNNLSTM: !!python/object:argparse.Namespace
+      architecture_params: !!python/object:argparse.Namespace
+        cnn_layers: 4
+        hidden_dim: 128
+    FlareTransformer: !!python/object:argparse.Namespace
+      architecture_params: !!python/object:argparse.Namespace
+        input_channel: 90
+        mm_params: !!python/object:argparse.Namespace
+          N: 1
+          d_ff: 16
+          d_model: 128
+          dropout: 0.1
+          h: 4
+        output_channel: 4
+        sfm_params: !!python/object:argparse.Namespace
+          N: 1
+          d_ff: 16
+          d_model: 128
+          dropout: 0.1
+          h: 4
+        window: 4
+    Ours: !!python/object:argparse.Namespace
+      architecture_params: !!python/object:argparse.Namespace
+        D: 64
+        L: 128
+        L_LT: 1
+        L_SSE: 3
+        drop_path_rate: 0.5
+        dropout_rates: !!python/object:argparse.Namespace
+          dwcm: 0.4
+          head: 0.6
+          ltssm: 0.5
+          mixing_ssm: 0.5
+          sse: 0.5
+          stssm: 0.6
+        layer_scale_init_value: 1.0e-06
+  selected: Ours
+optimizer: adamw
+params: params/main/params.yaml
+resume_from_checkpoint: checkpoints/main/090_stage1_best.pth
+stage: 1
+stage2:
+  epochs: 15
+  lr: 4.0e-05
+test_periods:
+- !!python/tuple
+  - '2019-03-01'
+  - '2019-03-02'
+train_periods:
+- !!python/tuple
+  - '2020-01-01'
+  - '2020-01-01'
+trial_name: 090
+val_periods:
+- !!python/tuple
+  - '2020-01-02'
+  - '2020-01-02'
+wandb: false
+warmup_epochs: 3
+weight_decay: 0.05
+
+2025-04-04 16:54:20,805 - 090 - INFO - ==================
+
+2025-04-04 16:55:06,635 - 090 - INFO - Using fold 6
+2025-04-04 16:55:06,635 - 090 - INFO - Dataset configuration:
+2025-04-04 16:55:06,635 - 090 - INFO - force_preprocess: False
+2025-04-04 16:55:06,635 - 090 - INFO - force_recalc_indices: False
+2025-04-04 16:55:06,635 - 090 - INFO - force_recalc_stats: False
+2025-04-04 16:55:06,635 - 090 - INFO - ==================================================
+2025-04-04 16:55:06,635 - 090 - INFO - Statistics Computation Start
+2025-04-04 16:55:06,635 - 090 - INFO - Using statistics directory: ../../DeepSpaceWeatherModel/datasets/main/statistics/fold6
+2025-04-04 16:55:06,635 - 090 - INFO - Training periods:
+2025-04-04 16:55:06,635 - 090 - INFO -   2020-01-01 to 2020-01-02
+2025-04-04 16:55:06,635 - 090 - INFO - ==================================================
+2025-04-04 16:55:06,635 - 090 - INFO - Loading cached statistics from ../../DeepSpaceWeatherModel/datasets/main/statistics/fold6
+2025-04-04 16:55:06,636 - 090 - INFO - Loaded full Climatology: [0.54033927 0.32127617 0.12230964 0.01607491]
+2025-04-04 16:55:06,636 - 090 - INFO - Normalized Binary Climatology: [0.86161544 0.13838456]
+2025-04-04 16:55:06,636 - 090 - INFO - Below M class probability: 0.8616
+2025-04-04 16:55:06,636 - 090 - INFO - M class and above probability: 0.1384
+2025-04-04 16:55:06,636 - 090 - INFO - ==================================================
+2025-04-04 16:55:06,636 - 090 - INFO - Statistics Computation Complete
+2025-04-04 16:55:06,636 - 090 - INFO - ==================================================
+2025-04-04 16:55:07,823 - 090 - INFO - ==========================================================================================
+2025-04-04 16:55:07,824 - 090 - INFO - MACs: 2326.26M
+2025-04-04 16:55:07,824 - 090 - INFO - ==========================================================================================
+2025-04-04 16:55:07,837 - 090 - INFO - Model Summary:
+================================================================================
+Layer (type:depth-idx)                                  Param #
+================================================================================
+Ours                                                    --
+├─SolarSpatialEncoder: 1-1                              --
+│    └─ModuleList: 2-1                                  --
+│    │    └─Sequential: 3-1                             7,104
+│    │    └─Sequential: 3-2                             110,784
+│    │    └─Sequential: 3-3                             110,784
+│    │    └─Sequential: 3-4                             110,784
+│    └─ModuleList: 2-2                                  --
+│    │    └─DepthwiseChannelSelectiveModule: 3-5        14,912
+│    │    └─DepthwiseChannelSelectiveModule: 3-6        14,912
+│    │    └─DepthwiseChannelSelectiveModule: 3-7        14,912
+│    └─ModuleList: 2-3                                  --
+│    │    └─SpatioTemporalSSM: 3-8                      29,440
+│    │    └─SpatioTemporalSSM: 3-9                      29,440
+│    │    └─SpatioTemporalSSM: 3-10                     29,440
+│    └─Dropout: 2-4                                     --
+│    └─Sequential: 2-5                                  --
+│    │    └─Conv2d: 3-11                                1,474,816
+│    │    └─BatchNorm2d: 3-12                           512
+│    │    └─ReLU: 3-13                                  --
+│    │    └─Dropout: 3-14                               --
+│    │    └─Conv2d: 3-15                                295,040
+│    │    └─BatchNorm2d: 3-16                           256
+│    │    └─ReLU: 3-17                                  --
+│    │    └─Dropout: 3-18                               --
+│    │    └─Conv2d: 3-19                                147,584
+├─LongRangeTemporalSSM: 1-2                             --
+│    └─SSMBlock: 2-6                                    --
+│    │    └─ModuleList: 3-20                            115,968
+│    └─Sequential: 2-7                                  --
+│    │    └─Conv1d: 3-21                                82,048
+│    │    └─Dropout: 3-22                               --
+│    │    └─ReLU: 3-23                                  --
+│    │    └─Conv1d: 3-24                                82,048
+│    │    └─Dropout: 3-25                               --
+│    │    └─ReLU: 3-26                                  --
+│    └─Dropout: 2-8                                     --
+│    └─AdaptiveAvgPool1d: 2-9                           --
+├─SSMBlock: 1-3                                         --
+│    └─ModuleList: 2-10                                 --
+│    │    └─SSMLayer: 3-27                              29,312
+├─ClassificationHead: 1-4                               --
+│    └─AdaptiveAvgPool1d: 2-11                          --
+│    └─Sequential: 2-12                                 --
+│    │    └─Linear: 3-28                                2,080
+│    │    └─GELU: 3-29                                  --
+│    │    └─Dropout: 3-30                               --
+│    │    └─Linear: 3-31                                1,056
+│    │    └─GELU: 3-32                                  --
+│    │    └─Dropout: 3-33                               --
+│    │    └─Linear: 3-34                                132
+================================================================================
+Total params: 2,703,364
+Trainable params: 2,703,364
+Non-trainable params: 0
+================================================================================
+2025-04-04 16:55:07,837 - 090 - INFO - 
+=== Configuration ===
+2025-04-04 16:55:07,840 - 090 - INFO - bs: 64
+cache_root: ../../DeepSpaceWeatherModel/datasets/main
+calculate_valid_indices: false
+class_weights:
+  stage1:
+    beta: 0.9999
+    custom_weights:
+    - 1.0
+    - 2.0
+    - 2.0
+    - 2.0
+    enabled: true
+    method: inverse
+  stage2:
+    beta: 0.9999
+    custom_weights:
+    - 1.0
+    - 1.0
+    - 3.0
+    - 5.0
+    enabled: false
+    method: inverse
+cosine_epochs: 20
+cuda_device: 0
+current_stage: 1
+data_path: ../../DeepSpaceWeatherModel/datasets/all_data_hours
+data_root: ../../DeepSpaceWeatherModel/datasets
+dataset:
+  force_preprocess: false
+  force_recalc_indices: false
+  force_recalc_stats: false
+debug: false
+detail_summary: false
+device: cuda:0
+early_stopping:
+  metric: valid_GMGS
+  patience: 5
+epoch_for_2stage: 15
+epochs: 20
+factor:
+  BS: 2.5
+  CE: 1.5
+  GMGS: 1.5
+features_path: ../../DeepSpaceWeatherModel/datasets/all_features/completed/all_features_history_672_step_1
+fold: 6
+history: 4
+imbalance: true
+lr: 4.0e-05
+lr_for_2stage: 4.0e-05
+main_metric: GMGS
+mode: test
+model: !!python/object:argparse.Namespace
+  models:
+    CNNLSTM: !!python/object:argparse.Namespace
+      architecture_params: !!python/object:argparse.Namespace
+        cnn_layers: 4
+        hidden_dim: 128
+    FlareTransformer: !!python/object:argparse.Namespace
+      architecture_params: !!python/object:argparse.Namespace
+        input_channel: 90
+        mm_params: !!python/object:argparse.Namespace
+          N: 1
+          d_ff: 16
+          d_model: 128
+          dropout: 0.1
+          h: 4
+        output_channel: 4
+        sfm_params: !!python/object:argparse.Namespace
+          N: 1
+          d_ff: 16
+          d_model: 128
+          dropout: 0.1
+          h: 4
+        window: 4
+    Ours: !!python/object:argparse.Namespace
+      architecture_params: !!python/object:argparse.Namespace
+        D: 64
+        L: 128
+        L_LT: 1
+        L_SSE: 3
+        drop_path_rate: 0.5
+        dropout_rates: !!python/object:argparse.Namespace
+          dwcm: 0.4
+          head: 0.6
+          ltssm: 0.5
+          mixing_ssm: 0.5
+          sse: 0.5
+          stssm: 0.6
+        layer_scale_init_value: 1.0e-06
+  selected: Ours
+optimizer: adamw
+params: params/main/params.yaml
+resume_from_checkpoint: checkpoints/main/090_stage1_best.pth
+stage: 1
+stage2:
+  epochs: 15
+  lr: 4.0e-05
+test_periods:
+- !!python/tuple
+  - '2019-03-01'
+  - '2019-03-02'
+train_periods:
+- !!python/tuple
+  - '2020-01-01'
+  - '2020-01-02'
+trial_name: 090
+val_periods:
+- !!python/tuple
+  - '2020-01-03'
+  - '2020-01-04'
+wandb: false
+warmup_epochs: 3
+weight_decay: 0.05
+
+2025-04-04 16:55:07,840 - 090 - INFO - ==================
+
+2025-04-04 16:55:14,563 - 090 - INFO - Using fold 6
+2025-04-04 16:55:14,563 - 090 - INFO - Dataset configuration:
+2025-04-04 16:55:14,563 - 090 - INFO - force_preprocess: False
+2025-04-04 16:55:14,563 - 090 - INFO - force_recalc_indices: False
+2025-04-04 16:55:14,563 - 090 - INFO - force_recalc_stats: False
+2025-04-04 16:55:14,564 - 090 - INFO - ==================================================
+2025-04-04 16:55:14,564 - 090 - INFO - Statistics Computation Start
+2025-04-04 16:55:14,564 - 090 - INFO - Using statistics directory: ../../DeepSpaceWeatherModel/datasets/main/statistics/fold6
+2025-04-04 16:55:14,564 - 090 - INFO - Training periods:
+2025-04-04 16:55:14,564 - 090 - INFO -   2020-01-01 to 2020-01-02
+2025-04-04 16:55:14,564 - 090 - INFO - ==================================================
+2025-04-04 16:55:14,564 - 090 - INFO - Loading cached statistics from ../../DeepSpaceWeatherModel/datasets/main/statistics/fold6
+2025-04-04 16:55:14,565 - 090 - INFO - Loaded full Climatology: [0.54033927 0.32127617 0.12230964 0.01607491]
+2025-04-04 16:55:14,565 - 090 - INFO - Normalized Binary Climatology: [0.86161544 0.13838456]
+2025-04-04 16:55:14,566 - 090 - INFO - Below M class probability: 0.8616
+2025-04-04 16:55:14,566 - 090 - INFO - M class and above probability: 0.1384
+2025-04-04 16:55:14,566 - 090 - INFO - ==================================================
+2025-04-04 16:55:14,566 - 090 - INFO - Statistics Computation Complete
+2025-04-04 16:55:14,566 - 090 - INFO - ==================================================
+2025-04-04 16:55:16,032 - 090 - INFO - ==========================================================================================
+2025-04-04 16:55:16,032 - 090 - INFO - MACs: 2326.26M
+2025-04-04 16:55:16,032 - 090 - INFO - ==========================================================================================
+2025-04-04 16:55:16,043 - 090 - INFO - Model Summary:
+================================================================================
+Layer (type:depth-idx)                                  Param #
+================================================================================
+Ours                                                    --
+├─SolarSpatialEncoder: 1-1                              --
+│    └─ModuleList: 2-1                                  --
+│    │    └─Sequential: 3-1                             7,104
+│    │    └─Sequential: 3-2                             110,784
+│    │    └─Sequential: 3-3                             110,784
+│    │    └─Sequential: 3-4                             110,784
+│    └─ModuleList: 2-2                                  --
+│    │    └─DepthwiseChannelSelectiveModule: 3-5        14,912
+│    │    └─DepthwiseChannelSelectiveModule: 3-6        14,912
+│    │    └─DepthwiseChannelSelectiveModule: 3-7        14,912
+│    └─ModuleList: 2-3                                  --
+│    │    └─SpatioTemporalSSM: 3-8                      29,440
+│    │    └─SpatioTemporalSSM: 3-9                      29,440
+│    │    └─SpatioTemporalSSM: 3-10                     29,440
+│    └─Dropout: 2-4                                     --
+│    └─Sequential: 2-5                                  --
+│    │    └─Conv2d: 3-11                                1,474,816
+│    │    └─BatchNorm2d: 3-12                           512
+│    │    └─ReLU: 3-13                                  --
+│    │    └─Dropout: 3-14                               --
+│    │    └─Conv2d: 3-15                                295,040
+│    │    └─BatchNorm2d: 3-16                           256
+│    │    └─ReLU: 3-17                                  --
+│    │    └─Dropout: 3-18                               --
+│    │    └─Conv2d: 3-19                                147,584
+├─LongRangeTemporalSSM: 1-2                             --
+│    └─SSMBlock: 2-6                                    --
+│    │    └─ModuleList: 3-20                            115,968
+│    └─Sequential: 2-7                                  --
+│    │    └─Conv1d: 3-21                                82,048
+│    │    └─Dropout: 3-22                               --
+│    │    └─ReLU: 3-23                                  --
+│    │    └─Conv1d: 3-24                                82,048
+│    │    └─Dropout: 3-25                               --
+│    │    └─ReLU: 3-26                                  --
+│    └─Dropout: 2-8                                     --
+│    └─AdaptiveAvgPool1d: 2-9                           --
+├─SSMBlock: 1-3                                         --
+│    └─ModuleList: 2-10                                 --
+│    │    └─SSMLayer: 3-27                              29,312
+├─ClassificationHead: 1-4                               --
+│    └─AdaptiveAvgPool1d: 2-11                          --
+│    └─Sequential: 2-12                                 --
+│    │    └─Linear: 3-28                                2,080
+│    │    └─GELU: 3-29                                  --
+│    │    └─Dropout: 3-30                               --
+│    │    └─Linear: 3-31                                1,056
+│    │    └─GELU: 3-32                                  --
+│    │    └─Dropout: 3-33                               --
+│    │    └─Linear: 3-34                                132
+================================================================================
+Total params: 2,703,364
+Trainable params: 2,703,364
+Non-trainable params: 0
+================================================================================
+2025-04-04 16:55:16,044 - 090 - INFO - 
+=== Configuration ===
+2025-04-04 16:55:16,047 - 090 - INFO - bs: 64
+cache_root: ../../DeepSpaceWeatherModel/datasets/main
+calculate_valid_indices: false
+class_weights:
+  stage1:
+    beta: 0.9999
+    custom_weights:
+    - 1.0
+    - 2.0
+    - 2.0
+    - 2.0
+    enabled: true
+    method: inverse
+  stage2:
+    beta: 0.9999
+    custom_weights:
+    - 1.0
+    - 1.0
+    - 3.0
+    - 5.0
+    enabled: false
+    method: inverse
+cosine_epochs: 20
+cuda_device: 0
+current_stage: 1
+data_path: ../../DeepSpaceWeatherModel/datasets/all_data_hours
+data_root: ../../DeepSpaceWeatherModel/datasets
+dataset:
+  force_preprocess: false
+  force_recalc_indices: false
+  force_recalc_stats: false
+debug: false
+detail_summary: false
+device: cuda:0
+early_stopping:
+  metric: valid_GMGS
+  patience: 5
+epoch_for_2stage: 15
+epochs: 20
+factor:
+  BS: 2.5
+  CE: 1.5
+  GMGS: 1.5
+features_path: ../../DeepSpaceWeatherModel/datasets/all_features/completed/all_features_history_672_step_1
+fold: 6
+history: 4
+imbalance: true
+lr: 4.0e-05
+lr_for_2stage: 4.0e-05
+main_metric: GMGS
+mode: test
+model: !!python/object:argparse.Namespace
+  models:
+    CNNLSTM: !!python/object:argparse.Namespace
+      architecture_params: !!python/object:argparse.Namespace
+        cnn_layers: 4
+        hidden_dim: 128
+    FlareTransformer: !!python/object:argparse.Namespace
+      architecture_params: !!python/object:argparse.Namespace
+        input_channel: 90
+        mm_params: !!python/object:argparse.Namespace
+          N: 1
+          d_ff: 16
+          d_model: 128
+          dropout: 0.1
+          h: 4
+        output_channel: 4
+        sfm_params: !!python/object:argparse.Namespace
+          N: 1
+          d_ff: 16
+          d_model: 128
+          dropout: 0.1
+          h: 4
+        window: 4
+    Ours: !!python/object:argparse.Namespace
+      architecture_params: !!python/object:argparse.Namespace
+        D: 64
+        L: 128
+        L_LT: 1
+        L_SSE: 3
+        drop_path_rate: 0.5
+        dropout_rates: !!python/object:argparse.Namespace
+          dwcm: 0.4
+          head: 0.6
+          ltssm: 0.5
+          mixing_ssm: 0.5
+          sse: 0.5
+          stssm: 0.6
+        layer_scale_init_value: 1.0e-06
+  selected: Ours
+optimizer: adamw
+params: params/main/params.yaml
+resume_from_checkpoint: checkpoints/main/090_stage1_best.pth
+stage: 1
+stage2:
+  epochs: 15
+  lr: 4.0e-05
+test_periods:
+- !!python/tuple
+  - '2019-03-01'
+  - '2019-03-02'
+train_periods:
+- !!python/tuple
+  - '2020-01-01'
+  - '2020-01-02'
+trial_name: 090
+val_periods:
+- !!python/tuple
+  - '2020-01-03'
+  - '2020-01-04'
+wandb: false
+warmup_epochs: 3
+weight_decay: 0.05
+
+2025-04-04 16:55:16,047 - 090 - INFO - ==================
+
+2025-04-04 16:55:32,588 - 090 - INFO - Loading checkpoint from: checkpoints/main/090_stage1_best.pth
+2025-04-04 16:55:39,275 - 090 - INFO - Confusion matrix: [[ 0  0  0 10]
+ [ 0  0  0  0]
+ [ 0  0  0  0]
+ [ 0  0  0  0]]
+2025-04-04 16:55:39,277 - 090 - INFO - Results saved to: results/analysis_results/090_stage1_results.json
+2025-04-04 16:55:39,277 - 090 - INFO - Test Loss: 2.4223
+2025-04-04 16:55:39,277 - 090 - INFO - test_ACC: 0.0000
+2025-04-04 16:55:39,277 - 090 - INFO - test_TSS: 0.0000
+2025-04-04 16:55:39,277 - 090 - INFO - test_BSS: -20.3913
+2025-04-04 16:55:39,277 - 090 - INFO - test_GMGS: 0.0000
+2025-04-04 16:55:39,277 - 090 - INFO - test_confusion_matrix: [[0, 0, 0, 10], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]]
+2025-04-04 16:56:34,218 - 090 - INFO - Using fold 6
+2025-04-04 16:56:34,219 - 090 - INFO - Dataset configuration:
+2025-04-04 16:56:34,219 - 090 - INFO - force_preprocess: False
+2025-04-04 16:56:34,219 - 090 - INFO - force_recalc_indices: False
+2025-04-04 16:56:34,219 - 090 - INFO - force_recalc_stats: False
+2025-04-04 16:56:34,219 - 090 - INFO - ==================================================
+2025-04-04 16:56:34,219 - 090 - INFO - Statistics Computation Start
+2025-04-04 16:56:34,219 - 090 - INFO - Using statistics directory: ../../DeepSpaceWeatherModel/datasets/main/statistics/fold6
+2025-04-04 16:56:34,219 - 090 - INFO - Training periods:
+2025-04-04 16:56:34,219 - 090 - INFO -   2020-01-01 to 2020-01-02
+2025-04-04 16:56:34,219 - 090 - INFO - ==================================================
+2025-04-04 16:56:34,219 - 090 - INFO - Loading cached statistics from ../../DeepSpaceWeatherModel/datasets/main/statistics/fold6
+2025-04-04 16:56:34,219 - 090 - INFO - Loaded full Climatology: [0.54033927 0.32127617 0.12230964 0.01607491]
+2025-04-04 16:56:34,220 - 090 - INFO - Normalized Binary Climatology: [0.86161544 0.13838456]
+2025-04-04 16:56:34,220 - 090 - INFO - Below M class probability: 0.8616
+2025-04-04 16:56:34,220 - 090 - INFO - M class and above probability: 0.1384
+2025-04-04 16:56:34,220 - 090 - INFO - ==================================================
+2025-04-04 16:56:34,220 - 090 - INFO - Statistics Computation Complete
+2025-04-04 16:56:34,220 - 090 - INFO - ==================================================
+2025-04-04 16:56:35,496 - 090 - INFO - ==========================================================================================
+2025-04-04 16:56:35,496 - 090 - INFO - MACs: 2326.26M
+2025-04-04 16:56:35,496 - 090 - INFO - ==========================================================================================
+2025-04-04 16:56:35,508 - 090 - INFO - Model Summary:
+================================================================================
+Layer (type:depth-idx)                                  Param #
+================================================================================
+Ours                                                    --
+├─SolarSpatialEncoder: 1-1                              --
+│    └─ModuleList: 2-1                                  --
+│    │    └─Sequential: 3-1                             7,104
+│    │    └─Sequential: 3-2                             110,784
+│    │    └─Sequential: 3-3                             110,784
+│    │    └─Sequential: 3-4                             110,784
+│    └─ModuleList: 2-2                                  --
+│    │    └─DepthwiseChannelSelectiveModule: 3-5        14,912
+│    │    └─DepthwiseChannelSelectiveModule: 3-6        14,912
+│    │    └─DepthwiseChannelSelectiveModule: 3-7        14,912
+│    └─ModuleList: 2-3                                  --
+│    │    └─SpatioTemporalSSM: 3-8                      29,440
+│    │    └─SpatioTemporalSSM: 3-9                      29,440
+│    │    └─SpatioTemporalSSM: 3-10                     29,440
+│    └─Dropout: 2-4                                     --
+│    └─Sequential: 2-5                                  --
+│    │    └─Conv2d: 3-11                                1,474,816
+│    │    └─BatchNorm2d: 3-12                           512
+│    │    └─ReLU: 3-13                                  --
+│    │    └─Dropout: 3-14                               --
+│    │    └─Conv2d: 3-15                                295,040
+│    │    └─BatchNorm2d: 3-16                           256
+│    │    └─ReLU: 3-17                                  --
+│    │    └─Dropout: 3-18                               --
+│    │    └─Conv2d: 3-19                                147,584
+├─LongRangeTemporalSSM: 1-2                             --
+│    └─SSMBlock: 2-6                                    --
+│    │    └─ModuleList: 3-20                            115,968
+│    └─Sequential: 2-7                                  --
+│    │    └─Conv1d: 3-21                                82,048
+│    │    └─Dropout: 3-22                               --
+│    │    └─ReLU: 3-23                                  --
+│    │    └─Conv1d: 3-24                                82,048
+│    │    └─Dropout: 3-25                               --
+│    │    └─ReLU: 3-26                                  --
+│    └─Dropout: 2-8                                     --
+│    └─AdaptiveAvgPool1d: 2-9                           --
+├─SSMBlock: 1-3                                         --
+│    └─ModuleList: 2-10                                 --
+│    │    └─SSMLayer: 3-27                              29,312
+├─ClassificationHead: 1-4                               --
+│    └─AdaptiveAvgPool1d: 2-11                          --
+│    └─Sequential: 2-12                                 --
+│    │    └─Linear: 3-28                                2,080
+│    │    └─GELU: 3-29                                  --
+│    │    └─Dropout: 3-30                               --
+│    │    └─Linear: 3-31                                1,056
+│    │    └─GELU: 3-32                                  --
+│    │    └─Dropout: 3-33                               --
+│    │    └─Linear: 3-34                                132
+================================================================================
+Total params: 2,703,364
+Trainable params: 2,703,364
+Non-trainable params: 0
+================================================================================
+2025-04-04 16:56:35,508 - 090 - INFO - 
+=== Configuration ===
+2025-04-04 16:56:35,511 - 090 - INFO - bs: 64
+cache_root: ../../DeepSpaceWeatherModel/datasets/main
+calculate_valid_indices: false
+class_weights:
+  stage1:
+    beta: 0.9999
+    custom_weights:
+    - 1.0
+    - 2.0
+    - 2.0
+    - 2.0
+    enabled: true
+    method: inverse
+  stage2:
+    beta: 0.9999
+    custom_weights:
+    - 1.0
+    - 1.0
+    - 3.0
+    - 5.0
+    enabled: false
+    method: inverse
+cosine_epochs: 20
+cuda_device: 0
+current_stage: 1
+data_path: ../../DeepSpaceWeatherModel/datasets/all_data_hours
+data_root: ../../DeepSpaceWeatherModel/datasets
+dataset:
+  force_preprocess: false
+  force_recalc_indices: false
+  force_recalc_stats: false
+debug: false
+detail_summary: false
+device: cuda:0
+early_stopping:
+  metric: valid_GMGS
+  patience: 5
+epoch_for_2stage: 15
+epochs: 20
+factor:
+  BS: 2.5
+  CE: 1.5
+  GMGS: 1.5
+features_path: ../../DeepSpaceWeatherModel/datasets/all_features/completed/all_features_history_672_step_1
+fold: 6
+history: 4
+imbalance: true
+lr: 4.0e-05
+lr_for_2stage: 4.0e-05
+main_metric: GMGS
+mode: test
+model: !!python/object:argparse.Namespace
+  models:
+    CNNLSTM: !!python/object:argparse.Namespace
+      architecture_params: !!python/object:argparse.Namespace
+        cnn_layers: 4
+        hidden_dim: 128
+    FlareTransformer: !!python/object:argparse.Namespace
+      architecture_params: !!python/object:argparse.Namespace
+        input_channel: 90
+        mm_params: !!python/object:argparse.Namespace
+          N: 1
+          d_ff: 16
+          d_model: 128
+          dropout: 0.1
+          h: 4
+        output_channel: 4
+        sfm_params: !!python/object:argparse.Namespace
+          N: 1
+          d_ff: 16
+          d_model: 128
+          dropout: 0.1
+          h: 4
+        window: 4
+    Ours: !!python/object:argparse.Namespace
+      architecture_params: !!python/object:argparse.Namespace
+        D: 64
+        L: 128
+        L_LT: 1
+        L_SSE: 3
+        drop_path_rate: 0.5
+        dropout_rates: !!python/object:argparse.Namespace
+          dwcm: 0.4
+          head: 0.6
+          ltssm: 0.5
+          mixing_ssm: 0.5
+          sse: 0.5
+          stssm: 0.6
+        layer_scale_init_value: 1.0e-06
+  selected: Ours
+optimizer: adamw
+params: params/main/params.yaml
+resume_from_checkpoint: checkpoints/main/090_stage1_best.pth
+stage: 1
+stage2:
+  epochs: 15
+  lr: 4.0e-05
+test_periods:
+- !!python/tuple
+  - '2019-12-01'
+  - '2021-11-30'
+train_periods:
+- !!python/tuple
+  - '2020-01-01'
+  - '2020-01-02'
+trial_name: 090
+val_periods:
+- !!python/tuple
+  - '2020-01-03'
+  - '2020-01-04'
+wandb: false
+warmup_epochs: 3
+weight_decay: 0.05
+
+2025-04-04 16:56:35,512 - 090 - INFO - ==================
+
+2025-04-04 17:09:57,044 - 090 - INFO - Loading checkpoint from: checkpoints/main/090_stage1_best.pth
+2025-04-04 17:12:18,811 - 090 - INFO - Confusion matrix: [[   0    0    0 6145]
+ [   0    0    0 1993]
+ [   0    0    0  420]
+ [   0    0    0   68]]
+2025-04-04 17:12:18,928 - 090 - INFO - Results saved to: results/analysis_results/090_stage1_results.json
+2025-04-04 17:12:18,929 - 090 - INFO - Test Loss: 2.7518
+2025-04-04 17:12:18,929 - 090 - INFO - test_ACC: 0.0079
+2025-04-04 17:12:18,929 - 090 - INFO - test_TSS: 0.0000
+2025-04-04 17:12:18,929 - 090 - INFO - test_BSS: -21.5225
+2025-04-04 17:12:18,929 - 090 - INFO - test_GMGS: 0.0000
+2025-04-04 17:12:18,929 - 090 - INFO - test_confusion_matrix: [[0, 0, 0, 6145], [0, 0, 0, 1993], [0, 0, 0, 420], [0, 0, 0, 68]]
