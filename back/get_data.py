@@ -151,21 +151,34 @@ def update_xrs_json(dt):
 
 
 def main():
-    now_jst = datetime.now(tz=tz.gettz('Asia/Tokyo')) - timedelta(minutes=30)
+    now_jst = datetime.now(tz=tz.gettz('Asia/Tokyo')) - timedelta(minutes=40)
     now_utc = now_jst.astimezone(tz=tz.tzutc())
     dt = now_utc.replace(minute=0, second=0, microsecond=0)
 
+    # 奇数時の場合、1時間繰り下げて偶数時に調整
+    if dt.hour % 2 != 0:
+        dt -= timedelta(hours=1)
+    else:
+        update_xrs_json(dt)
+
+    # XRS更新用のタイムスタンプ
+    xrs_dt = dt
+
     while True:
+        # XRSの更新（1時間粒度）
+        if xrs_dt <= dt:
+            update_xrs_json(xrs_dt)
+            xrs_dt -= timedelta(hours=1)
+
+        # H5ファイルが存在するか確認
         time_str = dt.strftime('%H')
         date_str = dt.strftime('%m%d')
-        hmi_path = os.path.join(SAVE_ROOT, date_str, f"{time_str}_hmi.png")
         h5_path = os.path.join(H5_SAVE_ROOT, dt.strftime("%Y%m%d_%H0000.h5"))
-
-        # h5ファイルが存在するか確認
         if os.path.exists(h5_path):
             print(f"✅ H5ファイルが既に存在: {h5_path}")
             break
 
+        # AIA画像とHMI画像の処理（2時間粒度）
         aia_images = []
         for wl in AIA_WAVELENGTHS:
             image_data = fetch_and_process_aia_image(wl, dt)
@@ -181,6 +194,7 @@ def main():
             else:
                 print(f"⚠️ AIA {wl} の画像が取得できなかったため、PNGは保存されませんでした")
 
+        hmi_path = os.path.join(SAVE_ROOT, date_str, f"{time_str}_hmi.png")
         hmi = download_hmi_image(dt)
         if not np.all(hmi == 0):  # 真っ黒な画像でない場合のみ保存
             save_png(hmi.astype(np.uint8), hmi_path)
@@ -189,10 +203,9 @@ def main():
             print(f"⚠️ HMI画像が取得できなかったため、PNGは保存されませんでした")
 
         save_h5(aia_images, hmi, dt)
-        update_xrs_json(dt)
 
-        # 1時間前に遡る
-        dt -= timedelta(hours=1)
+        # 2時間前に遡る
+        dt -= timedelta(hours=2)
 
 
 if __name__ == '__main__':
