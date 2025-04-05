@@ -1,5 +1,6 @@
 import os
 import requests
+import sys
 import numpy as np
 import cv2
 import json
@@ -151,9 +152,21 @@ def update_xrs_json(dt):
 
 
 def main():
-    now_jst = datetime.now(tz=tz.gettz('Asia/Tokyo')) - timedelta(minutes=45)
-    now_utc = now_jst.astimezone(tz=tz.tzutc())
-    dt = now_utc.replace(minute=0, second=0, microsecond=0)
+    if len(sys.argv) > 1:
+        try:
+            arg = sys.argv[1]
+            dt = datetime.now(tz=tz.tzutc()).replace(minute=0, second=0, microsecond=0)
+            year = dt.year  # 現在の年を取得
+            month = int(arg[:2])  # 引数の最初の2文字を月として解釈
+            day = int(arg[2:4])  # 次の2文字を日として解釈
+            hour = int(arg[4:6])  # 最後の2文字を時として解釈
+            dt = datetime(year, month, day, hour, tzinfo=tz.tzutc())
+        except Exception as e:
+            print(f"❌ 引数の処理に失敗しました: {e}")
+            return
+    else:
+        now_jst = datetime.now(tz=tz.gettz('Asia/Tokyo')) - timedelta(minutes=45)
+        dt = now_jst.astimezone(tz=tz.tzutc()).replace(minute=0, second=0, microsecond=0)
 
     # 奇数時の場合、1時間繰り下げて偶数時に調整
     if dt.hour % 2 != 0:
@@ -167,12 +180,18 @@ def main():
         update_xrs_json(dt)
         update_xrs_json(dt - timedelta(hours=1))
 
-        # H5ファイルが存在するか確認
+        # H5ファイル、pngが存在するか確認
         time_str = dt.strftime('%H')
         date_str = dt.strftime('%m%d')
         h5_path = os.path.join(H5_SAVE_ROOT, dt.strftime("%Y%m%d_%H0000.h5"))
-        if os.path.exists(h5_path):
-            print(f"✅ H5ファイルが既に存在: {h5_path}")
+        png_paths = [
+            os.path.join(SAVE_ROOT, date_str, f"{time_str}_aia_{wl}.png")
+            for wl in AIA_WAVELENGTHS
+        ]
+        png_paths.append(os.path.join(SAVE_ROOT, date_str, f"{time_str}_hmi.png"))
+
+        if os.path.exists(h5_path) and all(os.path.exists(png) for png in png_paths):
+            print(f"✅ H5ファイルとすべてのPNGファイルが既に存在: {h5_path}")
             break
 
         # AIA画像とHMI画像の処理（2時間粒度）
