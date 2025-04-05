@@ -216,17 +216,15 @@ function loadImagesFromSelectedTime() {
     animationTimer = null;
   }
 
-  // flatpickr から選択された日付（文字列 "YYYY-MM-DD"）を取得
-  const selectedDateStr = fp.input.value;
-  if (!selectedDateStr) {
+  // flatpickr から選択された日付オブジェクトを取得
+  const selectedDateObj = fp.selectedDates[0];
+  if (!selectedDateObj) {
     console.error("日付が選択されていません");
     return;
   }
-  // UTC 時刻の Date オブジェクトとして組み立てる
-  const selectedDateParts = selectedDateStr.split("-");
-  const year = parseInt(selectedDateParts[0], 10);
-  const month = parseInt(selectedDateParts[1], 10) - 1;
-  const day = parseInt(selectedDateParts[2], 10);
+  const year = selectedDateObj.getUTCFullYear();
+  const month = selectedDateObj.getUTCMonth();
+  const day = selectedDateObj.getUTCDate();
   // 時刻は <select id="utc-hour"> の値
   const hour = parseInt(document.getElementById("utc-hour").value, 10);
   const baseTime = new Date(Date.UTC(year, month, day, hour, 0, 0));
