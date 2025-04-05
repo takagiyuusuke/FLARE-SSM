@@ -339,15 +339,15 @@ class SolarFlareDatasetWithFeatures(Dataset):
                 return None
             
         # check future index
-        for future_idx in range(i + 24, i + self.future_hours, 24):
-            if future_idx >= len(self.timestamps):
-                return None
+        # for future_idx in range(i + 24, i + self.future_hours, 24):
+        #     if future_idx >= len(self.timestamps):
+        #         return None
 
-            future_label = self.labels[future_idx]
-            if future_label not in [1, 2, 3, 4]:
-                return None
+        #     future_label = self.labels[future_idx]
+        #     if future_label not in [1, 2, 3, 4]:
+        #         return None
 
-        return i if self.labels[i] > 0 else None
+        return i
 
     def _get_valid_indices(self):
         """Get valid indices (serial processing version)"""
