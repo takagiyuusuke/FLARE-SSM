@@ -129,15 +129,37 @@ window.addEventListener('DOMContentLoaded', () => {
     now.getUTCHours(), 0, 0
   ));
 
-  // flatpickr は enableTime:false として日付のみ選択
-  fp = flatpickr("#date-picker", {
-    inline: true,
-    enableTime: false,
-    dateFormat: "Y-m-d",
-    defaultDate: utcNow.toISOString().slice(0, 10),  // "YYYY-MM-DD"
-    maxDate: "today",
-    minDate: "2025-01-01", // 適宜変更
-  });
+  // pred.json から利用可能な日付を取得
+  fetch('data/pred.json')
+    .then(response => response.json())
+    .then(predData => {
+      // キーから日付部分 ("YYYYMMDD") を抽出し、ユニークな日付リストを作成
+      const availableDates = new Set(
+        Object.keys(predData).map(key => key.slice(0, 8)) // "YYYYMMDDHH" → "YYYYMMDD"
+      );
+
+      // flatpickr の初期化
+      fp = flatpickr("#date-picker", {
+        inline: true,
+        enableTime: false,
+        dateFormat: "Y-m-d",
+        defaultDate: utcNow.toISOString().slice(0, 10), // 今日の日付
+        maxDate: "today",
+        minDate: "2025-01-01", // 必要に応じて変更
+        enable: [
+          function(date) {
+            // 日付を "YYYYMMDD" 形式に変換して存在確認
+            const y = date.getFullYear();
+            const m = String(date.getMonth() + 1).padStart(2, '0');
+            const d = String(date.getDate()).padStart(2, '0');
+            return availableDates.has(`${y}${m}${d}`);
+          }
+        ]
+      });
+    })
+    .catch(err => {
+      console.error("pred.json の取得中にエラー:", err);
+    });
 
   // 時刻選択用の <select>（#utc-hour） を初期化（偶数時刻のみ）
   const hourSelect = document.getElementById("utc-hour");
