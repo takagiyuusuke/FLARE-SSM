@@ -165,7 +165,7 @@ def main():
             print(f"❌ 引数の処理に失敗しました: {e}")
             return
     else:
-        now_jst = datetime.now(tz=tz.gettz('Asia/Tokyo')) - timedelta(minutes=45)
+        now_jst = datetime.now(tz=tz.gettz('Asia/Tokyo')) - timedelta(minutes=30)
         dt = now_jst.astimezone(tz=tz.tzutc()).replace(minute=0, second=0, microsecond=0)
 
     # 奇数時の場合、1時間繰り下げて偶数時に調整
