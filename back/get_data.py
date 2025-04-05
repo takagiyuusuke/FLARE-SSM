@@ -170,10 +170,10 @@ def main():
         # H5ファイルが存在するか確認
         time_str = dt.strftime('%H')
         date_str = dt.strftime('%m%d')
-        # h5_path = os.path.join(H5_SAVE_ROOT, dt.strftime("%Y%m%d_%H0000.h5"))
-        # if os.path.exists(h5_path):
-        #     print(f"✅ H5ファイルが既に存在: {h5_path}")
-        #     break
+        h5_path = os.path.join(H5_SAVE_ROOT, dt.strftime("%Y%m%d_%H0000.h5"))
+        if os.path.exists(h5_path):
+            print(f"✅ H5ファイルが既に存在: {h5_path}")
+            break
 
         # AIA画像とHMI画像の処理（2時間粒度）
         aia_images = []
