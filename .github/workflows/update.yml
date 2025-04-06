@@ -34,7 +34,9 @@ jobs:
       - name: Run inference
         run: |
           cd ml
-          python inference.py --params params/main/params.yaml --fold 1 --data_root ./datasets --cuda_device 0 --history 4 --trial_name 090 --mode test --resume_from_checkpoint checkpoints/main/090_stage1_best.pth
+          python inference.py --params params/main/params.yaml --fold 1 --data_root ./datasets --cuda_device 0 --history 4 --trial_name 090 --mode test --resume_from_checkpoint checkpoints/main/090_stage1_best.pth --hour 72
+          python inference.py --params params/main/params.yaml --fold 1 --data_root ./datasets --cuda_device 0 --history 4 --trial_name 090 --mode test --resume_from_checkpoint checkpoints/main/110_stage1_best.pth --hour 24
+          python inference.py --params params/main/params.yaml --fold 1 --data_root ./datasets --cuda_device 0 --history 4 --trial_name 090 --mode test --resume_from_checkpoint checkpoints/main/111_stage1_best.pth --hour 48
 
       - name: Commit and push
         run: |

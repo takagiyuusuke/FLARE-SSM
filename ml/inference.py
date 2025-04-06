@@ -62,6 +62,7 @@ def main():
     parser.add_argument("--mode", default="test")
     parser.add_argument("--resume_from_checkpoint", required=True, help="チェックポイントのパス")
     parser.add_argument("--debug", action="store_true", help="デバッグモード: 結果をファイルに保存せず、コマンドラインに出力します")
+    parser.add_argument("--hour", type=int, default=72, help="保存するJSONファイル名に使用する時間（例: 72）")
     args = parser.parse_args()
 
     # 既存の設定ファイルからパラメータを読み込む
@@ -175,10 +176,10 @@ def main():
         for ts, probs in predictions.items():
             print(f"{ts}: {probs}")
     else:
-        # 結果を "../data/pred.json" に保存
+        # 結果を "../data/pred_<hour>.json" に保存
         out_dir = os.path.join("..", "data")
         os.makedirs(out_dir, exist_ok=True)
-        out_path = os.path.join(out_dir, "pred_72.json")
+        out_path = os.path.join(out_dir, f"pred_{args.hour}.json")  # 動的にファイル名を変更
         with open(out_path, "w") as f:
             json.dump(predictions, f, indent=2)
 
