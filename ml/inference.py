@@ -61,6 +61,7 @@ def main():
     parser.add_argument("--trial_name", default="idxxxx")
     parser.add_argument("--mode", default="test")
     parser.add_argument("--resume_from_checkpoint", required=True, help="チェックポイントのパス")
+    parser.add_argument("--debug", action="store_true", help="デバッグモード: 結果をファイルに保存せず、コマンドラインに出力します")
     args = parser.parse_args()
 
     # 既存の設定ファイルからパラメータを読み込む
@@ -169,17 +170,22 @@ def main():
         key = target.strftime("%Y%m%d%H")
         predictions[key] = [round(p, 6) for p in probs_list]
 
-    # 結果を "../data/pred.json" に保存
-    out_dir = os.path.join("..", "data")
-    os.makedirs(out_dir, exist_ok=True)
-    out_path = os.path.join(out_dir, "pred.json")
-    with open(out_path, "w") as f:
-        json.dump(predictions, f, indent=2)
+    if args.debug:
+        print("Prediction results (debug mode):")
+        for ts, probs in predictions.items():
+            print(f"{ts}: {probs}")
+    else:
+        # 結果を "../data/pred.json" に保存
+        out_dir = os.path.join("..", "data")
+        os.makedirs(out_dir, exist_ok=True)
+        out_path = os.path.join(out_dir, "pred.json")
+        with open(out_path, "w") as f:
+            json.dump(predictions, f, indent=2)
 
-    print(f"Saved predictions for {len(predictions)} timestamps to {out_path}")
-    print("Prediction results:")
-    for ts, probs in predictions.items():
-        print(f"{ts}: {probs}")
+        print(f"Saved predictions for {len(predictions)} timestamps to {out_path}")
+        print("Prediction results:")
+        for ts, probs in predictions.items():
+            print(f"{ts}: {probs}")
 
 if __name__ == "__main__":
     main()
