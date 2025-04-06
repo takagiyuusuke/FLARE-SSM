@@ -138,7 +138,7 @@ def main():
     # 各ターゲット時刻について推論を実施
     for target in valid_targets:
         # required_times は [T-6h, T-4h, T-2h, T] の昇順のリスト
-        required_times = [target - timedelta(hours=2*(i)) for i in range(args_config.history)]
+        required_times = [target - timedelta(hours=2*(args_config.history - 1 - i)) for i in range(args_config.history)]
         X_list = []
         for rt in required_times:
             file_path = file_dict.get(rt)
