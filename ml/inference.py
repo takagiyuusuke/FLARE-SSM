@@ -178,7 +178,7 @@ def main():
         # 結果を "../data/pred.json" に保存
         out_dir = os.path.join("..", "data")
         os.makedirs(out_dir, exist_ok=True)
-        out_path = os.path.join(out_dir, "pred.json")
+        out_path = os.path.join(out_dir, "pred_72.json")
         with open(out_path, "w") as f:
             json.dump(predictions, f, indent=2)
 
