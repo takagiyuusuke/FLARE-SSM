@@ -276,25 +276,30 @@ function loadImagesFromSelectedTime() {
   const tD = String(baseTime.getUTCDate()).padStart(2, '0');
   const tH = String(baseTime.getUTCHours()).padStart(2, '0');
   const selectedTimeKey = `${tY}${tM}${tD}${tH}`;
-
-  // pred.json を取得してカードを表示
-  fetch('data/pred.json')
+  
+  // 選択された予測時間範囲を取得（デフォルトは24h）
+  const predictionRangeElem = document.querySelector('input[name="prediction-range"]:checked');
+  const predictionRange = predictionRangeElem ? predictionRangeElem.value : '24';
+  // pred_XX.json を取得してカードを表示
+  fetch(`data/pred_${predictionRange}.json`)
     .then(res => res.json())
     .then(predData => {
       const probabilities = predData[selectedTimeKey];
       const cardContainer = document.getElementById('prediction-cards');
       cardContainer.innerHTML = ''; // 既存のカードをクリア
-
+  
+      // 予測結果見出しの更新
+      const predictionHeader = document.getElementById('prediction-header');
+      predictionHeader.textContent = `${tY}-${tM}-${tD} ${tH}:00 UTCにおける${predictionRange}時間先までの推論結果`;
+  
       const classLabels = ['O class', 'C class', 'M class', 'X class'];
-
       if (probabilities) {
-        const maxProbability = Math.max(...probabilities); // 最大の確率を取得
-
+        const maxProbability = Math.max(...probabilities);
         probabilities.forEach((prob, index) => {
           const card = document.createElement('div');
           card.className = 'prediction-card';
           if (prob === maxProbability) {
-            card.classList.add('highlight'); // 最大の確率を持つカードを強調
+            card.classList.add('highlight');
           }
           card.innerHTML = `
             <h3><span class="class-label">${classLabels[index][0]}</span><span class="class-small">${classLabels[index].slice(1)}</span></h3>
@@ -304,7 +309,6 @@ function loadImagesFromSelectedTime() {
         });
       } else {
         console.warn(`❌ No prediction data found for key: ${selectedTimeKey}`);
-        // エントリが存在しない場合、??%のカードを表示
         for (let i = 0; i < 4; i++) {
           const card = document.createElement('div');
           card.className = 'prediction-card';
@@ -314,7 +318,6 @@ function loadImagesFromSelectedTime() {
           `;
           cardContainer.appendChild(card);
         }
-        // エラーメッセージを表示
         const errorMessage = document.createElement('p');
         errorMessage.className = 'error-message';
         errorMessage.textContent = "❌ 推論データが存在しません";
@@ -324,8 +327,8 @@ function loadImagesFromSelectedTime() {
     .catch(err => {
       console.error("Prediction data fetch error:", err);
       const cardContainer = document.getElementById('prediction-cards');
-      cardContainer.innerHTML = ''; // 既存のカードをクリア
-      // エラー時も??%のカードを表示
+      cardContainer.innerHTML = '';
+      const classLabels = ['O class', 'C class', 'M class', 'X class'];
       for (let i = 0; i < 4; i++) {
         const card = document.createElement('div');
         card.className = 'prediction-card';
@@ -335,7 +338,6 @@ function loadImagesFromSelectedTime() {
         `;
         cardContainer.appendChild(card);
       }
-      // エラーメッセージを表示
       const errorMessage = document.createElement('p');
       errorMessage.className = 'error-message';
       errorMessage.textContent = "❌ 推論データの取得中にエラーが発生しました";

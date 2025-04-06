@@ -24,7 +24,13 @@
           <label for="utc-hour">UTC 時刻:</label>
           <select id="utc-hour"></select>
         </div>
-        <button id="load-button">この時刻で読み込む</button>
+        <!-- 新たに追加する予測時間選択UI（24h,48h,72h） -->
+        <div id="prediction-range-selector">
+          <label><input type="radio" name="prediction-range" value="24" checked> 24h</label>
+          <label><input type="radio" name="prediction-range" value="48"> 48h</label>
+          <label><input type="radio" name="prediction-range" value="72"> 72h</label>
+        </div>
+        <button id="load-button">この条件で読み込む</button>
       </div>
     </div>
     <!-- 右側：太陽画像 -->
@@ -38,6 +44,7 @@
 
   <!-- 下部①：予測結果（横幅100%） -->
   <div class="prediction-container">
+    <h3 id="prediction-header"></h3>
     <div id="prediction-cards" class="card-container">
       <!-- 予測カードの内容 -->
     </div>
