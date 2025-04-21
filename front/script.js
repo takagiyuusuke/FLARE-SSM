@@ -384,6 +384,11 @@ function loadImagesFromSelectedTime() {
     
       window.flareChartInstance.update();
     } else {
+      const lastT = timestamps[timestamps.length - 1];
+      const formattedTime =
+        `${lastT.getUTCFullYear()}-${String(lastT.getUTCMonth()+1).padStart(2,'0')}` +
+        `-${String(lastT.getUTCDate()).padStart(2,'0')} ` +
+        `${String(lastT.getUTCHours()).padStart(2,'0')}:00 UTC`;
       window.flareChartInstance = new Chart(ctx, {
         type: 'line',
         data: {
@@ -449,7 +454,7 @@ function loadImagesFromSelectedTime() {
                   type: 'line',
                   scaleID: 'x', value: 24,
                   borderColor: 'black', borderWidth: 3,
-                  label: { enabled: true, content: fmt, position: 'end', backgroundColor: 'black', color: 'white', font: { weight: 'bold', size: 12 } }
+                  label: { enabled: true, content: formattedTime, position: 'end', backgroundColor: 'black', color: 'white', font: { weight: 'bold', size: 12 } }
                 }
               }
             }
