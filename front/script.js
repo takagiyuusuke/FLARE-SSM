@@ -371,13 +371,17 @@ function loadImagesFromSelectedTime() {
     });
 
     if (window.flareChartInstance) {
-      window.flareChartInstance.data.labels = labels;
-      window.flareChartInstance.data.datasets[0].data = flareData;
-      window.flareChartInstance.data.datasets[0].pointBackgroundColor = pointColors;
-      const lastT = timestamps[timestamps.length-1];
-      const fmt = `${lastT.getUTCFullYear()}-${String(lastT.getUTCMonth()+1).padStart(2,'0')}`
-                + `-${String(lastT.getUTCDate()).padStart(2,'0')} ${String(lastT.getUTCHours()).padStart(2,'0')}:00 UTC`;
-      window.flareChartInstance.options.plugins.annotation.annotations.zeroHourLine.label.content = fmt;
+      // 最新タイムスタンプをフォーマット
+      const lastT = timestamps[timestamps.length - 1];
+      const formattedTime =
+        `${lastT.getUTCFullYear()}-${String(lastT.getUTCMonth()+1).padStart(2,'0')}` +
+        `-${String(lastT.getUTCDate()).padStart(2,'0')} ` +
+        `${String(lastT.getUTCHours()).padStart(2,'0')}:00 UTC`;
+    
+      // label.content に定義済みの formattedTime をセット
+      window.flareChartInstance.options.plugins.annotation.annotations
+        .zeroHourLine.label.content = formattedTime;
+    
       window.flareChartInstance.update();
     } else {
       window.flareChartInstance = new Chart(ctx, {
