@@ -57,12 +57,12 @@ def fetch_and_process_aia_image(wavelength, dt):
         zw = img256.shape[1] / cropped.shape[1]
         img_fixed = zoom(cropped, (zh, zw), order=1)
 
-        return img_fixed.astype(np.uint16)
+        return img_fixed.astype(np.float32)
 
     except Exception as e:
         print(f"❌ AIA {wavelength} fetch/process failed: {e}")
         # フォールバックは真っ黒画像
-        return np.zeros((256, 256), dtype=np.uint16)
+        return np.zeros((256, 256), dtype=np.float32)
 
 
 def download_hmi_image(dt):
@@ -89,11 +89,11 @@ def download_hmi_image(dt):
         src = img256[-text_h:, -text_w:]
         img256[-text_h:, :text_w] = np.fliplr(src)
 
-        return img256.astype(np.uint16)
+        return img256.astype(np.float32)
 
     except Exception as e:
         print(f"❌ HMI fetch/process failed: {e}")
-        return np.zeros((256, 256), dtype=np.uint16)
+        return np.zeros((256, 256), dtype=np.float32)
 
 
 def save_png(image, path):
