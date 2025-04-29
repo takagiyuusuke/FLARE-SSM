@@ -151,7 +151,7 @@ function computeAccuracy(predData, xrsMap, rangeHours) {
     const probs   = predData[key];
     if (!Array.isArray(probs) || probs.length < 4) continue;
     const predCls = probs.indexOf(Math.max(...probs));
-    if (predCls === trueCls) correct++;
+    if (Math.floor(predCls / 2) === Math.floor(trueCls / 2)) correct++;
     total++;
   }
   return total > 0 ? (correct / total) : null;
@@ -163,7 +163,7 @@ function displayAccuracy(acc) {
   if (acc == null) {
     el.textContent = '的中率を計算できるデータがありません';
   } else {
-    el.textContent = `的中率: ${(acc * 100).toFixed(2)}%`;
+    el.textContent = `Accuracy≥M: ${(acc * 100).toFixed(2)}%`;
   }
 }
 

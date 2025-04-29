@@ -9,6 +9,7 @@ import h5py
 from io import BytesIO
 from datetime import datetime, timedelta
 from astropy.io import fits
+from scipy.ndimage import zoom
 from matplotlib import pyplot as plt
 from dateutil import tz
 
@@ -35,22 +36,32 @@ def fetch_and_process_aia_image(wavelength, dt):
         url = f"https://jsoc1.stanford.edu/data/aia/synoptic/{year}/{month}/{day}/H{hour}00/AIA{ymd}_{hour}00_{wavelength}.fits"
 
     try:
-        response = requests.get(url)
-        time.sleep(1)
-        response.raise_for_status()
-        hdul = fits.open(BytesIO(response.content))
-        image_data = hdul[1].data
-        if image_data.dtype == 'object':
-            image_data = np.array(image_data.tolist())
+        resp = requests.get(url)
+        resp.raise_for_status()
+        hdul = fits.open(BytesIO(resp.content))
+        img = hdul[1].data.astype(np.float32)  # raw (4096×4096) など
 
-        image_data = cv2.resize(image_data, (256, 256), interpolation=cv2.INTER_AREA)
-        image_data = image_data[20: -20, 15: -15]  # 中央クロップ
-        image_data = cv2.resize(image_data, (256, 256), interpolation=cv2.INTER_AREA)
-        image_data = np.flipud(image_data)
+        # 3) ダウンサンプリング to 256×256
+        zoom_factor = 256.0 / img.shape[0]
+        img256 = zoom(img, (zoom_factor, zoom_factor), order=1)
 
-        return image_data.astype(np.uint16)
+        # 4) file1 と同じく上下反転
+        img256 = img256[::-1, :]
+
+        # 5) クロップ
+        v_crop, h_crop = 20, 15
+        cropped = img256[v_crop:-v_crop, h_crop:-h_crop]
+
+        # 6) 再リサイズ back to 256×256
+        zh = img256.shape[0] / cropped.shape[0]
+        zw = img256.shape[1] / cropped.shape[1]
+        img_fixed = zoom(cropped, (zh, zw), order=1)
+
+        return img_fixed.astype(np.uint16)
+
     except Exception as e:
-        print(f"❌ AIA {wavelength} の取得失敗: {e}")
+        print(f"❌ AIA {wavelength} fetch/process failed: {e}")
+        # フォールバックは真っ黒画像
         return np.zeros((256, 256), dtype=np.uint16)
 
 
@@ -64,15 +75,24 @@ def download_hmi_image(dt):
     url = f"https://jsoc1.stanford.edu/data/hmi/images/{year}/{month}/{day}/{ymd}_{hour}0000_M_1k.jpg"
 
     try:
-        response = requests.get(url)
-        time.sleep(1)
-        response.raise_for_status()
-        image_data = cv2.imdecode(np.frombuffer(response.content, np.uint8), cv2.IMREAD_GRAYSCALE)
-        image_data[-30:, :] = 0
-        image_data = cv2.resize(image_data, (256, 256), interpolation=cv2.INTER_AREA)
-        return image_data.astype(np.uint16)
+        resp = requests.get(url)
+        resp.raise_for_status()
+        arr = np.frombuffer(resp.content, np.uint8)
+        img = cv2.imdecode(arr, cv2.IMREAD_GRAYSCALE).astype(np.float32)  # raw (1024×1024)
+
+        # 3) ダウンサンプリング to 256×256
+        zoom_factor = 256.0 / img.shape[0]
+        img256 = zoom(img, (zoom_factor, zoom_factor), order=1)
+
+        # 4) 文字領域の反転コピー
+        text_h, text_w = 10, 70
+        src = img256[-text_h:, -text_w:]
+        img256[-text_h:, :text_w] = np.fliplr(src)
+
+        return img256.astype(np.uint16)
+
     except Exception as e:
-        print(f"❌ HMI画像の取得失敗: {e}")
+        print(f"❌ HMI fetch/process failed: {e}")
         return np.zeros((256, 256), dtype=np.uint16)
 
 
