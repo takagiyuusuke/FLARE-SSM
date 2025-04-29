@@ -379,6 +379,9 @@ function loadImagesFromSelectedTime() {
         `${String(lastT.getUTCHours()).padStart(2,'0')}:00 UTC`;
     
       // label.content に定義済みの formattedTime をセット
+      window.flareChartInstance.data.labels = labels;
+      window.flareChartInstance.data.datasets[0].data = flareData;
+      window.flareChartInstance.data.datasets[0].pointBackgroundColor = pointColors;
       window.flareChartInstance.options.plugins.annotation.annotations
         .zeroHourLine.label.content = formattedTime;
     
