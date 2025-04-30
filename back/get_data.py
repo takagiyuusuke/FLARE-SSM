@@ -111,11 +111,11 @@ def save_h5(aia_images, hmi_image, dt):
         for img in aia_images:
             if img.ndim == 3 and img.shape[-1] == 3:
                 img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-            aia_images_fixed.append(img.astype(np.uint16).reshape(256, 256))
+            aia_images_fixed.append(img.astype(np.float32).reshape(256, 256))
 
         if hmi_image.ndim == 3 and hmi_image.shape[-1] == 3:
             hmi_image = cv2.cvtColor(hmi_image, cv2.COLOR_BGR2GRAY)
-        hmi_image = hmi_image.astype(np.uint16).reshape(256, 256)
+        hmi_image = hmi_image.astype(np.float32).reshape(256, 256)
 
         X = np.stack(aia_images_fixed + [hmi_image])  # shape: (10, 256, 256)
         timestamp = dt.strftime("%Y%m%d_%H0000").encode()
