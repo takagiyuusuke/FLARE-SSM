@@ -41,21 +41,17 @@ def fetch_and_process_aia_image(wavelength, dt):
         hdul = fits.open(BytesIO(resp.content))
         img = hdul[1].data.astype(np.float32)  # raw (4096×4096) など
 
-        # 3) ダウンサンプリング to 256×256
-        zoom_factor = 256.0 / img.shape[0]
-        img256 = zoom(img, (zoom_factor, zoom_factor), order=1)
+        # 1) 上下反転
+        img = img[::-1, :]
 
-        # 4) file1 と同じく上下反転
-        img256 = img256[::-1, :]
-
-        # 5) クロップ
+        # 2) 中央クロップ
         v_crop, h_crop = 20, 15
-        cropped = img256[v_crop:-v_crop, h_crop:-h_crop]
+        img_c = img[v_crop:-v_crop, h_crop:-h_crop]  # e.g. (4096−40)×(4096−30)
 
-        # 6) 再リサイズ back to 256×256
-        zh = img256.shape[0] / cropped.shape[0]
-        zw = img256.shape[1] / cropped.shape[1]
-        img_fixed = zoom(cropped, (zh, zw), order=1)
+        # 3) scipy.zoom で一発 256×256
+        zoom_h = 256.0 / img_c.shape[0]
+        zoom_w = 256.0 / img_c.shape[1]
+        img_fixed = zoom(img_c, (zoom_h, zoom_w), order=1)
 
         return img_fixed.astype(np.float32)
 
@@ -80,11 +76,14 @@ def download_hmi_image(dt):
         arr = np.frombuffer(resp.content, np.uint8)
         img = cv2.imdecode(arr, cv2.IMREAD_GRAYSCALE).astype(np.float32)  # raw (1024×1024)
 
-        # 3) ダウンサンプリング to 256×256
-        zoom_factor = 256.0 / img.shape[0]
-        img256 = zoom(img, (zoom_factor, zoom_factor), order=1)
+        img = img[::-1, :]
 
-        # 4) 文字領域の反転コピー
+        # 2) 一発で 256×256 に downsample
+        zh = 256.0 / img.shape[0]
+        zw = 256.0 / img.shape[1]
+        img256 = zoom(img, (zh, zw), order=1)
+
+        # 3) 文字領域を水平反転コピー
         text_h, text_w = 10, 70
         src = img256[-text_h:, -text_w:]
         img256[-text_h:, :text_w] = np.fliplr(src)
