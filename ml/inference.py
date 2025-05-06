@@ -82,7 +82,7 @@ def main():
     # チェックポイントファイル名の先頭3桁を取得して保存ファイル名を決定
     checkpoint_filename = os.path.basename(args.resume_from_checkpoint)
     checkpoint_prefix = checkpoint_filename[:3]  # 先頭3桁を取得
-    hour_mapping = {"090": 72, "110": 24, "111": 48}  # マッピング
+    hour_mapping = {"211": 72, "110": 24, "111": 48}  # マッピング
     hour_value = hour_mapping.get(checkpoint_prefix, 72)  # デフォルト値は72
 
     # キャッシュされた統計情報（means.npy, stds.npy）を読み込む
