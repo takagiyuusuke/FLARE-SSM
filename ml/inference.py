@@ -168,7 +168,7 @@ def main():
         sample_input2 = torch.zeros((1, 672, 128), dtype=torch.float32)
         
         with torch.no_grad():
-            logits, _ = model(sample_input1, sample_input2)
+            logits, _ = model(sample_input1, sample_input2, [pd.Timestamp(target)])
             probs = torch.softmax(logits, dim=1)
             probs_list = probs[0].cpu().numpy().tolist()
         
