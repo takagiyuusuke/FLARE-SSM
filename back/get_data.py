@@ -85,9 +85,9 @@ def download_hmi_image(dt):
         img256 = zoom(img, (zoom_factor, zoom_factor), order=1)
 
         # 4) 文字領域の反転コピー
-        text_h, text_w = 10, 70
-        src = img256[-text_h:, -text_w:]
-        img256[-text_h:, :text_w] = np.fliplr(src)
+        text_h = 7
+        src = img256[-text_h:, :]
+        img256[-text_h:, :] = np.zero_like(src)
 
         return img256.astype(np.float32)
 
