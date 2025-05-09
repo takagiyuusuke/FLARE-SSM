@@ -56,8 +56,10 @@ def fetch_and_process_aia_image(wavelength, dt):
         img = hdul[1].data.astype(np.float32)
 
         # 2) Downsample to 256×256
-        zoom_factor = 256.0 / img.shape[0]
-        img256 = zoom(img, (zoom_factor, zoom_factor), order=1)
+        blurred = cv2.GaussianBlur(img, ksize=(5, 5), sigmaX=1.5, sigmaY=1.5)
+
+        img256 = cv2.resize(blurred, (256, 256), interpolation=cv2.INTER_AREA)
+
 
         # 3) Crop margins
         v_crop, h_crop = 20, 15
@@ -95,8 +97,9 @@ def download_hmi_image(dt):
         img = cv2.imdecode(arr, cv2.IMREAD_GRAYSCALE).astype(np.float32)  # raw (1024×1024)
 
         # 3) ダウンサンプリング to 256×256
-        zoom_factor = 256.0 / img.shape[0]
-        img256 = zoom(img, (zoom_factor, zoom_factor), order=1)
+        blurred = cv2.GaussianBlur(img, ksize=(5, 5), sigmaX=1.5, sigmaY=1.5)
+
+        img256 = cv2.resize(blurred, (256, 256), interpolation=cv2.INTER_AREA)
 
         # 4) 文字領域の反転コピー
         text_h = 7
