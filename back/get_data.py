@@ -24,6 +24,16 @@ XRS_URL = "https://services.swpc.noaa.gov/json/goes/primary/xrays-7-day.json"
 
 
 def fetch_and_process_aia_image(wavelength, dt):
+    """
+    Fetch an AIA FITS image for the given wavelength and datetime,
+    downsample to 256×256, then crop, flip, and restore to 256×256.
+    """
+    from io import BytesIO
+    import requests
+    from astropy.io import fits
+    import numpy as np
+    from scipy.ndimage import zoom
+
     ymd = dt.strftime('%Y%m%d')
     hour = dt.strftime('%H')
     year = dt.year
@@ -31,28 +41,32 @@ def fetch_and_process_aia_image(wavelength, dt):
     day = dt.strftime('%d')
 
     if year >= 2023:
-        url = f"https://sdo5.nascom.nasa.gov/data/aia/synoptic/{year}/{month}/{day}/H{hour}00/AIA{ymd}_{hour}0000_{wavelength}.fits"
+        url = f"https://sdo5.nascom.nasa.gov/data/aia/synoptic/{year}/{month}/{day}/H{hour}00/" \
+              f"AIA{ymd}_{hour}0000_{wavelength}.fits"
     else:
-        url = f"https://jsoc1.stanford.edu/data/aia/synoptic/{year}/{month}/{day}/H{hour}00/AIA{ymd}_{hour}00_{wavelength}.fits"
+        url = f"https://jsoc1.stanford.edu/data/aia/synoptic/{year}/{month}/{day}/H{hour}00/" \
+              f"AIA{ymd}_{hour}00_{wavelength}.fits"
 
     try:
         resp = requests.get(url)
         resp.raise_for_status()
-        hdul = fits.open(BytesIO(resp.content))
-        img = hdul[1].data.astype(np.float32)  # raw (4096×4096) など
 
-        # 3) ダウンサンプリング to 256×256
+        # 1) Load FITS
+        hdul = fits.open(BytesIO(resp.content))
+        img = hdul[1].data.astype(np.float32)
+
+        # 2) Downsample to 256×256
         zoom_factor = 256.0 / img.shape[0]
         img256 = zoom(img, (zoom_factor, zoom_factor), order=1)
 
-        # 4) file1 と同じく上下反転
-        img256 = img256[::-1, :]
-
-        # 5) クロップ
+        # 3) Crop margins
         v_crop, h_crop = 20, 15
         cropped = img256[v_crop:-v_crop, h_crop:-h_crop]
 
-        # 6) 再リサイズ back to 256×256
+        # 4) Flip vertically (to match code2 order)
+        cropped = cropped[::-1, :]
+
+        # 5) Resize back to 256×256
         zh = img256.shape[0] / cropped.shape[0]
         zw = img256.shape[1] / cropped.shape[1]
         img_fixed = zoom(cropped, (zh, zw), order=1)
@@ -61,7 +75,7 @@ def fetch_and_process_aia_image(wavelength, dt):
 
     except Exception as e:
         print(f"❌ AIA {wavelength} fetch/process failed: {e}")
-        # フォールバックは真っ黒画像
+        # Fallback to a black image if anything goes wrong
         return np.zeros((256, 256), dtype=np.float32)
 
 
