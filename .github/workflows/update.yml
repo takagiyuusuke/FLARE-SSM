@@ -34,7 +34,7 @@ jobs:
       - name: Run inference
         run: |
           cd ml
-          python inference.py --params params/main/params.yaml --fold 1 --data_root ./datasets --cuda_device 0 --history 4 --trial_name 090 --mode test --resume_from_checkpoint checkpoints/main/211_stage1_best.pth
+          python inference.py --params params/main/params.yaml --fold 1 --data_root ./datasets --cuda_device 0 --history 4 --trial_name 090 --mode test --resume_from_checkpoint checkpoints/main/216_stage1_best.pth
           python inference.py --params params/main/params.yaml --fold 1 --data_root ./datasets --cuda_device 0 --history 4 --trial_name 090 --mode test --resume_from_checkpoint checkpoints/main/212_stage1_best.pth
           python inference.py --params params/main/params.yaml --fold 1 --data_root ./datasets --cuda_device 0 --history 4 --trial_name 090 --mode test --resume_from_checkpoint checkpoints/main/213_stage1_best.pth
 
