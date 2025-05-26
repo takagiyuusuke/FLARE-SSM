@@ -202,7 +202,7 @@ window.addEventListener('DOMContentLoaded', () => {
     dateFormat: "Y-m-d",
     defaultDate: utcNow.toISOString().slice(0,10),
     maxDate:     utcNow.toISOString().slice(0,10),
-    minDate:     "2025-03-20",
+    minDate:     "2025-04-01",
   });
 
   // 時刻セレクト初期化
