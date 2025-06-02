@@ -157,8 +157,45 @@ function computeAccuracy(predData, xrsMap, rangeHours) {
   return total > 0 ? (correct / total) : null;
 }
 
+// ========== Recall≥M計算 ==========
+function computeRecallM(predData, xrsMap, rangeHours) {
+  let totalM = 0, detectedM = 0;
+  for (const key in predData) {
+    if (!predData.hasOwnProperty(key)) continue;
+    // key="YYYYMMDDHH"
+    const year  = +key.slice(0,4);
+    const month = +key.slice(4,6) - 1;
+    const day   = +key.slice(6,8);
+    const hour  = +key.slice(8,10);
+    const baseUTC = Date.UTC(year, month, day, hour);
+
+    // t から t+rangeHours-1 の最大フラックスを取得
+    let maxFlux = null;
+    for (let i = 0; i < rangeHours; i++) {
+      const t = new Date(baseUTC + i * 3600*1000);
+      const k = `${t.getUTCFullYear()}${String(t.getUTCMonth()+1).padStart(2,'0')}`
+              + `${String(t.getUTCDate()).padStart(2,'0')}${String(t.getUTCHours()).padStart(2,'0')}`;
+      const f = xrsMap[k];
+      if (f != null && (maxFlux === null || f > maxFlux)) {
+        maxFlux = f;
+      }
+    }
+    if (maxFlux === null) continue; // データ不足
+
+    const trueCls = computeClassFromFlux(maxFlux);
+    if (trueCls < 2) continue; // Mクラス未満は除外
+    totalM++;
+
+    const probs   = predData[key];
+    if (!Array.isArray(probs) || probs.length < 4) continue;
+    const predCls = probs.indexOf(Math.max(...probs));
+    if (predCls >= 2) detectedM++;
+  }
+  return totalM > 0 ? (detectedM / totalM) : null;
+}
+
 // ========== 的中率表示 ==========
-function displayAccuracy(acc) {
+function displayAccuracy(acc, recallM = null) {
   const el = document.getElementById('accuracyDisplay');
   // どのrangeが選択されているか取得
   const rangeElem = document.querySelector('input[name="prediction-range"]:checked');
@@ -174,6 +211,11 @@ function displayAccuracy(acc) {
     el.innerHTML += '的中率を計算できるデータがありません';
   } else {
     el.innerHTML += `Accuracy≥M: ${(acc * 100).toFixed(2)}%`;
+    if (recallM == null) {
+      el.innerHTML += `<br>Recall≥M: データ不足`;
+    } else {
+      el.innerHTML += `<br>Recall≥M: ${(recallM * 100).toFixed(2)}%`;
+    }
   }
 }
 
@@ -362,7 +404,8 @@ function loadImagesFromSelectedTime() {
 
       // 的中率計算＆表示
       const acc = computeAccuracy(predData, xrsFullDataMap, predictionRange);
-      displayAccuracy(acc);
+      const recallM = computeRecallM(predData, xrsFullDataMap, predictionRange);
+      displayAccuracy(acc, recallM);
     })
     .catch(err => {
       console.error("Prediction fetch error:", err);
