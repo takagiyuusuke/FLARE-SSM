@@ -201,22 +201,23 @@ function displayAccuracy(acc, recallM = null) {
   const rangeElem = document.querySelector('input[name="prediction-range"]:checked');
   const range = rangeElem ? +rangeElem.value : 24;
   let header = '';
-  if (range === 24) header = '24時間予測的中率';
-  else if (range === 48) header = '48時間予測的中率';
-  else if (range === 72) header = '72時間予測的中率';
+  if (range === 24) header = '24時間予測性能';
+  else if (range === 48) header = '48時間予測性能';
+  else if (range === 72) header = '72時間予測性能';
   else header = `${range}時間予測的中率`;
 
   el.innerHTML = `<h3>${header}</h3>`;
-  if (acc == null) {
-    el.innerHTML += '的中率を計算できるデータがありません';
+  // if (acc == null) {
+  //   el.innerHTML += '的中率を計算できるデータがありません';
+  // } else {
+  //   el.innerHTML += `Accuracy≥M: ${(acc * 100).toFixed(2)}%`;
+  // }
+  if (recallM == null) {
+    el.innerHTML += `<br>Recall≥M: データ不足`;
   } else {
-    el.innerHTML += `Accuracy≥M: ${(acc * 100).toFixed(2)}%`;
-    if (recallM == null) {
-      el.innerHTML += `<br>Recall≥M: データ不足`;
-    } else {
-      el.innerHTML += `<br>Recall≥M: ${(recallM * 100).toFixed(2)}%`;
-    }
+    el.innerHTML += `<br>Recall≥M: ${(recallM * 100).toFixed(2)}%`;
   }
+  
 }
 
 // ========== グローバル変数 ==========
