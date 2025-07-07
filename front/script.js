@@ -201,9 +201,9 @@ function displayAccuracy(acc, recallM = null) {
   const rangeElem = document.querySelector('input[name="prediction-range"]:checked');
   const range = rangeElem ? +rangeElem.value : 24;
   let header = '';
-  if (range === 24) header = '24時間予測性能';
-  else if (range === 48) header = '48時間予測性能';
-  else if (range === 72) header = '72時間予測性能';
+  if (range === 24) header = '24時間予測性能（2025/4/1-本日まで）';
+  else if (range === 48) header = '48時間予測性能（2025/4/1-本日まで）';
+  else if (range === 72) header = '72時間予測性能（2025/4/1-本日まで）';
   else header = `${range}時間予測的中率`;
 
   el.innerHTML = `<h3>${header}</h3>`;
