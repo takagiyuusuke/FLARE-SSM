@@ -9,8 +9,6 @@ body {
   -webkit-text-size-adjust: 100%;
 }
 
-/* (中略) ... PC表示用の既存スタイルは変更ありません ... */
-
 /* ヘッダー */
 header {
   width: 100%;
@@ -23,7 +21,7 @@ header {
 h2, h3 {
   text-align: center;
   margin: 15px 0;
-  font-size: 1.25rem; /* 1.25 * 14px = 17.5px */
+  font-size: 1.25rem;
   font-weight: bold;
 }
 
@@ -61,7 +59,7 @@ h2, h3 {
   gap: 8px;
 }
 #time-picker label {
-  font-size: 1rem; /* 14px */
+  font-size: 1rem;
 }
 #time-picker select {
   font-size: 1rem;
@@ -159,9 +157,6 @@ h2, h3 {
 }
 
 
-/* ... (その他のPC用スタイルは変更なし) ... */
-
-
 /**************************************************/
 /* --- スマートフォン表示用のスタイル --- */
 /**************************************************/
@@ -175,7 +170,6 @@ h2, h3 {
   .left-top, .right-top {
     flex: 1 1 100%;
     width: 100%;
-    /* ★追加：コンテナに左右の余白を設けて、めり込みを防止 */
     padding-left: 10px;
     padding-right: 10px;
     box-sizing: border-box;
@@ -185,52 +179,50 @@ h2, h3 {
     gap: 25px;
   }
   
-  /* ★★★ カレンダーを構成する全要素を個別に拡大 ★★★ */
+  /* ★★★ カレンダーレイアウトとサイズの最終修正 ★★★ */
   .flatpickr-calendar {
-    width: 100% !important; /* コンテナ幅いっぱいに広げる */
+    width: 100% !important; 
   }
 
   /* 月と年のナビゲーション部分 */
   .flatpickr-months {
-    height: 70px; /* 高さを確保 */
-  }
-  .flatpickr-months .flatpickr-month {
-    height: 70px;
-    line-height: 70px;
+    height: auto; /* 高さを自動調整に */
+    padding: 15px 0; /* 上下に余白を追加 */
   }
   .flatpickr-monthDropdown-months {
-    font-size: 28px; /* 月の文字サイズ */
-  }
-  .flatpickr-prev-month, .flatpickr-next-month {
-    height: 70px;
-    padding: 16px;
+    font-size: 2rem; /* 28px相当、月の文字を大きく */
   }
   .flatpickr-prev-month svg, .flatpickr-next-month svg {
-    width: 20px; /* 矢印のサイズ */
-    height: 20px;
+    transform: scale(1.5); /* 矢印を大きく */
   }
 
   /* 曜日のヘッダー部分 */
-  .flatpickr-weekdays {
-    height: 40px;
-  }
   .flatpickr-weekday {
-    font-size: 18px; /* 曜日の文字サイズ */
-    line-height: 40px;
+    font-size: 1.25rem; /* 20px相当、曜日の文字を大きく */
     font-weight: bold;
+    height: 3rem; /* 高さを確保 */
+    line-height: 3rem;
   }
 
-  /* 日付のマス部分 */
+  /* ★1 & 2. 日付が表示される領域のレイアウトを修正 */
   .dayContainer {
+    display: grid; /* グリッドレイアウトを適用 */
+    grid-template-columns: repeat(7, 1fr); /* 7つのカラムを均等に配置 */
+    gap: 5px; /* 日付間の隙間を少し設ける */
     padding: 0;
+    width: 100%;
   }
+
+  /* ★3. 日付のマスと文字の大きさを修正 */
   .flatpickr-day {
-    font-size: 20px; /* 日付の文字サイズ */
-    /* マス自体のサイズを大幅に拡大 */
-    width: 14.28%; /* 100% / 7日 */
-    height: 50px;
-    line-height: 50px;
-    max-width: none; /* 最大幅の制限を解除 */
+    font-size: 1.5rem; /* 24px相当、日付の数字を大幅に拡大 */
+    font-weight: 500;
+    /* 幅はグリッドが自動調整するので削除 */
+    width: auto;
+    max-width: none;
+    /* 高さを十分に確保して、カレンダー全体の縦幅を広げる */
+    height: 3.5rem;
+    line-height: 3.5rem;
   }
   
   /* ボタン類の拡大（前回同様） */
@@ -258,7 +250,7 @@ h2, h3 {
     font-size: 1.5rem;
   }
   .grid {
-    grid-template-columns: repeat(5, 1fr);
+    grid-template-columns: repeat(2, 1fr);
   }
 
   /* 予測カード（前回同様） */
