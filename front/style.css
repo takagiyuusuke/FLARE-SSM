@@ -38,14 +38,14 @@ h2, h3 {
   flex: 0 0 30%;
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: center; /* ★重要：中の要素を中央揃えにする */
   gap: 8px;
 }
 
 /* カレンダー・時刻選択のコンテナ */
 #date-container {
   width: 100%;
-  max-width: 300px;
+  max-width: 300px; /* カレンダーの標準的な幅に合わせる */
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -174,63 +174,17 @@ h2, h3 {
     padding-right: 10px;
     box-sizing: border-box;
   }
+  
+  /* ★★★ カレンダー拡大に関するスタイルを全て削除 ★★★ */
+  /* これによりカレンダーは標準のサイズとレイアウトで表示されますが、 */
+  /* 親要素の`.left-top`に`align-items: center`が設定されているため、画面の中央に配置されます。*/
+
   #date-container {
     max-width: 100%;
-    gap: 25px;
+    gap: 25px; /* ボタン類との間隔は維持 */
   }
   
-  /* ★★★ カレンダーレイアウトとサイズの最終修正 ★★★ */
-  /* カレンダー全体のコンテナ */
-  .flatpickr-calendar {
-    width: 100% !important; 
-    /* 高さは中の要素によって自動的に決まるように */
-    height: auto !important;
-  }
-
-  /* ★3. 月と年のナビゲーション部分 */
-  .flatpickr-months {
-    height: auto;
-    padding: 10px 0;
-  }
-  /* "July 2025" の文字をターゲット */
-  .flatpickr-current-month {
-    font-size: 2.5rem !important; /* 大幅に拡大 */
-    height: auto;
-    padding: 10px 0;
-  }
-  .flatpickr-prev-month svg, .flatpickr-next-month svg {
-    transform: scale(1.8); /* 矢印も大きく */
-  }
-
-  /* 曜日のヘッダー部分 */
-  .flatpickr-weekday {
-    font-size: 1.2rem !important; /* 曜日を大きく */
-    font-weight: bold;
-    height: 3rem;
-    line-height: 3rem;
-  }
-
-  /* ★1 & 2. 日付が表示される領域をグリッド化して均等に配置 */
-  .dayContainer {
-    display: grid !important; /* グリッドレイアウトを強制 */
-    grid-template-columns: repeat(7, 1fr) !important; /* 7つのカラムを均等に配置 */
-    width: 100% !important;
-    padding: 0;
-    gap: 2px; /* 日付間の隙間 */
-  }
-
-  /* 日付のマスと文字の大きさを修正 */
-  .flatpickr-day {
-    font-size: 1.6rem !important; /* 日付の数字を大幅に拡大 */
-    font-weight: 500;
-    /* 幅と高さ、行の高さをしっかり確保 */
-    width: auto !important;
-    max-width: none !important;
-    height: 4rem !important;     /* これでカレンダーの縦幅が大きくなる */
-    line-height: 4rem !important;
-  }
-  
-  /* ボタン類の拡大（前回同様） */
+  /* ボタン類の拡大は維持 */
   #time-picker label, #time-picker select {
     font-size: 2rem;
   }
@@ -250,15 +204,13 @@ h2, h3 {
     width: 100%;
   }
 
-  /* キャプションとグリッド（前回同様） */
+  /* その他のスマホ用レイアウトは維持 */
   #timestamp {
     font-size: 1.5rem;
   }
   .grid {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(5, 1fr);
   }
-
-  /* 予測カード（前回同様） */
   .prediction-card {
     flex: 0 0 calc(50% - 4px);
   }
