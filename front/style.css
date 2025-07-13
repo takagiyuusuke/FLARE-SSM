@@ -1,9 +1,13 @@
 /* --- 全体基本設定 --- */
 body {
   font-family: "Roboto", sans-serif;
-  margin: 10px;
+  margin: 0; /* ★変更：bodyのデフォルトマージンをリセット */
+  padding: 10px; /* ★変更：代わりにpaddingで内側に余白を確保 */
   background: #f5f5f5;
   color: #333;
+  /* ★変更：全体の基本フォントサイズを読みやすい大きさに設定 */
+  font-size: 16px;
+  -webkit-text-size-adjust: 100%; /* ★追加：iPhoneで勝手に文字サイズが変わるのを防ぐ */
 }
 
 /* ヘッダー（薄い灰色） */
@@ -17,7 +21,10 @@ header {
 /* 見出し */
 h2, h3 {
   text-align: center;
-  margin: 8px 0;
+  margin: 15px 0;
+  /* ★変更：見出しの文字を大きく、読みやすく */
+  font-size: 1.25rem; /* 20px相当 */
+  font-weight: bold;
 }
 
 /* --- 上部レイアウト --- */
@@ -33,18 +40,18 @@ h2, h3 {
   flex: 0 0 30%;
   display: flex;
   flex-direction: column;
-  /* align-items: center; を削除し、デフォルトの stretch にすることで、中の要素が横幅いっぱいに広がるようになります */
+  /* ★変更：要素を中央に配置しつつ、コンテナ自体の幅を確保する準備 */
+  align-items: center;
   gap: 8px;
 }
 
 /* カレンダー・時刻選択のコンテナ */
 #date-container {
   width: 100%;
-  text-align: center;
-  /* ★追加：中の要素を見やすくするためにFlexbox化し、間隔を空けます */
+  max-width: 350px; /* ★追加：カレンダーが広がりすぎないように最大幅を設定 */
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 16px; /* ★変更：各要素の間隔を広げて操作しやすく */
 }
 
 /* inlineカレンダーは初期は横幅100% */
@@ -53,7 +60,7 @@ h2, h3 {
   box-sizing: border-box;
   border: none;
   background: transparent;
-  font-size: 14px;
+  font-size: 1rem; /* 16px相当 */
   text-align: center;
 }
 
@@ -62,22 +69,38 @@ h2, h3 {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 4px;
+  gap: 8px;
+}
+/* ★追加：時刻選択のラベルのスタイル */
+#time-picker label {
+  font-size: 1.125rem; /* 18px相当 */
 }
 #time-picker select {
-  font-size: 16px;
-  padding: 4px 6px;
+  font-size: 1.125rem; /* ★変更：文字を大きく */
+  padding: 8px 12px;   /* ★変更：タップ領域を拡大 */
   border: 1px solid #ccc;
   border-radius: 4px;
   background: #fff;
   color: #333;
 }
 
-/* ★追加：ラジオボタンのコンテナを中央寄せに */
+/* ★追加：ラジオボタンのスタイルを全体的に見直し */
 #prediction-range-selector {
   display: flex;
   justify-content: center;
-  gap: 16px; /* ラジオボタンの間隔を調整 */
+  align-items: center;
+  gap: 1rem;
+}
+#prediction-range-selector label {
+  font-size: 1.125rem; /* 18px相当 */
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px;
+}
+#prediction-range-selector input[type="radio"] {
+  /* ラジオボタン自体を大きくしてタップしやすく */
+  transform: scale(1.5);
 }
 
 
@@ -86,16 +109,14 @@ h2, h3 {
   background-color: #6200ee;
   color: #fff;
   border: none;
-  padding: 8px 16px;
-  font-size: 14px;
+  padding: 12px 16px; /* ★変更：縦の余白を増やして押しやすく */
+  font-size: 1.125rem; /* ★変更：文字を大きく */
+  font-weight: bold;   /* ★追加：文字を太く */
   border-radius: 4px;
   cursor: pointer;
   transition: background-color 0.3s ease, box-shadow 0.3s ease;
-  /* ★追加：ボタンの横幅を100%にし、タップしやすくします */
-  width: 100%;
-  box-sizing: border-box; /* paddingを含めて100%にする */
-  padding-top: 12px; /* ★追加：押しやすさのため縦のpaddingを調整 */
-  padding-bottom: 12px; /* ★追加 */
+  width: 100%; /* ★変更：常に親要素の幅に合わせる */
+  box-sizing: border-box;
 }
 #load-button:hover {
   background-color: #3700b3;
@@ -112,7 +133,8 @@ h2, h3 {
 }
 .grid {
   display: grid;
-  grid-template-columns: repeat(5, minmax(128px, 1fr));
+  /* ★変更：PC表示ではきっちり5列x2行を維持 */
+  grid-template-columns: repeat(5, 1fr);
   grid-template-rows: repeat(2, auto);
   gap: 6px;
   width: 100%;
@@ -140,7 +162,7 @@ h2, h3 {
   gap: 8px;
 }
 .prediction-card {
-  flex: 0 0 250px;
+  flex: 1 1 250px;
   border: 1px solid #ccc;
   border-radius: 5px;
   padding: 10px;
@@ -148,7 +170,7 @@ h2, h3 {
   background-color: #f9f9f9;
   box-shadow: 0 1px 3px rgba(0,0,0,0.1);
   transition: transform 0.2s, border-color 0.2s;
-  font-size: 14px;
+  font-size: 1rem; /* 16px相当 */
 }
 .prediction-card:hover {
   transform: scale(1.05);
@@ -158,12 +180,12 @@ h2, h3 {
   box-shadow: 0 3px 8px rgba(255,152,0,0.5);
 }
 .class-label {
-  font-size: 18px;
+  font-size: 1.5rem;   /* ★変更：24px相当、文字を大幅に大きく */
   font-weight: bold;
   color: #333;
 }
 .class-small {
-  font-size: 12px;
+  font-size: 0.875rem; /* ★変更：14px相当、少し大きく */
   font-weight: normal;
   color: #666;
 }
@@ -186,35 +208,39 @@ h2, h3 {
   text-align: center;
 }
 
-/* --- レスポンシブ対応 --- 
-   画面幅が1050px以下の場合、.top-container を縦方向に変更 */
+/* --- レスポンシブ対応 --- */
 @media (max-width: 1050px) {
   .top-container {
     flex-direction: column;
-    /* ★修正：align-items: center を削除。これにより .left-top が横幅いっぱいに広がります */
+    align-items: center; /* ★変更：縦並びの際に中央寄せを維持 */
   }
   .left-top, .right-top {
     flex: 1 1 100%;
+    width: 100%; /* ★追加：コンテナの幅を100%に明確化 */
   }
 
-  /* ★追加：スマホ表示では画像の列数を減らして見やすくします */
+  /* ★変更：太陽画像のグリッドをスマホでは見やすい2列x5行に */
   .grid {
-    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    grid-template-columns: repeat(5, 1fr);
+  }
+
+  /* ★変更：予測カードをスマホで2列x2行に表示 */
+  .prediction-card {
+    /* (100% / 2列) - (gapの半分) で計算 */
+    flex-basis: calc(50% - 4px);
+    flex-grow: 0; /* 不要な伸びを防止 */
   }
 }
 
-/* --- 850px以上の場合、左側の内容を中央に固定 --- */
+
+/* --- 1050px以上のPC表示用の調整 --- */
 @media (min-width: 1050px) {
   #date-container {
     max-width: 300px;
     margin: 0 auto;
-    /* ★修正：PC表示では元のレイアウトに戻すため flex の設定を解除します */
-    display: block;
   }
-  /* ★追加：PC表示ではボタンの幅を自動に戻します */
   #load-button {
-    width: auto;
-    padding: 8px 16px;
+    width: auto; /* PCではボタン幅を自動に */
   }
 }
 
