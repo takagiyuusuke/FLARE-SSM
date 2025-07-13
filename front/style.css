@@ -1,15 +1,12 @@
-/* --- 全体基本設定（主にPC表示用） --- */
+/* --- 全体基本設定 --- */
 body {
   font-family: "Roboto", sans-serif;
-  margin: 0;
-  padding: 10px;
+  margin: 10px;
   background: #f5f5f5;
   color: #333;
-  font-size: 14px; /* PC表示の基本フォントサイズ */
-  -webkit-text-size-adjust: 100%;
 }
 
-/* ヘッダー */
+/* ヘッダー（薄い灰色） */
 header {
   width: 100%;
   height: 50px;
@@ -20,9 +17,7 @@ header {
 /* 見出し */
 h2, h3 {
   text-align: center;
-  margin: 15px 0;
-  font-size: 1.25rem;
-  font-weight: bold;
+  margin: 8px 0;
 }
 
 /* --- 上部レイアウト --- */
@@ -38,53 +33,40 @@ h2, h3 {
   flex: 0 0 30%;
   display: flex;
   flex-direction: column;
-  align-items: center; /* ★重要：中の要素を中央揃えにする */
+  align-items: center;
   gap: 8px;
 }
 
 /* カレンダー・時刻選択のコンテナ */
 #date-container {
   width: 100%;
-  max-width: 300px; /* カレンダーの標準的な幅に合わせる */
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
+  text-align: center;
 }
 
-/* 時刻選択部分 */
+/* inlineカレンダーは初期は横幅100% */
+.inline-calendar {
+  width: 100%;
+  box-sizing: border-box;
+  border: none;
+  background: transparent;
+  font-size: 14px;
+  text-align: center;
+}
+
+/* 時刻選択部分：中央寄せ */
 #time-picker {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-}
-#time-picker label {
-  font-size: 1rem;
+  gap: 4px;
 }
 #time-picker select {
-  font-size: 1rem;
+  font-size: 16px;
   padding: 4px 6px;
   border: 1px solid #ccc;
   border-radius: 4px;
   background: #fff;
-}
-
-/* ラジオボタン */
-#prediction-range-selector {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 1rem;
-}
-#prediction-range-selector label {
-  font-size: 1rem;
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  padding: 5px;
-}
-#prediction-range-selector input[type="radio"] {
-  transform: scale(1.2);
+  color: #333;
 }
 
 /* ボタン */
@@ -93,14 +75,14 @@ h2, h3 {
   color: #fff;
   border: none;
   padding: 8px 16px;
-  font-size: 1rem;
-  font-weight: bold;
+  font-size: 14px;
   border-radius: 4px;
   cursor: pointer;
   transition: background-color 0.3s ease, box-shadow 0.3s ease;
 }
 #load-button:hover {
   background-color: #3700b3;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
 }
 
 /* --- 右側：太陽画像グリッド --- */
@@ -113,7 +95,8 @@ h2, h3 {
 }
 .grid {
   display: grid;
-  grid-template-columns: repeat(5, 1fr); /* PCでは5列 */
+  grid-template-columns: repeat(5, minmax(128px, 1fr));
+  grid-template-rows: repeat(2, auto);
   gap: 6px;
   width: 100%;
 }
@@ -140,89 +123,110 @@ h2, h3 {
   gap: 8px;
 }
 .prediction-card {
-  flex: 1 1 250px; /* PCでは横に4つ並ぶように */
+  flex: 0 0 250px;
   border: 1px solid #ccc;
   border-radius: 5px;
   padding: 10px;
   text-align: center;
   background-color: #f9f9f9;
-  box-sizing: border-box;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  transition: transform 0.2s, border-color 0.2s;
+  font-size: 14px;
+}
+.prediction-card:hover {
+  transform: scale(1.05);
+}
+.prediction-card.highlight {
+  border-color: #ff9800;
+  box-shadow: 0 3px 8px rgba(255,152,0,0.5);
 }
 .class-label {
-  font-size: 1.5rem;
+  font-size: 18px;
   font-weight: bold;
+  color: #333;
 }
 .class-small {
-  font-size: 0.875rem;
+  font-size: 12px;
+  font-weight: normal;
+  color: #666;
+}
+.error-message {
+  width: 100%;
+  margin-top: 8px;
+  text-align: center;
+  color: red;
+  font-weight: bold;
 }
 
+#accuracy-container {
+  text-align: center;
+}
 
-/**************************************************/
-/* --- スマートフォン表示用のスタイル --- */
-/**************************************************/
+/* --- 下部：グラフ --- */
+.graph-container {
+  width: 100%;
+  margin: 10px 0;
+  text-align: center;
+}
+
+/* --- レスポンシブ対応 --- 
+   画面幅が850px以下の場合、.top-container を縦方向に変更 */
 @media (max-width: 1050px) {
-
-  /* --- レイアウトの基本設定 --- */
   .top-container {
     flex-direction: column;
     align-items: center;
   }
   .left-top, .right-top {
     flex: 1 1 100%;
-    width: 100%;
-    padding-left: 10px;
-    padding-right: 10px;
-    box-sizing: border-box;
   }
-  
-  /* ★★★ カレンダー拡大に関するスタイルを全て削除 ★★★ */
-  /* これによりカレンダーは標準のサイズとレイアウトで表示されますが、 */
-  /* 親要素の`.left-top`に`align-items: center`が設定されているため、画面の中央に配置されます。*/
-
-  #date-container {
-    max-width: 100%;
-    gap: 25px; /* ボタン類との間隔は維持 */
-  }
-  
-  /* ボタン類の拡大は維持 */
-  #time-picker label, #time-picker select {
-    font-size: 2rem;
-  }
-  #time-picker select {
-    padding: 10px 15px;
-  }
-  #prediction-range-selector label {
-    font-size: 2rem;
-    padding: 10px;
-  }
-  #prediction-range-selector input[type="radio"] {
-    transform: scale(2.0);
-  }
-  #load-button {
-    font-size: 2rem;
-    padding: 20px 16px;
-    width: 100%;
+  /* flatpickrで生成されるカレンダー本体のスタイル */
+  .flatpickr-calendar {
+    /* 横幅を画面幅の95%に設定します。
+      !important を付けているのは、flatpickrがインラインで設定するスタイルを上書きするためです。
+    */
+    width: 95% !important; 
+    /* 横幅が広がりすぎないように最大幅を設定 */
+    max-width: 450px;
+    /* 中央寄せにする */
+    margin: 0 auto;
   }
 
-  /* その他のスマホ用レイアウトは維持 */
-  #timestamp {
-    font-size: 1.5rem;
+  /* カレンダー内の日付セルのスタイル */
+  .flatpickr-day {
+    /* フォントサイズを大きくして見やすくします */
+    font-size: 1rem; 
+    /* セルの高さを調整してタップしやすくします */
+    line-height: 36px;
   }
-  .grid {
-    grid-template-columns: repeat(5, 1fr);
-  }
-  .prediction-card {
-    flex: 0 0 calc(50% - 4px);
-  }
-  .class-label {
-    font-size: 2.2rem;
-  }
-  .class-small {
+
+  /* 曜日表示（Sun, Mon...）のスタイル */
+  .flatpickr-weekday {
     font-size: 1rem;
+    font-weight: bold;
+  }
+
+  /* 月の選択部分（ヘッダー）の高さを調整 */
+  .flatpickr-months {
+    height: 50px;
+    line-height: 2; /* 垂直方向の中央揃えを調整 */
+  }
+
+  /* 月と年の表示を大きくする */
+  .flatpickr-current-month .flatpickr-monthDropdown-months,
+  .flatpickr-current-month input.cur-year {
+    font-size: 1.2rem;
+    font-weight: bold;
   }
 }
 
-/* テキストボックスを常に非表示にする */
+/* --- 850px以上の場合、左側の内容を中央に固定 --- */
+@media (min-width: 1050px) {
+  #date-container {
+    max-width: 300px;
+    margin: 0 auto;
+  }
+}
+
 #date-picker {
-  display: none !important;
+  display: none;
 }
