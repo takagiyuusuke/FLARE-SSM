@@ -180,49 +180,54 @@ h2, h3 {
   }
   
   /* ★★★ カレンダーレイアウトとサイズの最終修正 ★★★ */
+  /* カレンダー全体のコンテナ */
   .flatpickr-calendar {
     width: 100% !important; 
+    /* 高さは中の要素によって自動的に決まるように */
+    height: auto !important;
   }
 
-  /* 月と年のナビゲーション部分 */
+  /* ★3. 月と年のナビゲーション部分 */
   .flatpickr-months {
-    height: auto; /* 高さを自動調整に */
-    padding: 15px 0; /* 上下に余白を追加 */
+    height: auto;
+    padding: 10px 0;
   }
-  .flatpickr-monthDropdown-months {
-    font-size: 2rem; /* 28px相当、月の文字を大きく */
+  /* "July 2025" の文字をターゲット */
+  .flatpickr-current-month {
+    font-size: 2.5rem !important; /* 大幅に拡大 */
+    height: auto;
+    padding: 10px 0;
   }
   .flatpickr-prev-month svg, .flatpickr-next-month svg {
-    transform: scale(1.5); /* 矢印を大きく */
+    transform: scale(1.8); /* 矢印も大きく */
   }
 
   /* 曜日のヘッダー部分 */
   .flatpickr-weekday {
-    font-size: 1.25rem; /* 20px相当、曜日の文字を大きく */
+    font-size: 1.2rem !important; /* 曜日を大きく */
     font-weight: bold;
-    height: 3rem; /* 高さを確保 */
+    height: 3rem;
     line-height: 3rem;
   }
 
-  /* ★1 & 2. 日付が表示される領域のレイアウトを修正 */
+  /* ★1 & 2. 日付が表示される領域をグリッド化して均等に配置 */
   .dayContainer {
-    display: grid; /* グリッドレイアウトを適用 */
-    grid-template-columns: repeat(7, 1fr); /* 7つのカラムを均等に配置 */
-    gap: 5px; /* 日付間の隙間を少し設ける */
+    display: grid !important; /* グリッドレイアウトを強制 */
+    grid-template-columns: repeat(7, 1fr) !important; /* 7つのカラムを均等に配置 */
+    width: 100% !important;
     padding: 0;
-    width: 100%;
+    gap: 2px; /* 日付間の隙間 */
   }
 
-  /* ★3. 日付のマスと文字の大きさを修正 */
+  /* 日付のマスと文字の大きさを修正 */
   .flatpickr-day {
-    font-size: 1.5rem; /* 24px相当、日付の数字を大幅に拡大 */
+    font-size: 1.6rem !important; /* 日付の数字を大幅に拡大 */
     font-weight: 500;
-    /* 幅はグリッドが自動調整するので削除 */
-    width: auto;
-    max-width: none;
-    /* 高さを十分に確保して、カレンダー全体の縦幅を広げる */
-    height: 3.5rem;
-    line-height: 3.5rem;
+    /* 幅と高さ、行の高さをしっかり確保 */
+    width: auto !important;
+    max-width: none !important;
+    height: 4rem !important;     /* これでカレンダーの縦幅が大きくなる */
+    line-height: 4rem !important;
   }
   
   /* ボタン類の拡大（前回同様） */
