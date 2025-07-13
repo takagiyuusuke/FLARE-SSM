@@ -33,7 +33,7 @@ h2, h3 {
   flex: 0 0 30%;
   display: flex;
   flex-direction: column;
-  align-items: center;
+  /* align-items: center; を削除し、デフォルトの stretch にすることで、中の要素が横幅いっぱいに広がるようになります */
   gap: 8px;
 }
 
@@ -41,6 +41,10 @@ h2, h3 {
 #date-container {
   width: 100%;
   text-align: center;
+  /* ★追加：中の要素を見やすくするためにFlexbox化し、間隔を空けます */
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
 /* inlineカレンダーは初期は横幅100% */
@@ -69,6 +73,14 @@ h2, h3 {
   color: #333;
 }
 
+/* ★追加：ラジオボタンのコンテナを中央寄せに */
+#prediction-range-selector {
+  display: flex;
+  justify-content: center;
+  gap: 16px; /* ラジオボタンの間隔を調整 */
+}
+
+
 /* ボタン */
 #load-button {
   background-color: #6200ee;
@@ -79,6 +91,11 @@ h2, h3 {
   border-radius: 4px;
   cursor: pointer;
   transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  /* ★追加：ボタンの横幅を100%にし、タップしやすくします */
+  width: 100%;
+  box-sizing: border-box; /* paddingを含めて100%にする */
+  padding-top: 12px; /* ★追加：押しやすさのため縦のpaddingを調整 */
+  padding-bottom: 12px; /* ★追加 */
 }
 #load-button:hover {
   background-color: #3700b3;
@@ -170,14 +187,19 @@ h2, h3 {
 }
 
 /* --- レスポンシブ対応 --- 
-   画面幅が850px以下の場合、.top-container を縦方向に変更 */
+   画面幅が1050px以下の場合、.top-container を縦方向に変更 */
 @media (max-width: 1050px) {
   .top-container {
     flex-direction: column;
-    align-items: center;
+    /* ★修正：align-items: center を削除。これにより .left-top が横幅いっぱいに広がります */
   }
   .left-top, .right-top {
     flex: 1 1 100%;
+  }
+
+  /* ★追加：スマホ表示では画像の列数を減らして見やすくします */
+  .grid {
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
   }
 }
 
@@ -186,6 +208,13 @@ h2, h3 {
   #date-container {
     max-width: 300px;
     margin: 0 auto;
+    /* ★修正：PC表示では元のレイアウトに戻すため flex の設定を解除します */
+    display: block;
+  }
+  /* ★追加：PC表示ではボタンの幅を自動に戻します */
+  #load-button {
+    width: auto;
+    padding: 8px 16px;
   }
 }
 
