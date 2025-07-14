@@ -180,42 +180,72 @@ h2, h3 {
     flex: 1 1 100%;
   }
   /* flatpickrで生成されるカレンダー本体のスタイル */
+  /* flatpickrで生成されるカレンダー本体のスタイル */
   .flatpickr-calendar {
-    /* 横幅を画面幅の95%に設定します。
-      !important を付けているのは、flatpickrがインラインで設定するスタイルを上書きするためです。
-    */
-    width: 95% !important; 
+    /* 横幅を画面幅いっぱいに。!importantで強制的に適用します */
+    width: 98% !important; 
     /* 横幅が広がりすぎないように最大幅を設定 */
-    max-width: 450px;
-    /* 中央寄せにする */
-    margin: 0 auto;
+    max-width: 500px;
+    /* 中央寄せし、上下に余白を持たせます */
+    margin: 1rem auto;
+    /* 内側の余白を調整 */
+    padding: 1%;
+    /* サイズ計算の基準を枠線やパディングの内側にします（レイアウト崩れ防止） */
+    box-sizing: border-box !important;
+    /* 全体のフォントサイズを大きくします */
+    font-size: 16px; /* これを基準にremが計算されます */
   }
 
-  /* カレンダー内の日付セルのスタイル */
-  .flatpickr-day {
-    /* フォントサイズを大きくして見やすくします */
-    font-size: 1rem; 
-    /* セルの高さを調整してタップしやすくします */
-    line-height: 36px;
+  /* 曜日と日付を包括するコンテナ */
+  .flatpickr-innerContainer {
+    box-sizing: border-box;
+  }
+  
+  /* 日付部分全体のコンテナ */
+  .dayContainer {
+    padding: 0;
+    box-sizing: border-box;
   }
 
   /* 曜日表示（Sun, Mon...）のスタイル */
   .flatpickr-weekday {
-    font-size: 1rem;
+    font-size: 1.1rem; /* 文字を大きく */
     font-weight: bold;
+    color: #555;
+    height: 38px;      /* 高さを確保 */
+    line-height: 38px;
   }
 
-  /* 月の選択部分（ヘッダー）の高さを調整 */
+  /* カレンダー内の日付セルのスタイル */
+  .flatpickr-day {
+    /* フォントサイズを大胆に大きく！ */
+    font-size: 1.5rem; 
+    /* セルの高さを確保し、タップしやすくします */
+    height: 52px;
+    line-height: 52px;
+    /* セル間のマージンをリセット */
+    margin: 0; 
+  }
+
+  /* 月の選択部分（ヘッダー）のスタイル */
   .flatpickr-months {
-    height: 50px;
-    line-height: 2; /* 垂直方向の中央揃えを調整 */
+    height: 64px; /* 高さを十分に確保 */
   }
 
-  /* 月と年の表示を大きくする */
+  /* 月と年の表示をさらに大きく！ */
   .flatpickr-current-month .flatpickr-monthDropdown-months,
   .flatpickr-current-month input.cur-year {
-    font-size: 1.2rem;
-    font-weight: bold;
+    font-size: 1.8rem;
+    font-weight: 700;
+  }
+  
+  /* 左右の矢印アイコンのサイズとタップ領域を拡大 */
+  .flatpickr-months .flatpickr-prev-month,
+  .flatpickr-months .flatpickr-next-month {
+    height: 48px;
+    width: 24px;
+    padding: 10px;
+    top: 8px;
   }
 }
 
