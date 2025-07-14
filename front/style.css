@@ -181,19 +181,16 @@ h2, h3 {
     width: 100%;
   }
 
-  /* ▼▼▼▼▼ 以下のコードに置き換えてください ▼▼▼▼▼ */
-
   /* flatpickrで生成されるカレンダー本体のスタイル */
   .flatpickr-calendar {
-    /* ★★★ 全体をスケールアップさせるための基準フォントサイズ ★★★ */
-    /* この値を大きくすることで、rem単位の全ての要素が比例して大きくなります */
-    font-size: 20px; 
+    /* ★★★★★ これが全体のサイズを決定する最重要の基準値 ★★★★★ */
+    /* この数値を大きくすれば、全てが比例して巨大化します！ */
+    font-size: 32px; 
 
-    /* 横幅を画面幅いっぱいに設定 */
     width: 98% !important; 
-    max-width: 600px;
-    margin: 1rem auto;
-    padding: 1.5%;
+    max-width: 800px; /* 最大幅も大きく取ります */
+    margin: 1.5rem auto;
+    padding: 2%;
     box-sizing: border-box !important;
   }
 
@@ -211,44 +208,39 @@ h2, h3 {
 
   /* 曜日表示（Sun, Mon...）のスタイル */
   .flatpickr-weekday {
-    /* ★★★ 曜日の文字サイズと高さを修正 ★★★ */
-    font-size: 1.3rem; /* 文字を大きく */
+    font-size: 1.5rem; /* 曜日を巨大化 */
     font-weight: bold;
-    color: #333;
-    height: 45px;      /* 高さを十分に確保して文字の欠けを解消 */
-    line-height: 45px; /* 高さと揃えて垂直中央に配置 */
+    height: 60px;      /* 高さを十分に確保 */
+    line-height: 60px;
   }
 
   /* カレンダー内の日付セルのスタイル */
   .flatpickr-day {
-    font-size: 1.6rem; /* 日付の数字をさらに大きく */
-    height: 60px;      /* セルの高さを十分に確保 */
-    line-height: 60px;
+    font-size: 2.2rem; /* 日付の数字を巨大化！ */
+    height: 85px;      /* セルの高さを巨大化！ */
+    line-height: 85px;
     margin: 0; 
   }
 
   /* 月の選択部分（ヘッダー）のスタイル */
   .flatpickr-months {
-    /* ★★★ ヘッダーの高さを十分に確保 ★★★ */
-    height: 80px;
+    height: 120px; /* ヘッダーの高さを巨大化！ */
   }
 
   /* 月と年の表示を大きくする */
   .flatpickr-current-month .flatpickr-monthDropdown-months,
   .flatpickr-current-month input.cur-year {
-    /* ★★★ 月・年の文字サイズを大幅にアップ ★★★ */
-    font-size: 2.2rem;
+    font-size: 3rem; /* 月と年を巨大化！ */
     font-weight: bold;
-    /* 上下の余白を調整 */
-    padding-top: 10px;
+    padding-top: 15px; /* 位置を微調整 */
   }
   
   /* 左右の矢印アイコンのサイズとタップ領域を拡大 */
   .flatpickr-months .flatpickr-prev-month,
   .flatpickr-months .flatpickr-next-month {
-    top: 16px; /* 位置を調整 */
-    height: 48px;
-    width: 48px;
+    top: 30px; /* 位置を調整 */
+    height: 60px;
+    width: 60px;
   }
 }
 
