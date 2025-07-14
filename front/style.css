@@ -178,22 +178,23 @@ h2, h3 {
   }
   .left-top, .right-top {
     flex: 1 1 100%;
+    width: 100%;
   }
-  /* flatpickrで生成されるカレンダー本体のスタイル */
+
+  /* ▼▼▼▼▼ 以下のコードに置き換えてください ▼▼▼▼▼ */
+
   /* flatpickrで生成されるカレンダー本体のスタイル */
   .flatpickr-calendar {
-    /* 横幅を画面幅いっぱいに。!importantで強制的に適用します */
+    /* ★★★ 全体をスケールアップさせるための基準フォントサイズ ★★★ */
+    /* この値を大きくすることで、rem単位の全ての要素が比例して大きくなります */
+    font-size: 20px; 
+
+    /* 横幅を画面幅いっぱいに設定 */
     width: 98% !important; 
-    /* 横幅が広がりすぎないように最大幅を設定 */
-    max-width: 500px;
-    /* 中央寄せし、上下に余白を持たせます */
+    max-width: 600px;
     margin: 1rem auto;
-    /* 内側の余白を調整 */
-    padding: 1%;
-    /* サイズ計算の基準を枠線やパディングの内側にします（レイアウト崩れ防止） */
+    padding: 1.5%;
     box-sizing: border-box !important;
-    /* 全体のフォントサイズを大きくします */
-    font-size: 16px; /* これを基準にremが計算されます */
   }
 
   /* 曜日と日付を包括するコンテナ */
@@ -204,48 +205,50 @@ h2, h3 {
   /* 日付部分全体のコンテナ */
   .dayContainer {
     padding: 0;
+    width: 100%;
     box-sizing: border-box;
   }
 
   /* 曜日表示（Sun, Mon...）のスタイル */
   .flatpickr-weekday {
-    font-size: 1.1rem; /* 文字を大きく */
+    /* ★★★ 曜日の文字サイズと高さを修正 ★★★ */
+    font-size: 1.3rem; /* 文字を大きく */
     font-weight: bold;
-    color: #555;
-    height: 38px;      /* 高さを確保 */
-    line-height: 38px;
+    color: #333;
+    height: 45px;      /* 高さを十分に確保して文字の欠けを解消 */
+    line-height: 45px; /* 高さと揃えて垂直中央に配置 */
   }
 
   /* カレンダー内の日付セルのスタイル */
   .flatpickr-day {
-    /* フォントサイズを大胆に大きく！ */
-    font-size: 1.5rem; 
-    /* セルの高さを確保し、タップしやすくします */
-    height: 52px;
-    line-height: 52px;
-    /* セル間のマージンをリセット */
+    font-size: 1.6rem; /* 日付の数字をさらに大きく */
+    height: 60px;      /* セルの高さを十分に確保 */
+    line-height: 60px;
     margin: 0; 
   }
 
   /* 月の選択部分（ヘッダー）のスタイル */
   .flatpickr-months {
-    height: 64px; /* 高さを十分に確保 */
+    /* ★★★ ヘッダーの高さを十分に確保 ★★★ */
+    height: 80px;
   }
 
-  /* 月と年の表示をさらに大きく！ */
+  /* 月と年の表示を大きくする */
   .flatpickr-current-month .flatpickr-monthDropdown-months,
   .flatpickr-current-month input.cur-year {
-    font-size: 1.8rem;
-    font-weight: 700;
+    /* ★★★ 月・年の文字サイズを大幅にアップ ★★★ */
+    font-size: 2.2rem;
+    font-weight: bold;
+    /* 上下の余白を調整 */
+    padding-top: 10px;
   }
   
   /* 左右の矢印アイコンのサイズとタップ領域を拡大 */
   .flatpickr-months .flatpickr-prev-month,
   .flatpickr-months .flatpickr-next-month {
+    top: 16px; /* 位置を調整 */
     height: 48px;
-    width: 24px;
-    padding: 10px;
-    top: 8px;
+    width: 48px;
   }
 }
 
