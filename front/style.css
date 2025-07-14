@@ -183,68 +183,49 @@ h2, h3 {
 
   /* flatpickrで生成されるカレンダー本体のスタイル */
   .flatpickr-calendar {
-    font-size: 28px; /* 全体の基準サイズ。お好みで32pxなどに調整してください */
-    width: 98% !important; 
-    max-width: 800px;
-    margin: 1.5rem auto;
-    padding: 10px;
-    box-sizing: border-box !important;
+    /* 横幅は親要素の95%とし、最大でも400pxに制限して大きすぎないようにします */
+    width: 95% !important;
+    max-width: 400px;
+    /* ★★★ margin: auto で水平方向の中央配置を確実にします ★★★ */
+    margin: 1.5rem auto !important;
+    /* 複雑なレイアウト指定を全て削除し、ライブラリの基本レイアウトに戻します */
   }
 
-  /* ★★★ 曜日が表示されるように修正＆均等配置 ★★★ */
-  .flatpickr-weekdays {
-    display: flex; /* Flexboxを適用して横並びにする */
-    width: 100%;
-  }
-  .flatpickr-weekday {
-    flex-basis: calc(100% / 7); /* 7つの要素で幅を均等に分ける */
-    max-width: calc(100% / 7);
-    text-align: center;         /* 文字をセルの中央に配置 */
-    font-size: 1.2rem;
-    font-weight: bold;
-    height: 50px;
-    line-height: 50px;
-    color: #333; /* 文字色を再設定 */
-  }
-
-  /* ★★★ 日付が左下に詰まる問題を解消＆均等配置 ★★★ */
-  .dayContainer {
-    display: flex;     /* Flexboxを適用 */
-    flex-wrap: wrap;   /* 7日ごとに折り返す */
-    width: 100%;
-    padding: 0;
-    box-sizing: border-box;
+  /* 曜日と日付の文字を少しだけ大きくして見やすくする */
+  .flatpickr-weekday,
+  .flatpickr-day {
+    font-size: 1.1rem; /* 主張しすぎない程度に文字を大きく */
   }
   .flatpickr-day {
-    flex-basis: calc(100% / 7); /* 7つの要素で幅を均等に分ける */
-    max-width: calc(100% / 7);
-    text-align: center;
-    margin: 0; /* 余計なマージンをリセット */
-    font-size: 1.8rem;
-    height: 75px;
-    line-height: 75px;
+    /* 日付セルの高さを確保してタップしやすくする */
+    height: 40px;
+    line-height: 40px;
   }
-  
-  /* 月の選択部分（ヘッダー）のスタイル */
-  .flatpickr-months {
-    height: 100px;
+  .flatpickr-weekday {
+    height: 30px;
+    line-height: 30px;
   }
 
-  /* ★★★ 月・年の文字が小さい問題を解決 ★★★ */
+  /* ★★★ ヘッダー部分（月と年）の表示問題をまとめて解決 ★★★ */
+  .flatpickr-months {
+    /* ヘッダーに十分な高さを与え、文字が切れるのを防ぎます */
+    height: 52px;
+  }
+
+  .flatpickr-current-month {
+    /* flatpickrの仕組み(position:absolute)を利用して中央に配置します */
+    left: 50%;
+    transform: translateX(-50%);
+    width: 70%; /* 表示領域を確保 */
+    text-align: center; /* コンテナ内部のテキストも中央揃えに */
+  }
+
+  /* 月と年の文字サイズを見やすい大きさに調整 */
   .flatpickr-current-month .flatpickr-monthDropdown-months,
   .flatpickr-current-month input.cur-year {
-    font-size: 2.8rem !important; /* !importantで強制的にスタイルを適用 */
+    font-size: 1.4rem;
     font-weight: bold;
-    padding-top: 5px;
-    color: #111; /* 文字色を再設定 */
-  }
-  
-  /* 左右の矢印アイコンの位置調整 */
-  .flatpickr-months .flatpickr-prev-month,
-  .flatpickr-months .flatpickr-next-month {
-    top: 25px;
-    height: 50px;
-    width: 50px;
+    color: #333;
   }
 }
 
