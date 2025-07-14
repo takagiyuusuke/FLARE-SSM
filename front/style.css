@@ -183,64 +183,68 @@ h2, h3 {
 
   /* flatpickrで生成されるカレンダー本体のスタイル */
   .flatpickr-calendar {
-    /* ★★★★★ これが全体のサイズを決定する最重要の基準値 ★★★★★ */
-    /* この数値を大きくすれば、全てが比例して巨大化します！ */
-    font-size: 32px; 
-
+    font-size: 28px; /* 全体の基準サイズ。お好みで32pxなどに調整してください */
     width: 98% !important; 
-    max-width: 800px; /* 最大幅も大きく取ります */
+    max-width: 800px;
     margin: 1.5rem auto;
-    padding: 2%;
+    padding: 10px;
     box-sizing: border-box !important;
   }
 
-  /* 曜日と日付を包括するコンテナ */
-  .flatpickr-innerContainer {
+  /* ★★★ 曜日が表示されるように修正＆均等配置 ★★★ */
+  .flatpickr-weekdays {
+    display: flex; /* Flexboxを適用して横並びにする */
+    width: 100%;
+  }
+  .flatpickr-weekday {
+    flex-basis: calc(100% / 7); /* 7つの要素で幅を均等に分ける */
+    max-width: calc(100% / 7);
+    text-align: center;         /* 文字をセルの中央に配置 */
+    font-size: 1.2rem;
+    font-weight: bold;
+    height: 50px;
+    line-height: 50px;
+    color: #333; /* 文字色を再設定 */
+  }
+
+  /* ★★★ 日付が左下に詰まる問題を解消＆均等配置 ★★★ */
+  .dayContainer {
+    display: flex;     /* Flexboxを適用 */
+    flex-wrap: wrap;   /* 7日ごとに折り返す */
+    width: 100%;
+    padding: 0;
     box-sizing: border-box;
+  }
+  .flatpickr-day {
+    flex-basis: calc(100% / 7); /* 7つの要素で幅を均等に分ける */
+    max-width: calc(100% / 7);
+    text-align: center;
+    margin: 0; /* 余計なマージンをリセット */
+    font-size: 1.8rem;
+    height: 75px;
+    line-height: 75px;
   }
   
-  /* 日付部分全体のコンテナ */
-  .dayContainer {
-    padding: 0;
-    width: 100%;
-    box-sizing: border-box;
-  }
-
-  /* 曜日表示（Sun, Mon...）のスタイル */
-  .flatpickr-weekday {
-    font-size: 1.5rem; /* 曜日を巨大化 */
-    font-weight: bold;
-    height: 60px;      /* 高さを十分に確保 */
-    line-height: 60px;
-  }
-
-  /* カレンダー内の日付セルのスタイル */
-  .flatpickr-day {
-    font-size: 2.2rem; /* 日付の数字を巨大化！ */
-    height: 85px;      /* セルの高さを巨大化！ */
-    line-height: 85px;
-    margin: 0; 
-  }
-
   /* 月の選択部分（ヘッダー）のスタイル */
   .flatpickr-months {
-    height: 120px; /* ヘッダーの高さを巨大化！ */
+    height: 100px;
   }
 
-  /* 月と年の表示を大きくする */
+  /* ★★★ 月・年の文字が小さい問題を解決 ★★★ */
   .flatpickr-current-month .flatpickr-monthDropdown-months,
   .flatpickr-current-month input.cur-year {
-    font-size: 3rem; /* 月と年を巨大化！ */
+    font-size: 2.8rem !important; /* !importantで強制的にスタイルを適用 */
     font-weight: bold;
-    padding-top: 15px; /* 位置を微調整 */
+    padding-top: 5px;
+    color: #111; /* 文字色を再設定 */
   }
   
-  /* 左右の矢印アイコンのサイズとタップ領域を拡大 */
+  /* 左右の矢印アイコンの位置調整 */
   .flatpickr-months .flatpickr-prev-month,
   .flatpickr-months .flatpickr-next-month {
-    top: 30px; /* 位置を調整 */
-    height: 60px;
-    width: 60px;
+    top: 25px;
+    height: 50px;
+    width: 50px;
   }
 }
 
