@@ -224,22 +224,21 @@ function displayAccuracy(acc, recallM = null) {
 let xrsFullDataMap = {};
 let fp, preloadedImages = {}, timestamps = [], imageElements = {}, frameIndex = 0, animationTimer = null;
 
-// utcNowは初期化時に定義済み
-let utcNow; // グローバル化
-
 // ========== 初期化処理 ==========
+
+// utcNowをグローバルで保持
+const now = new Date();
+const utcNow = new Date(Date.UTC(
+  now.getUTCFullYear(), now.getUTCMonth(),
+  now.getUTCDate(), now.getUTCHours(), 0, 0
+) - 2 * 3600 * 1000); // UTCで2時間前に調整
+
 window.addEventListener('DOMContentLoaded', () => {
   // XRSデータをマップで読み込み
   fetch('data/xrs.json')
     .then(res => res.json())
     .then(data => { xrsFullDataMap = data; })
     .catch(err => console.error("XRS読み込みエラー:", err));
-
-  const now = new Date();
-  utcNow = new Date(Date.UTC(
-    now.getUTCFullYear(), now.getUTCMonth(),
-    now.getUTCDate(), now.getUTCHours(), 0, 0
-  ) - 2 * 3600 * 1000); // UTCで2時間前に調整
 
   // 日付ピッカー
   fp = flatpickr("#date-picker", {
@@ -249,11 +248,19 @@ window.addEventListener('DOMContentLoaded', () => {
     defaultDate: utcNow.toISOString().slice(0,10),
     maxDate:     utcNow.toISOString().slice(0,10),
     minDate:     "2025-04-01",
-    onChange: updateHourOptions // 日付変更時に呼び出し
+    onChange: updateHourSelectOptions
   });
 
   // 時刻セレクト初期化
-  updateHourOptions();
+  const hourSelect = document.getElementById("utc-hour");
+  updateHourSelectOptions();
+  hourSelect.value = Math.floor(utcNow.getUTCHours()/2)*2;
+
+  // 日付・時刻変更時にもガードをかける
+  hourSelect.addEventListener('focus', updateHourSelectOptions);
+  hourSelect.addEventListener('click', updateHourSelectOptions);
+  hourSelect.addEventListener('keydown', updateHourSelectOptions);
+  document.getElementById('date-picker').addEventListener('change', updateHourSelectOptions);
 
   document.getElementById('load-button')
     .addEventListener('click', loadImagesFromSelectedTime);
@@ -261,24 +268,34 @@ window.addEventListener('DOMContentLoaded', () => {
   loadImagesFromSelectedTime();
 });
 
-// 日付に応じて時刻セレクトのoptionを制御
-function updateHourOptions() {
+// 日付・時刻に応じて時刻セレクトの選択肢を制御
+function updateHourSelectOptions() {
   const hourSelect = document.getElementById("utc-hour");
-  const dateStr = fp.input.value;
-  hourSelect.innerHTML = "";
+  const dateStr = fp && fp.input ? fp.input.value : null;
+  if (!dateStr) return;
+  const [Y, M, D] = dateStr.split("-").map(s=>+s);
+  const isLatest =
+    Y === utcNow.getUTCFullYear() &&
+    M === (utcNow.getUTCMonth()+1) &&
+    D === utcNow.getUTCDate();
   let maxHour = 22;
-  if (dateStr === utcNow.toISOString().slice(0,10)) {
+  if (isLatest) {
     maxHour = Math.floor(utcNow.getUTCHours()/2)*2;
   }
-  for (let h = 0; h < 24; h += 2) {
+  const prevValue = hourSelect.value;
+  hourSelect.innerHTML = "";
+  for (let h = 0; h <= maxHour; h += 2) {
     const opt = document.createElement("option");
     opt.value = h;
     opt.textContent = String(h).padStart(2,"0") + ":00";
-    if (h > maxHour) opt.disabled = true;
     hourSelect.appendChild(opt);
   }
-  // デフォルト値
-  hourSelect.value = Math.min(Math.floor(utcNow.getUTCHours()/2)*2, maxHour);
+  // 直前の値が選択肢にあれば維持、なければ最大値
+  if ([...hourSelect.options].some(o => o.value == prevValue)) {
+    hourSelect.value = prevValue;
+  } else {
+    hourSelect.value = maxHour;
+  }
 }
 
 // ========== チャート用XRS取得 ==========
@@ -571,4 +588,49 @@ function createTransparentImageURL(width = 200, height = 200) {
 }
 
 // ========== 画像レンダリング & アニメーション ==========
-function renderImages() 
+function renderImages() {
+  const grid = document.getElementById('aia-grid');
+  grid.innerHTML = '';
+  imageElements = {};
+
+  [...wavelengths, 'HMI'].forEach(type => {
+    const container = document.createElement('div');
+    container.className = 'channel';
+    const label = document.createElement('div');
+    label.textContent = type === 'HMI' ? 'HMI' : `AIA ${parseInt(type,10)}Å`;
+    const img = document.createElement('img');
+    img.id = `img-${type}`;
+    container.appendChild(label);
+    container.appendChild(img);
+    grid.appendChild(container);
+    imageElements[type] = img;
+  });
+
+  frameIndex = 0;
+  const timestampLabel = document.getElementById('timestamp');
+  animationTimer = setInterval(() => {
+    wavelengths.forEach(wl => {
+      const key = `${wl}-${frameIndex % timestamps.length}`;
+      if (preloadedImages[key]) imageElements[wl].src = preloadedImages[key].src;
+    });
+    const hmiKey = `HMI-${frameIndex % timestamps.length}`;
+    if (preloadedImages[hmiKey]) imageElements['HMI'].src = preloadedImages[hmiKey].src;
+
+    const t = timestamps[frameIndex % timestamps.length];
+    const timeStr = `${t.getUTCFullYear()}-${String(t.getUTCMonth()+1).padStart(2,'0')}`
+                  + `-${String(t.getUTCDate()).padStart(2,'0')} ${String(t.getUTCHours()).padStart(2,'0')}:00 UTC`;
+    timestampLabel.textContent = `現在表示中の時刻: ${timeStr}`;
+
+    if (window.flareChartInstance) {
+      const ds = window.flareChartInstance.data.datasets[0];
+      ds.pointRadius = Array(96).fill(2);
+      const offset = Math.floor((t - timestamps[timestamps.length-1])/(3600*1000));
+      if (offset >= -24 && offset < 72) {
+        ds.pointRadius[offset+24] = 6;
+      }
+      window.flareChartInstance.update('none');
+    }
+
+    frameIndex++;
+  }, 400);
+}
