@@ -224,6 +224,9 @@ function displayAccuracy(acc, recallM = null) {
 let xrsFullDataMap = {};
 let fp, preloadedImages = {}, timestamps = [], imageElements = {}, frameIndex = 0, animationTimer = null;
 
+// utcNowは初期化時に定義済み
+let utcNow; // グローバル化
+
 // ========== 初期化処理 ==========
 window.addEventListener('DOMContentLoaded', () => {
   // XRSデータをマップで読み込み
@@ -233,10 +236,10 @@ window.addEventListener('DOMContentLoaded', () => {
     .catch(err => console.error("XRS読み込みエラー:", err));
 
   const now = new Date();
-  const utcNow = new Date(Date.UTC(
+  utcNow = new Date(Date.UTC(
     now.getUTCFullYear(), now.getUTCMonth(),
     now.getUTCDate(), now.getUTCHours(), 0, 0
-  ));
+  ) - 2 * 3600 * 1000); // UTCで2時間前に調整
 
   // 日付ピッカー
   fp = flatpickr("#date-picker", {
@@ -246,24 +249,37 @@ window.addEventListener('DOMContentLoaded', () => {
     defaultDate: utcNow.toISOString().slice(0,10),
     maxDate:     utcNow.toISOString().slice(0,10),
     minDate:     "2025-04-01",
+    onChange: updateHourOptions // 日付変更時に呼び出し
   });
 
   // 時刻セレクト初期化
-  const hourSelect = document.getElementById("utc-hour");
-  hourSelect.innerHTML = "";
-  for (let h = 0; h < 24; h += 2) {
-    const opt = document.createElement("option");
-    opt.value = h;
-    opt.textContent = String(h).padStart(2,"0") + ":00";
-    hourSelect.appendChild(opt);
-  }
-  hourSelect.value = Math.floor(utcNow.getUTCHours()/2)*2;
+  updateHourOptions();
 
   document.getElementById('load-button')
     .addEventListener('click', loadImagesFromSelectedTime);
 
   loadImagesFromSelectedTime();
 });
+
+// 日付に応じて時刻セレクトのoptionを制御
+function updateHourOptions() {
+  const hourSelect = document.getElementById("utc-hour");
+  const dateStr = fp.input.value;
+  hourSelect.innerHTML = "";
+  let maxHour = 22;
+  if (dateStr === utcNow.toISOString().slice(0,10)) {
+    maxHour = Math.floor(utcNow.getUTCHours()/2)*2;
+  }
+  for (let h = 0; h < 24; h += 2) {
+    const opt = document.createElement("option");
+    opt.value = h;
+    opt.textContent = String(h).padStart(2,"0") + ":00";
+    if (h > maxHour) opt.disabled = true;
+    hourSelect.appendChild(opt);
+  }
+  // デフォルト値
+  hourSelect.value = Math.min(Math.floor(utcNow.getUTCHours()/2)*2, maxHour);
+}
 
 // ========== チャート用XRS取得 ==========
 function loadXRSData(baseTime) {
@@ -555,49 +571,4 @@ function createTransparentImageURL(width = 200, height = 200) {
 }
 
 // ========== 画像レンダリング & アニメーション ==========
-function renderImages() {
-  const grid = document.getElementById('aia-grid');
-  grid.innerHTML = '';
-  imageElements = {};
-
-  [...wavelengths, 'HMI'].forEach(type => {
-    const container = document.createElement('div');
-    container.className = 'channel';
-    const label = document.createElement('div');
-    label.textContent = type === 'HMI' ? 'HMI' : `AIA ${parseInt(type,10)}Å`;
-    const img = document.createElement('img');
-    img.id = `img-${type}`;
-    container.appendChild(label);
-    container.appendChild(img);
-    grid.appendChild(container);
-    imageElements[type] = img;
-  });
-
-  frameIndex = 0;
-  const timestampLabel = document.getElementById('timestamp');
-  animationTimer = setInterval(() => {
-    wavelengths.forEach(wl => {
-      const key = `${wl}-${frameIndex % timestamps.length}`;
-      if (preloadedImages[key]) imageElements[wl].src = preloadedImages[key].src;
-    });
-    const hmiKey = `HMI-${frameIndex % timestamps.length}`;
-    if (preloadedImages[hmiKey]) imageElements['HMI'].src = preloadedImages[hmiKey].src;
-
-    const t = timestamps[frameIndex % timestamps.length];
-    const timeStr = `${t.getUTCFullYear()}-${String(t.getUTCMonth()+1).padStart(2,'0')}`
-                  + `-${String(t.getUTCDate()).padStart(2,'0')} ${String(t.getUTCHours()).padStart(2,'0')}:00 UTC`;
-    timestampLabel.textContent = `現在表示中の時刻: ${timeStr}`;
-
-    if (window.flareChartInstance) {
-      const ds = window.flareChartInstance.data.datasets[0];
-      ds.pointRadius = Array(96).fill(2);
-      const offset = Math.floor((t - timestamps[timestamps.length-1])/(3600*1000));
-      if (offset >= -24 && offset < 72) {
-        ds.pointRadius[offset+24] = 6;
-      }
-      window.flareChartInstance.update('none');
-    }
-
-    frameIndex++;
-  }, 400);
-}
+function renderImages() 
