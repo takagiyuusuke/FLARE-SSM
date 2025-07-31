@@ -457,21 +457,33 @@ function loadImagesFromSelectedTime() {
       return 'red';
     });
 
+    // スマホビューかどうか判定する関数
+    function isMobileView() {
+      return window.innerWidth <= 600;
+    }
+
+    // y軸tickラベル表示状態を返す
+    function getYAxisTicksDisplay() {
+      return !isMobileView();
+    }
+
+    // 既存インスタンスの更新
     if (window.flareChartInstance) {
-      // 最新タイムスタンプをフォーマット
       const lastT = timestamps[timestamps.length - 1];
       const formattedTime =
         `${lastT.getUTCFullYear()}-${String(lastT.getUTCMonth()+1).padStart(2,'0')}` +
         `-${String(lastT.getUTCDate()).padStart(2,'0')} ` +
         `${String(lastT.getUTCHours()).padStart(2,'0')}:00 UTC`;
-    
-      // label.content に定義済みの formattedTime をセット
+
       window.flareChartInstance.data.labels = labels;
       window.flareChartInstance.data.datasets[0].data = flareData;
       window.flareChartInstance.data.datasets[0].pointBackgroundColor = pointColors;
       window.flareChartInstance.options.plugins.annotation.annotations
         .zeroHourLine.label.content = formattedTime;
-    
+      // y軸tickラベル表示状態を更新
+      window.flareChartInstance.options.scales.y.ticks = window.flareChartInstance.options.scales.y.ticks || {};
+      window.flareChartInstance.options.scales.y.ticks.display = getYAxisTicksDisplay();
+
       window.flareChartInstance.update();
     } else {
       const lastT = timestamps[timestamps.length - 1];
@@ -497,7 +509,10 @@ function loadImagesFromSelectedTime() {
               type: 'logarithmic',
               min: 1e-9,
               max: 1e-3,
-              title: { display: true, text: 'Flux (W/m²)' }
+              title: { display: true, text: 'Flux (W/m²)' },
+              ticks: {
+                display: getYAxisTicksDisplay()
+              }
             }
           },
           plugins: {
@@ -570,6 +585,18 @@ function loadImagesFromSelectedTime() {
           }
         }]
       });
+    }
+
+    // ウィンドウリサイズ時にy軸tickラベル表示を切り替え
+    if (!window._flareChartResizeHandler) {
+      window._flareChartResizeHandler = function() {
+        if (window.flareChartInstance && window.flareChartInstance.options && window.flareChartInstance.options.scales && window.flareChartInstance.options.scales.y) {
+          window.flareChartInstance.options.scales.y.ticks = window.flareChartInstance.options.scales.y.ticks || {};
+          window.flareChartInstance.options.scales.y.ticks.display = getYAxisTicksDisplay();
+          window.flareChartInstance.update();
+        }
+      };
+      window.addEventListener('resize', window._flareChartResizeHandler);
     }
   });
 }
