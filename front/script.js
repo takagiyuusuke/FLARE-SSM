@@ -484,7 +484,7 @@ function loadImagesFromSelectedTime() {
         data: {
           labels: labels,
           datasets: [{
-            label: 'X-ray Flux (0.1–0.8 nm)',
+            label: 'X-ray Flux',
             data: flareData,
             borderColor: 'black',
             pointBackgroundColor: pointColors,
@@ -501,6 +501,7 @@ function loadImagesFromSelectedTime() {
             }
           },
           plugins: {
+            legend: { display: false },
             tooltip: {
               callbacks: {
                 label: ctx => {
