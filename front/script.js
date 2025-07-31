@@ -621,6 +621,9 @@ function renderImages() {
   grid.innerHTML = '';
   imageElements = {};
 
+  // ダミー画像URLを生成
+  const dummyURL = createTransparentImageURL();
+
   [...wavelengths, 'HMI'].forEach(type => {
     const container = document.createElement('div');
     container.className = 'channel';
@@ -628,6 +631,8 @@ function renderImages() {
     label.textContent = type === 'HMI' ? 'HMI' : `AIA ${parseInt(type,10)}Å`;
     const img = document.createElement('img');
     img.id = `img-${type}`;
+    // 画像読み込み前はダミー画像を表示
+    img.src = dummyURL;
     container.appendChild(label);
     container.appendChild(img);
     grid.appendChild(container);
