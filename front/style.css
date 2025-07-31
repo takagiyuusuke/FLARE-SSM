@@ -100,6 +100,12 @@ h2, h3 {
   gap: 6px;
   width: 100%;
 }
+/* スマホ用: 画面幅600px以下でグリッドを3列に */
+@media (max-width: 600px) {
+  .grid {
+    grid-template-columns: repeat(3, minmax(128px, 1fr));
+  }
+}
 .channel {
   display: flex;
   flex-direction: column;
