@@ -1,2 +1,3 @@
 __pycache__/
 *.pyc
+ml/datasets/all_data_hours/20250[3-9]*.h5
