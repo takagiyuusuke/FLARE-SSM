@@ -201,10 +201,10 @@ function displayAccuracy(acc, recallM = null) {
   const rangeElem = document.querySelector('input[name="prediction-range"]:checked');
   const range = rangeElem ? +rangeElem.value : 24;
   let header = '';
-  if (range === 24) header = '24時間予測性能（2025/4/1-本日まで）';
-  else if (range === 48) header = '48時間予測性能（2025/4/1-本日まで）';
-  else if (range === 72) header = '72時間予測性能（2025/4/1-本日まで）';
-  else header = `${range}時間予測的中率`;
+  if (range === 24) header = '24-hour prediction performance（2025/4/1-Today）';
+  else if (range === 48) header = '48-hour prediction performance（2025/4/1-Today）';
+  else if (range === 72) header = '72-hour prediction performance（2025/4/1-Today）';
+  else header = `${range}-hour prediction performance（2025/4/1-Today）`;
 
   el.innerHTML = `<h3>${header}</h3>`;
   // if (acc == null) {
@@ -402,7 +402,7 @@ function loadImagesFromSelectedTime() {
       const container = document.getElementById('prediction-cards');
       container.innerHTML = '';
       document.getElementById('prediction-header').textContent
-        = `${Y}-${String(M).padStart(2,'0')}-${String(D).padStart(2,'0')} ${String(H).padStart(2,'0')}:00 UTC の ${predictionRange}時間先 推論結果`;
+        = `${Y}-${String(M).padStart(2,'0')}-${String(D).padStart(2,'0')} ${String(H).padStart(2,'0')}:00 UTC の ${predictionRange}-hour Prediction Results`;
 
       const labels = ['O class','C class','M class','X class'];
       if (predData[keyTime]) {
@@ -652,7 +652,7 @@ function renderImages() {
     const t = timestamps[frameIndex % timestamps.length];
     const timeStr = `${t.getUTCFullYear()}-${String(t.getUTCMonth()+1).padStart(2,'0')}`
                   + `-${String(t.getUTCDate()).padStart(2,'0')} ${String(t.getUTCHours()).padStart(2,'0')}:00 UTC`;
-    timestampLabel.textContent = `現在表示中の時刻: ${timeStr}`;
+    timestampLabel.textContent = `Displayed time: ${timeStr}`;
 
     if (window.flareChartInstance) {
       const ds = window.flareChartInstance.data.datasets[0];

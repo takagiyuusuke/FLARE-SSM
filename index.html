@@ -2,7 +2,7 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>フレアデモ</title>
+  <title>FLARE-SSM</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="front/style.css">
   <!-- Flatpickr のスタイル -->
@@ -22,7 +22,7 @@
         <!-- flatpickr用の input 要素。inline カレンダーが表示される -->
         <input id="date-picker" type="text" readonly class="inline-calendar">
         <div id="time-picker">
-          <label for="utc-hour">UTC 時刻:</label>
+          <label for="utc-hour">UTC time:</label>
           <select id="utc-hour"></select>
         </div>
         <!-- 新たに追加する予測時間選択UI（24h,48h,72h） -->
@@ -31,7 +31,7 @@
           <label><input type="radio" name="prediction-range" value="48"> 48h</label>
           <label><input type="radio" name="prediction-range" value="72"> 72h</label>
         </div>
-        <button id="load-button">この条件で読み込む</button>
+        <button id="load-button">Load</button>
       </div>
     </div>
     <!-- 右側：太陽画像 -->
@@ -57,7 +57,7 @@
 
   <!-- 下部②：X線強度グラフ（横幅100%） -->
   <div class="graph-container">
-    <h3>72時間後までのX線強度の推移 (GOES観測)</h3>
+    <h3>X-ray flux (observed by GOES)</h3>
     <canvas id="flareChart" width="600" height="300"></canvas>
   </div>
 
